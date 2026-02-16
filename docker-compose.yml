@@ -1,0 +1,9 @@
+services:
+  leilao-front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agrolance-front-container
+    ports:
+      - "4200:80"
+    restart: always
