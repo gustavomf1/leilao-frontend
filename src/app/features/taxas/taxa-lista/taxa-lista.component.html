@@ -1,0 +1,38 @@
+<div class="page-header">
+  <h2 class="page-title">Taxas</h2>
+  <a routerLink="../form" class="btn-primary">+ Nova Taxa</a>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar taxa..." [(ngModel)]="filtro">
+</div>
+
+<div class="table-card">
+  @if (taxasFiltradas.length > 0) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Porcentagem</th>
+          <th>Tipo de Cliente</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (taxa of taxasFiltradas; track taxa.id) {
+          <tr>
+            <td>{{ taxa.porcentagem }}%</td>
+            <td>{{ taxa.tipo_cliente }}</td>
+            <td>
+              <div class="actions">
+                <a [routerLink]="['../form', taxa.id]" class="btn-edit">Editar</a>
+                <button (click)="excluir(taxa.id!)" class="btn-delete">Excluir</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="empty-state"><p>Nenhuma taxa encontrada.</p></div>
+  }
+</div>

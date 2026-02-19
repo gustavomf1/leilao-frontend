@@ -1,0 +1,51 @@
+<div class="page-header">
+  <h1 class="page-title">Fazendas</h1>
+  <a class="btn-primary" [routerLink]="['../form']">Nova Fazenda</a>
+</div>
+
+<div class="search-bar">
+  <input
+    type="text"
+    class="search-input"
+    placeholder="Buscar por nome, CNPJ ou cidade..."
+    (input)="filtrar($event)"
+  />
+</div>
+
+<div class="table-card">
+  @if (fazendasFiltradas.length > 0) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Inscricao</th>
+          <th>CNPJ</th>
+          <th>Cidade</th>
+          <th>UF</th>
+          <th>Acoes</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (fazenda of fazendasFiltradas; track fazenda.id) {
+          <tr>
+            <td>{{ fazenda.nome }}</td>
+            <td>{{ fazenda.inscricao }}</td>
+            <td>{{ fazenda.cnpj }}</td>
+            <td>{{ fazenda.cidade }}</td>
+            <td>{{ fazenda.uf }}</td>
+            <td>
+              <div class="actions">
+                <a class="btn-edit" [routerLink]="['../form', fazenda.id]">Editar</a>
+                <button class="btn-delete" (click)="excluir(fazenda)">Excluir</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="empty-state">
+      <p>Nenhuma fazenda encontrada.</p>
+    </div>
+  }
+</div>

@@ -1,0 +1,46 @@
+<div class="page-header">
+  <h2 class="page-title">Leilões</h2>
+  <a routerLink="../form" class="btn-primary">+ Novo Leilão</a>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar leilão..." [(ngModel)]="filtro">
+</div>
+
+<div class="table-card">
+  @if (leiloesFiltrados.length > 0) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Local</th>
+          <th>Cidade</th>
+          <th>UF</th>
+          <th>Data</th>
+          <th>Descrição</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (leilao of leiloesFiltrados; track leilao.id) {
+          <tr>
+            <td>{{ leilao.local }}</td>
+            <td>{{ leilao.cidade }}</td>
+            <td>{{ leilao.uf }}</td>
+            <td>{{ leilao.data }}</td>
+            <td>{{ leilao.descricao }}</td>
+            <td>
+              <div class="actions">
+                <a [routerLink]="['../form', leilao.id]" class="btn-edit">Editar</a>
+                <button (click)="excluir(leilao.id!)" class="btn-delete">Excluir</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="empty-state">
+      <p>Nenhum leilão encontrado.</p>
+    </div>
+  }
+</div>

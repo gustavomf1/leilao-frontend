@@ -1,0 +1,38 @@
+<div class="page-header">
+  <h2 class="page-title">Condições</h2>
+  <a routerLink="../form" class="btn-primary">+ Nova Condição</a>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar condição..." [(ngModel)]="filtro">
+</div>
+
+<div class="table-card">
+  @if (condicoesFiltradas.length > 0) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Descrição</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (condicao of condicoesFiltradas; track condicao.id) {
+          <tr>
+            <td>{{ condicao.tipo }}</td>
+            <td>{{ condicao.descricao }}</td>
+            <td>
+              <div class="actions">
+                <a [routerLink]="['../form', condicao.id]" class="btn-edit">Editar</a>
+                <button (click)="excluir(condicao.id!)" class="btn-delete">Excluir</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="empty-state"><p>Nenhuma condição encontrada.</p></div>
+  }
+</div>

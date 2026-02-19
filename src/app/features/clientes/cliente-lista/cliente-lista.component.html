@@ -1,0 +1,55 @@
+<div class="page-header">
+  <h1 class="page-title">Clientes</h1>
+  <a class="btn-primary" [routerLink]="['../form']">+ Novo Cliente</a>
+</div>
+
+<div class="search-bar">
+  <input
+    type="text"
+    class="search-input"
+    placeholder="Buscar por nome, CPF ou cidade..."
+    [(ngModel)]="filtro"
+  />
+</div>
+
+<div class="table-card">
+  @if (clientesFiltrados.length > 0) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CPF</th>
+          <th>Telefone</th>
+          <th>Cidade</th>
+          <th>UF</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cliente of clientesFiltrados; track cliente.id) {
+          <tr>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.telefone }}</td>
+            <td>{{ cliente.cidade }}</td>
+            <td>{{ cliente.uf }}</td>
+            <td>
+              <div class="actions">
+                <a class="btn-edit" [routerLink]="['../form', cliente.id]">Editar</a>
+                <button class="btn-delete" (click)="excluir(cliente.id!)">Excluir</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="empty-state">
+      @if (filtro.trim()) {
+        <p>Nenhum cliente encontrado para "<strong>{{ filtro }}</strong>".</p>
+      } @else {
+        <p>Nenhum cliente cadastrado.</p>
+      }
+    </div>
+  }
+</div>

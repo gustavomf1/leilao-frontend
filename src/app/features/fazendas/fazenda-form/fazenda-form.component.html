@@ -1,0 +1,50 @@
+<div class="page-header">
+  <h1 class="page-title">
+    @if (editando) {
+      Editar Fazenda
+    } @else {
+      Nova Fazenda
+    }
+  </h1>
+</div>
+
+<div class="form-card">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="inscricao">Inscricao</label>
+        <input id="inscricao" type="text" formControlName="inscricao" placeholder="Inscricao da fazenda" />
+      </div>
+
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" formControlName="nome" placeholder="Nome da fazenda" />
+      </div>
+
+      <div class="form-group">
+        <label for="cnpj">CNPJ</label>
+        <input id="cnpj" type="text" formControlName="cnpj" placeholder="CNPJ" />
+      </div>
+
+      <div class="form-group">
+        <label for="cidade">Cidade</label>
+        <input id="cidade" type="text" formControlName="cidade" placeholder="Cidade" />
+      </div>
+
+      <div class="form-group">
+        <label for="uf">UF</label>
+        <input id="uf" type="text" formControlName="uf" placeholder="UF" maxlength="2" />
+      </div>
+
+      <div class="form-group">
+        <label for="titular_id">Titular ID</label>
+        <input id="titular_id" type="number" formControlName="titular_id" placeholder="ID do titular" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">Salvar</button>
+      <a class="btn-secondary" (click)="voltar()">Cancelar</a>
+    </div>
+  </form>
+</div>

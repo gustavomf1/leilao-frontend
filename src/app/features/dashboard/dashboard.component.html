@@ -1,0 +1,142 @@
+<div class="dashboard">
+  <h2 class="page-title">Dashboard</h2>
+  <p class="page-subtitle">Visao geral do sistema AgroLance</p>
+
+  <div class="stats-grid">
+    <a routerLink="/app/clientes" class="stat-card">
+      <div class="stat-icon clientes">👤</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalClientes }}</span>
+        <span class="stat-label">Clientes</span>
+      </div>
+    </a>
+
+    <a routerLink="/app/fazendas" class="stat-card">
+      <div class="stat-icon fazendas">🏡</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalFazendas }}</span>
+        <span class="stat-label">Fazendas</span>
+      </div>
+    </a>
+
+    <a routerLink="/app/leiloes" class="stat-card">
+      <div class="stat-icon leiloes">🔨</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalLeiloes }}</span>
+        <span class="stat-label">Leiloes</span>
+      </div>
+    </a>
+
+    <a routerLink="/app/lotes" class="stat-card">
+      <div class="stat-icon lotes">🐄</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalLotes }}</span>
+        <span class="stat-label">Lotes</span>
+      </div>
+    </a>
+
+    <div class="stat-card">
+      <div class="stat-icon animais">🐂</div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalAnimais }}</span>
+        <span class="stat-label">Total de Animais</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon valor">💰</div>
+      <div class="stat-info">
+        <span class="stat-value">R$ {{ valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}</span>
+        <span class="stat-label">Valor Total em Lotes</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panels-grid">
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Ultimos Leiloes</h3>
+        <a routerLink="/app/leiloes" class="panel-link">Ver todos</a>
+      </div>
+      <div class="panel-body">
+        @if (ultimosLeiloes.length > 0) {
+          <table class="panel-table">
+            <thead>
+              <tr>
+                <th>Local</th>
+                <th>Cidade</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (leilao of ultimosLeiloes; track leilao.id) {
+                <tr>
+                  <td>{{ leilao.local }}</td>
+                  <td>{{ leilao.cidade }} / {{ leilao.uf }}</td>
+                  <td>{{ leilao.data }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty-text">Nenhum leilao cadastrado ainda.</p>
+        }
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Ultimos Lotes</h3>
+        <a routerLink="/app/lotes" class="panel-link">Ver todos</a>
+      </div>
+      <div class="panel-body">
+        @if (ultimosLotes.length > 0) {
+          <table class="panel-table">
+            <thead>
+              <tr>
+                <th>Codigo</th>
+                <th>Animais</th>
+                <th>Raca</th>
+                <th>Preco</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (lote of ultimosLotes; track lote.id) {
+                <tr>
+                  <td><strong>{{ lote.codigo }}</strong></td>
+                  <td>{{ lote.qntd_animais }}</td>
+                  <td>{{ lote.raca }}</td>
+                  <td>R$ {{ lote.preco_compra.toFixed(2) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty-text">Nenhum lote cadastrado ainda.</p>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <h3 class="section-title">Acoes Rapidas</h3>
+    <div class="actions-grid">
+      <a routerLink="/app/clientes" [queryParams]="{action: 'new'}" class="action-card">
+        <span class="action-icon">👤</span>
+        <span class="action-label">Novo Cliente</span>
+      </a>
+      <a routerLink="/app/fazendas" [queryParams]="{action: 'new'}" class="action-card">
+        <span class="action-icon">🏡</span>
+        <span class="action-label">Nova Fazenda</span>
+      </a>
+      <a routerLink="/app/leiloes" [queryParams]="{action: 'new'}" class="action-card">
+        <span class="action-icon">🔨</span>
+        <span class="action-label">Novo Leilao</span>
+      </a>
+      <a routerLink="/app/lotes" [queryParams]="{action: 'new'}" class="action-card">
+        <span class="action-icon">🐄</span>
+        <span class="action-label">Novo Lote</span>
+      </a>
+    </div>
+  </div>
+</div>

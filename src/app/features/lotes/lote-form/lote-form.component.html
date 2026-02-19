@@ -1,0 +1,72 @@
+<div class="page-header">
+  <h2 class="page-title">{{ isEdicao ? 'Editar Lote' : 'Novo Lote' }}</h2>
+</div>
+
+<div class="form-card">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Codigo</label>
+        <input type="text" formControlName="codigo" placeholder="Codigo do lote">
+      </div>
+      <div class="form-group">
+        <label>Qtd. Animais</label>
+        <input type="number" formControlName="qntd_animais" placeholder="Quantidade">
+      </div>
+      <div class="form-group">
+        <label>Sexo</label>
+        <select formControlName="sexo">
+          <option value="">Selecione</option>
+          <option value="Macho">Macho</option>
+          <option value="Femea">Femea</option>
+          <option value="Misto">Misto</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Idade (meses)</label>
+        <input type="number" formControlName="idade_em_meses" placeholder="Idade em meses">
+      </div>
+      <div class="form-group">
+        <label>Peso (kg)</label>
+        <input type="number" formControlName="peso" placeholder="Peso" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Raca</label>
+        <input type="text" formControlName="raca" placeholder="Raca">
+      </div>
+      <div class="form-group">
+        <label>Especie</label>
+        <input type="text" formControlName="especie" placeholder="Especie">
+      </div>
+      <div class="form-group">
+        <label>Categoria Animal</label>
+        <input type="text" formControlName="categoria_animal" placeholder="Categoria">
+      </div>
+      <div class="form-group">
+        <label>Preco de Compra (R$)</label>
+        <input type="number" formControlName="preco_compra" placeholder="Preco" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Leilao ID</label>
+        <input type="number" formControlName="leilao_id" placeholder="ID do leilao">
+      </div>
+      <div class="form-group">
+        <label>Vendedor ID</label>
+        <input type="number" formControlName="vendedor_id" placeholder="ID do vendedor">
+      </div>
+      <div class="form-group">
+        <label>Comprador ID</label>
+        <input type="number" formControlName="comprador_id" placeholder="ID do comprador">
+      </div>
+      <div class="form-group full-width">
+        <label>Observacoes</label>
+        <textarea formControlName="obs" placeholder="Observacoes sobre o lote" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">Salvar</button>
+      <button type="button" class="btn-secondary" (click)="voltar()">Cancelar</button>
+    </div>
+  </form>
+</div>

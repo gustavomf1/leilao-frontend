@@ -8,5 +8,22 @@
 body, html {
   height: 100%;
   width: 100%;
-  overflow: hidden; /* Evita scrolls desnecessários na tela de login */
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+  --primary: #ff9800;
+  --primary-dark: #f57c00;
+  --primary-light: #ffb74d;
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #94a3b8;
+  --content-bg: #f1f5f9;
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #3b82f6;
 }

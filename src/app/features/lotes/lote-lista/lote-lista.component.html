@@ -1,0 +1,48 @@
+<div class="page-header">
+  <h2 class="page-title">Lotes</h2>
+  <a routerLink="../form" class="btn-primary">+ Novo Lote</a>
+</div>
+
+<div class="search-bar">
+  <input type="text" class="search-input" placeholder="Buscar lote..." [(ngModel)]="filtro">
+</div>
+
+<div class="table-card">
+  @if (lotesFiltrados.length > 0) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Codigo</th>
+          <th>Qtd. Animais</th>
+          <th>Raca</th>
+          <th>Especie</th>
+          <th>Categoria</th>
+          <th>Peso (kg)</th>
+          <th>Preco Compra</th>
+          <th>Acoes</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (lote of lotesFiltrados; track lote.id) {
+          <tr>
+            <td><strong>{{ lote.codigo }}</strong></td>
+            <td>{{ lote.qntd_animais }}</td>
+            <td>{{ lote.raca }}</td>
+            <td>{{ lote.especie }}</td>
+            <td>{{ lote.categoria_animal }}</td>
+            <td>{{ lote.peso }} kg</td>
+            <td>R$ {{ lote.preco_compra.toFixed(2) }}</td>
+            <td>
+              <div class="actions">
+                <a [routerLink]="['../form', lote.id]" class="btn-edit">Editar</a>
+                <button (click)="excluir(lote.id!)" class="btn-delete">Excluir</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <div class="empty-state"><p>Nenhum lote encontrado.</p></div>
+  }
+</div>
