@@ -1,14 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { ClienteService } from '../../../core/services/cliente.service';
-
+import { SubformComponent } from '../../shared-components/subform/subform.component';
+import { FazendaFormComponent } from '../../fazendas/fazenda-form/fazenda-form.component';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-cliente-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './cliente-form.component.html',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    SubformComponent // 👈 ISSO AQUI É O QUE ESTÁ FALTANDO
+  ], templateUrl: './cliente-form.component.html',
   styleUrl: './cliente-form.component.css'
 })
 export class ClienteFormComponent implements OnInit {
@@ -16,7 +22,7 @@ export class ClienteFormComponent implements OnInit {
   private clienteService = inject(ClienteService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-
+  private dialog = inject(MatDialog);
   form!: FormGroup;
   isEdicao = false;
   clienteId?: number;
@@ -31,11 +37,10 @@ export class ClienteFormComponent implements OnInit {
     this.form = this.fb.group({
       nome: ['', Validators.required],
       cpf: ['', Validators.required],
-      rg: [''],
       telefone: ['', Validators.required],
       cidade: ['', Validators.required],
       uf: ['', Validators.required],
-      fazenda_id: [null]
+      fazendas: this.fb.array([]) // 👈 FORM ARRAY
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -47,6 +52,23 @@ export class ClienteFormComponent implements OnInit {
         error: (err) => console.error('Erro ao carregar cliente:', err)
       });
     }
+  }
+
+  get fazendas(): FormArray {
+    return this.form.get('fazendas') as FormArray;
+  }
+
+  abrirDialogFazenda() {
+    const dialogRef = this.dialog.open(FazendaFormComponent, {
+      width: '900px',
+      panelClass: 'fazenda-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe((fazendaCriada) => {
+      if (fazendaCriada) {
+        this.fazendas.push(this.fb.control(fazendaCriada));
+      }
+    });
   }
 
   onSubmit(): void {

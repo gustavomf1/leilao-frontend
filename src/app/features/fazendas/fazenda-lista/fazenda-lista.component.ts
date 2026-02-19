@@ -1,8 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, Inject, inject, OnInit, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Fazenda } from '../../../core/models/fazenda.model';
 import { FazendaService } from '../../../core/services/fazenda.service';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-fazenda-lista',
@@ -13,11 +14,17 @@ import { FazendaService } from '../../../core/services/fazenda.service';
 })
 export class FazendaListaComponent implements OnInit {
   private fazendaService = inject(FazendaService);
+  isDialog = false;
 
   fazendas: Fazenda[] = [];
   fazendasFiltradas: Fazenda[] = [];
   termoBusca = '';
 
+   constructor(@Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
+    if (data) {
+      this.isDialog = true;
+    }
+  }
   ngOnInit(): void {
     this.carregarFazendas();
   }

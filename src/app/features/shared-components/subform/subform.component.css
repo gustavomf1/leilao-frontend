@@ -1,0 +1,90 @@
+.subform-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.subform-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.subform-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.subform-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.subform-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.subform-item:hover {
+  border-color: #ff9800;
+  background: #fffde7;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.btn-add {
+  background: #ff9800;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+
+.btn-add:hover {
+  background: #f57c00;
+}
+
+.btn-remove {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+}
+
+.btn-remove:hover {
+  background: #fecaca;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  border: 2px dashed #e2e8f0;
+  border-radius: 8px;
+}

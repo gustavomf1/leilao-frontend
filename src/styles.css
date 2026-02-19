@@ -11,6 +11,7 @@ body, html {
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
+
 :root {
   --primary: #ff9800;
   --primary-dark: #f57c00;
@@ -27,3 +28,16 @@ body, html {
   --warning: #f59e0b;
   --info: #3b82f6;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.fazenda-dialog .mat-mdc-dialog-container {
+  padding: 1.5rem !important;
+  border-radius: 16px !important;
+}
+
+.fazenda-dialog .mat-mdc-dialog-surface {
+  border-radius: 16px !important;
+}
+

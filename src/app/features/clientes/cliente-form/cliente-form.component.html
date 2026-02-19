@@ -1,9 +1,9 @@
 <div class="page-header">
   <h1 class="page-title">
     @if (isEdicao) {
-      Editar Cliente
+    Editar Cliente
     } @else {
-      Novo Cliente
+    Novo Cliente
     }
   </h1>
 </div>
@@ -15,7 +15,7 @@
         <label for="nome">Nome</label>
         <input id="nome" type="text" formControlName="nome" placeholder="Nome completo" />
         @if (form.get('nome')?.invalid && form.get('nome')?.touched) {
-          <span class="error-msg">Nome é obrigatório.</span>
+        <span class="error-msg">Nome é obrigatório.</span>
         }
       </div>
 
@@ -23,7 +23,7 @@
         <label for="cpf">CPF</label>
         <input id="cpf" type="text" formControlName="cpf" placeholder="000.000.000-00" />
         @if (form.get('cpf')?.invalid && form.get('cpf')?.touched) {
-          <span class="error-msg">CPF é obrigatório.</span>
+        <span class="error-msg">CPF é obrigatório.</span>
         }
       </div>
 
@@ -36,7 +36,7 @@
         <label for="telefone">Telefone</label>
         <input id="telefone" type="text" formControlName="telefone" placeholder="(00) 00000-0000" />
         @if (form.get('telefone')?.invalid && form.get('telefone')?.touched) {
-          <span class="error-msg">Telefone é obrigatório.</span>
+        <span class="error-msg">Telefone é obrigatório.</span>
         }
       </div>
 
@@ -44,7 +44,7 @@
         <label for="cidade">Cidade</label>
         <input id="cidade" type="text" formControlName="cidade" placeholder="Cidade" />
         @if (form.get('cidade')?.invalid && form.get('cidade')?.touched) {
-          <span class="error-msg">Cidade é obrigatória.</span>
+        <span class="error-msg">Cidade é obrigatória.</span>
         }
       </div>
 
@@ -53,17 +53,20 @@
         <select id="uf" formControlName="uf">
           <option value="" disabled>Selecione o estado</option>
           @for (estado of estados; track estado) {
-            <option [value]="estado">{{ estado }}</option>
+          <option [value]="estado">{{ estado }}</option>
           }
         </select>
         @if (form.get('uf')?.invalid && form.get('uf')?.touched) {
-          <span class="error-msg">UF é obrigatória.</span>
+        <span class="error-msg">UF é obrigatória.</span>
         }
       </div>
 
       <div class="form-group">
-        <label for="fazenda_id">Fazenda ID</label>
-        <input id="fazenda_id" type="number" formControlName="fazenda_id" placeholder="Opcional" />
+        <label for="fazenda_id">Fazendas</label>
+        <div class="dialog-container">
+          <app-subform label="Fazendas" [formArray]="fazendas" displayField="nome"
+            (create)="abrirDialogFazenda()"></app-subform>
+        </div>
       </div>
     </div>
 

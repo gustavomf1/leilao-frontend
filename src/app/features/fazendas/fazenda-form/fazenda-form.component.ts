@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FazendaService } from '../../../core/services/fazenda.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Optional, Inject } from '@angular/core';
 
 @Component({
   selector: 'app-fazenda-form',
@@ -17,6 +19,9 @@ export class FazendaFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
+  private dialogRef = inject(MatDialogRef<FazendaFormComponent>, { optional: true });
+  private dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+
   editando = false;
   fazendaId?: number;
 
@@ -28,6 +33,7 @@ export class FazendaFormComponent implements OnInit {
     uf: ['', Validators.required],
     titular_id: [null as number | null]
   });
+
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -54,34 +60,51 @@ export class FazendaFormComponent implements OnInit {
     }
   }
 
+  get isDialog(): boolean {
+    return !!this.dialogRef;
+  }
+
   onSubmit(): void {
-    if (this.form.valid) {
-      const dados = this.form.getRawValue() as any;
-      if (this.editando && this.fazendaId) {
-        this.fazendaService.atualizar(this.fazendaId, dados).subscribe({
-          next: () => {
+    if (!this.form.valid) return;
+
+    const dados = this.form.getRawValue() as any;
+
+    if (this.editando && this.fazendaId) {
+      this.fazendaService.atualizar(this.fazendaId, dados).subscribe({
+        next: (fazendaAtualizada) => {
+          if (this.isDialog) {
+            this.dialogRef?.close(fazendaAtualizada);
+          } else {
             this.voltar();
-          },
-          error: (err) => {
-            console.error('Erro ao atualizar fazenda:', err);
-            alert('Erro ao atualizar fazenda.');
           }
-        });
-      } else {
-        this.fazendaService.salvar(dados).subscribe({
-          next: () => {
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar fazenda:', err);
+          alert('Erro ao atualizar fazenda.');
+        }
+      });
+    } else {
+      this.fazendaService.salvar(dados).subscribe({
+        next: (fazendaCriada) => {
+          if (this.isDialog) {
+            this.dialogRef?.close(fazendaCriada);
+          } else {
             this.voltar();
-          },
-          error: (err) => {
-            console.error('Erro ao salvar fazenda:', err);
-            alert('Erro ao salvar fazenda.');
           }
-        });
-      }
+        },
+        error: (err) => {
+          console.error('Erro ao salvar fazenda:', err);
+          alert('Erro ao salvar fazenda.');
+        }
+      });
     }
   }
 
   voltar(): void {
-    this.router.navigate(['../'], { relativeTo: this.route.parent });
+    if (this.isDialog) {
+      this.dialogRef?.close();
+    } else {
+      this.router.navigate(['../'], { relativeTo: this.route.parent });
+    }
   }
 }

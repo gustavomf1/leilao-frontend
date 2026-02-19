@@ -1,6 +1,7 @@
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .page-title { font-size: 1.5rem; font-weight: 700; color: #1e293b; }
-.form-card { background: #ffffff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 2rem; }
+.form-card { background: #ffffff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);padding: 1.5rem;
+  height: auto; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
 .form-group.full-width { grid-column: 1 / -1; }
