@@ -1,0 +1,33 @@
+<div class="monitor-container">
+  <div class="header">
+    <span class="status-badge" [class.online]="true">● AO VIVO</span>
+    <h2>Monitor de Lotes em Tempo Real</h2>
+  </div>
+
+  <div *ngIf="lotes.length === 0" class="empty-state">
+    <p>Aguardando lances ou novos lotes do leilão...</p>
+    <div class="spinner"></div>
+  </div>
+
+  <div class="lotes-grid">
+    <div *ngFor="let lote of lotes" class="lote-card animate-in">
+      <div class="lote-header">
+        <span class="lote-codigo">#{{ lote.codigo }}</span>
+        <span class="lote-raca">{{ lote.raca }}</span>
+      </div>
+      <div class="lote-body">
+        <div class="info-item">
+          <label>Quantidade</label>
+          <span>{{ lote.qntdAnimais }} cabeças</span>
+        </div>
+        <div class="info-item price">
+          <label>Preço Atual</label>
+          <span>{{ lote.precoCompra | currency:'BRL' }}</span>
+        </div>
+      </div>
+      <div class="lote-footer">
+        <small>Vendedor: {{ lote.vendedorNome }}</small>
+      </div>
+    </div>
+  </div>
+</div>

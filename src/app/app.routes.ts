@@ -10,10 +10,9 @@ import { FazendaListaComponent } from './features/fazendas/fazenda-lista/fazenda
 import { LayoutComponent } from './features/layout/layout.component';
 import { LeilaoFormComponent } from './features/leiloes/leilao-form/leilao-form.component';
 import { LeilaoListaComponent } from './features/leiloes/leilao-lista/leilao-lista.component';
-import { LoteFormComponent } from './features/lotes/lote-form/lote-form.component';
-import { LoteListaComponent } from './features/lotes/lote-lista/lote-lista.component';
 import { TaxaFormComponent } from './features/taxas/taxa-form/taxa-form.component';
 import { TaxaListaComponent } from './features/taxas/taxa-lista/taxa-lista.component';
+import { MonitorLotesComponent } from './features/lotes/monitor-lotes/monitor-lotes.component';
 
 
 export const routes: Routes = [
@@ -38,10 +37,9 @@ export const routes: Routes = [
       { path: 'taxas', component: TaxaListaComponent },
       { path: 'taxas/form', component: TaxaFormComponent },
       { path: 'taxas/form/:id', component: TaxaFormComponent },
-      { path: 'lotes', component: LoteListaComponent },
-      { path: 'lotes/form', component: LoteFormComponent },
-      { path: 'lotes/form/:id', component: LoteFormComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: 'lotes/monitor', component: MonitorLotesComponent},
+      //{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'lotes/monitor', pathMatch: 'full' }
     ]
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },

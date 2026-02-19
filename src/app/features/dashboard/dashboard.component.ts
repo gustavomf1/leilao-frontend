@@ -41,8 +41,8 @@ export class DashboardComponent implements OnInit {
       this.totalFazendas = fazendas.length;
       this.totalLeiloes = leiloes.length;
       this.totalLotes = lotes.length;
-      this.totalAnimais = lotes.reduce((sum, l) => sum + (l.qntd_animais || 0), 0);
-      this.valorTotal = lotes.reduce((sum, l) => sum + (l.preco_compra || 0), 0);
+      this.totalAnimais = lotes.reduce((sum, l) => sum + (l.qntdAnimais || 0), 0);
+      this.valorTotal = lotes.reduce((sum, l) => sum + (l.precoCompra || 0), 0);
       this.ultimosLeiloes = leiloes.slice(-5).reverse();
       this.ultimosLotes = lotes.slice(-5).reverse();
     });
