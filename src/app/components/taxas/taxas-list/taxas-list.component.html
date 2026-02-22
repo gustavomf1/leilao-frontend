@@ -1,0 +1,39 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Taxas</h2>
+    <a routerLink="/taxas/cadastrar" cButton color="primary" size="sm">
+      <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+      Nova Taxa
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-body>
+      <table cTable hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Porcentagem</th>
+            <th>Tipo de Cliente</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let taxa of taxas">
+            <td>{{ taxa.id }}</td>
+            <td>{{ taxa.porcentagem }}%</td>
+            <td>{{ taxa.tipo_cliente }}</td>
+            <td class="text-center">
+              <a [routerLink]="['/taxas', taxa.id]" cButton color="info" size="sm" variant="ghost">
+                <fa-icon [icon]="faPencil"></fa-icon>
+              </a>
+              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(taxa.id!)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+</div>

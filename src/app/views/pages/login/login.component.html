@@ -1,0 +1,62 @@
+<div class="login-wrapper">
+  <c-card class="login-card">
+    <!-- Header -->
+    <div class="login-header">
+      <div class="login-logo">
+        <svg cIcon name="cilLockLocked" size="xl"></svg>
+      </div>
+      <h1>Bem-vindo</h1>
+      <p>Faça login para acessar sua conta</p>
+    </div>
+
+    <!-- Body -->
+    <c-card-body class="login-body">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label-modern">E-mail</label>
+          <div class="input-icon-wrapper">
+            <svg cIcon name="cilEnvelopeClosed" class="input-icon"></svg>
+            <input
+              autoComplete="username"
+              formControlName="email"
+              placeholder="seu@email.com"
+              type="email"
+              class="w-100"
+            />
+          </div>
+        </div>
+
+        <!-- Senha -->
+        <div class="mb-3">
+          <label class="form-label-modern">Senha</label>
+          <div class="input-icon-wrapper">
+            <svg cIcon name="cilLockLocked" class="input-icon"></svg>
+            <input
+              autoComplete="current-password"
+              formControlName="senha" 
+              placeholder="•••"
+              [type]="showPassword ? 'text' : 'password'"
+              class="w-100"
+            />
+            <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+              <fa-icon [icon]="showPassword ? faEye : faEyeSlash" class="input-icon"></fa-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Lembrar / Esqueceu -->
+        <div class="remember-row">
+          <a href="javascript:void(0)" class="text-decoration-none" style="color: #321fdb; font-size: 0.85rem; font-weight: 500;">
+            Esqueceu a senha?
+          </a>
+        </div>
+
+        <!-- Botão Login -->
+        <button cButton color="primary" class="btn-login w-100" type="submit" [disabled]="loginForm.invalid">
+          Entrar
+        </button>
+
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

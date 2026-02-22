@@ -1,0 +1,49 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Lotes</h2>
+    <a routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
+      <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+      Novo Lote
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-body>
+      <table cTable hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Código</th>
+            <th>Qtd. Animais</th>
+            <th>Sexo</th>
+            <th>Raça</th>
+            <th>Espécie</th>
+            <th>Peso (kg)</th>
+            <th>Preço (R$)</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lote of lotes">
+            <td>{{ lote.id }}</td>
+            <td>{{ lote.codigo }}</td>
+            <td>{{ lote.qntd_animais }}</td>
+            <td>{{ lote.sexo }}</td>
+            <td>{{ lote.raca }}</td>
+            <td>{{ lote.especie }}</td>
+            <td>{{ lote.peso }}</td>
+            <td>{{ lote.preco_compra }}</td>
+            <td class="text-center">
+              <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
+                <fa-icon [icon]="faPencil"></fa-icon>
+              </a>
+              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+</div>

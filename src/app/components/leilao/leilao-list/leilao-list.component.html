@@ -1,0 +1,43 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Leilões</h2>
+    <a routerLink="/leiloes/cadastrar" cButton color="primary" size="sm">
+      <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+      Novo Leilão
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-body>
+      <table cTable hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Descrição</th>
+            <th>Local</th>
+            <th>Cidade/UF</th>
+            <th>Data</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let leilao of leiloes">
+            <td>{{ leilao.id }}</td>
+            <td>{{ leilao.descricao }}</td>
+            <td>{{ leilao.local }}</td>
+            <td>{{ leilao.cidade }}/{{ leilao.uf }}</td>
+            <td>{{ leilao.data }}</td>
+            <td class="text-center">
+              <a [routerLink]="['/leiloes', leilao.id]" cButton color="info" size="sm" variant="ghost">
+                <fa-icon [icon]="faPencil"></fa-icon>
+              </a>
+              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(leilao.id!)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+</div>

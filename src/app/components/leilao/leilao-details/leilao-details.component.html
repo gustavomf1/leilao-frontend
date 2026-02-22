@@ -1,0 +1,91 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ isEdicao ? 'Editar Leilão' : 'Novo Leilão' }}</h2>
+    <a routerLink="/leiloes/lista" cButton color="secondary" size="sm" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-header>
+      <strong>Dados do Leilão</strong>
+    </c-card-header>
+    <c-card-body>
+      <form [formGroup]="form" (ngSubmit)="salvar()">
+        <c-row>
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="descricao">Descrição *</label>
+              <input cFormControl id="descricao" formControlName="descricao" placeholder="Descrição do leilão" />
+              <c-form-feedback *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" [valid]="false">
+                Descrição é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="local">Local *</label>
+              <input cFormControl id="local" formControlName="local" placeholder="Local do evento" />
+              <c-form-feedback *ngIf="form.get('local')?.invalid && form.get('local')?.touched" [valid]="false">
+                Local é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="cidade">Cidade *</label>
+              <input cFormControl id="cidade" formControlName="cidade" placeholder="Cidade" />
+              <c-form-feedback *ngIf="form.get('cidade')?.invalid && form.get('cidade')?.touched" [valid]="false">
+                Cidade é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="2">
+            <div class="mb-3">
+              <label cLabel for="uf">UF *</label>
+              <input cFormControl id="uf" formControlName="uf" placeholder="UF" maxlength="2" />
+              <c-form-feedback *ngIf="form.get('uf')?.invalid && form.get('uf')?.touched" [valid]="false">
+                UF é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="data">Data *</label>
+              <input cFormControl id="data" type="date" formControlName="data" />
+              <c-form-feedback *ngIf="form.get('data')?.invalid && form.get('data')?.touched" [valid]="false">
+                Data é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="condicoes_id">Condição (ID)</label>
+              <input cFormControl id="condicoes_id" type="number" formControlName="condicoes_id" placeholder="ID da condição" />
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="taxas_id">Taxa (ID)</label>
+              <input cFormControl id="taxas_id" type="number" formControlName="taxas_id" placeholder="ID da taxa" />
+            </div>
+          </c-col>
+        </c-row>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" cButton color="primary" [disabled]="form.invalid">
+            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
+          </button>
+          <a routerLink="/leiloes/lista" cButton color="secondary" variant="ghost">Cancelar</a>
+        </div>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

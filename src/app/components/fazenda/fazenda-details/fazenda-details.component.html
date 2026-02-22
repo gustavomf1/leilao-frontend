@@ -1,0 +1,84 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ isEdicao ? 'Editar Fazenda' : 'Nova Fazenda' }}</h2>
+    <a routerLink="/fazendas/lista" cButton color="secondary" size="sm" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-header>
+      <strong>Dados da Fazenda</strong>
+    </c-card-header>
+    <c-card-body>
+      <form [formGroup]="form" (ngSubmit)="salvar()">
+        <c-row>
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="nome">Nome *</label>
+              <input cFormControl id="nome" formControlName="nome" placeholder="Nome da fazenda" />
+              <c-form-feedback *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" [valid]="false">
+                Nome é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="inscricao">Inscrição *</label>
+              <input cFormControl id="inscricao" formControlName="inscricao" placeholder="Inscrição estadual" />
+              <c-form-feedback *ngIf="form.get('inscricao')?.invalid && form.get('inscricao')?.touched" [valid]="false">
+                Inscrição é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="cnpj">CNPJ *</label>
+              <input cFormControl id="cnpj" formControlName="cnpj" placeholder="00.000.000/0000-00" />
+              <c-form-feedback *ngIf="form.get('cnpj')?.invalid && form.get('cnpj')?.touched" [valid]="false">
+                CNPJ é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="3">
+            <div class="mb-3">
+              <label cLabel for="cidade">Cidade *</label>
+              <input cFormControl id="cidade" formControlName="cidade" placeholder="Cidade" />
+              <c-form-feedback *ngIf="form.get('cidade')?.invalid && form.get('cidade')?.touched" [valid]="false">
+                Cidade é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="3">
+            <div class="mb-3">
+              <label cLabel for="uf">UF *</label>
+              <input cFormControl id="uf" formControlName="uf" placeholder="UF" maxlength="2" />
+              <c-form-feedback *ngIf="form.get('uf')?.invalid && form.get('uf')?.touched" [valid]="false">
+                UF é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="titular_id">Titular (ID)</label>
+              <input cFormControl id="titular_id" type="number" formControlName="titular_id" placeholder="ID do titular" />
+            </div>
+          </c-col>
+        </c-row>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" cButton color="primary" [disabled]="form.invalid">
+            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
+          </button>
+          <a routerLink="/fazendas/lista" cButton color="secondary" variant="ghost">Cancelar</a>
+        </div>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

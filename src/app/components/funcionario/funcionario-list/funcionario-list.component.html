@@ -1,0 +1,41 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Funcionários</h2>
+    <a routerLink="/funcionarios/cadastrar" cButton color="primary" size="sm">
+      <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+      Novo Funcionário
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-body>
+      <table cTable hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>CPF</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let funcionario of funcionarios">
+            <td>{{ funcionario.id }}</td>
+            <td>{{ funcionario.nome }}</td>
+            <td>{{ funcionario.email }}</td>
+            <td>{{ funcionario.cpf }}</td>
+            <td class="text-center">
+              <a [routerLink]="['/funcionarios', funcionario.id]" cButton color="info" size="sm" variant="ghost">
+                <fa-icon [icon]="faPencil"></fa-icon>
+              </a>
+              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(funcionario.id!)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+</div>

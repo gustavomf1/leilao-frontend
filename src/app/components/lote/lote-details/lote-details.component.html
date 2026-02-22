@@ -1,0 +1,150 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ isEdicao ? 'Editar Lote' : 'Novo Lote' }}</h2>
+    <a routerLink="/lotes/lista" cButton color="secondary" size="sm" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-header>
+      <strong>Dados do Lote</strong>
+    </c-card-header>
+    <c-card-body>
+      <form [formGroup]="form" (ngSubmit)="salvar()">
+        <c-row>
+          <!-- Identificação -->
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="codigo">Código *</label>
+              <input cFormControl id="codigo" formControlName="codigo" placeholder="Código do lote" />
+              <c-form-feedback *ngIf="form.get('codigo')?.invalid && form.get('codigo')?.touched" [valid]="false">
+                Código é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="qntd_animais">Qtd. Animais *</label>
+              <input cFormControl id="qntd_animais" type="number" formControlName="qntd_animais" placeholder="0" min="1" />
+              <c-form-feedback *ngIf="form.get('qntd_animais')?.invalid && form.get('qntd_animais')?.touched" [valid]="false">
+                Quantidade é obrigatória (mín. 1)
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="sexo">Sexo *</label>
+              <input cFormControl id="sexo" formControlName="sexo" placeholder="Macho / Fêmea" />
+              <c-form-feedback *ngIf="form.get('sexo')?.invalid && form.get('sexo')?.touched" [valid]="false">
+                Sexo é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <!-- Animal -->
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="raca">Raça *</label>
+              <input cFormControl id="raca" formControlName="raca" placeholder="Raça do animal" />
+              <c-form-feedback *ngIf="form.get('raca')?.invalid && form.get('raca')?.touched" [valid]="false">
+                Raça é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="especie">Espécie *</label>
+              <input cFormControl id="especie" formControlName="especie" placeholder="Bovino, Equino, etc." />
+              <c-form-feedback *ngIf="form.get('especie')?.invalid && form.get('especie')?.touched" [valid]="false">
+                Espécie é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="categoria_animal">Categoria *</label>
+              <input cFormControl id="categoria_animal" formControlName="categoria_animal" placeholder="Categoria" />
+              <c-form-feedback *ngIf="form.get('categoria_animal')?.invalid && form.get('categoria_animal')?.touched" [valid]="false">
+                Categoria é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <!-- Medidas -->
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="idade_em_meses">Idade (meses) *</label>
+              <input cFormControl id="idade_em_meses" type="number" formControlName="idade_em_meses" placeholder="0" min="0" />
+              <c-form-feedback *ngIf="form.get('idade_em_meses')?.invalid && form.get('idade_em_meses')?.touched" [valid]="false">
+                Idade é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="peso">Peso (kg) *</label>
+              <input cFormControl id="peso" type="number" formControlName="peso" placeholder="0.00" step="0.01" min="0" />
+              <c-form-feedback *ngIf="form.get('peso')?.invalid && form.get('peso')?.touched" [valid]="false">
+                Peso é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="preco_compra">Preço de Compra (R$) *</label>
+              <input cFormControl id="preco_compra" type="number" formControlName="preco_compra" placeholder="0.00" step="0.01" min="0" />
+              <c-form-feedback *ngIf="form.get('preco_compra')?.invalid && form.get('preco_compra')?.touched" [valid]="false">
+                Preço é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <!-- Relacionamentos -->
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="leilao_id">Leilão (ID)</label>
+              <input cFormControl id="leilao_id" type="number" formControlName="leilao_id" placeholder="ID do leilão" />
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="vendedor_id">Vendedor (ID)</label>
+              <input cFormControl id="vendedor_id" type="number" formControlName="vendedor_id" placeholder="ID do vendedor" />
+            </div>
+          </c-col>
+
+          <c-col [md]="4">
+            <div class="mb-3">
+              <label cLabel for="comprador_id">Comprador (ID)</label>
+              <input cFormControl id="comprador_id" type="number" formControlName="comprador_id" placeholder="ID do comprador" />
+            </div>
+          </c-col>
+
+          <!-- Observação -->
+          <c-col [md]="12">
+            <div class="mb-3">
+              <label cLabel for="obs">Observações</label>
+              <textarea cFormControl id="obs" formControlName="obs" placeholder="Observações sobre o lote" rows="3"></textarea>
+            </div>
+          </c-col>
+        </c-row>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" cButton color="primary" [disabled]="form.invalid">
+            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
+          </button>
+          <a routerLink="/lotes/lista" cButton color="secondary" variant="ghost">Cancelar</a>
+        </div>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

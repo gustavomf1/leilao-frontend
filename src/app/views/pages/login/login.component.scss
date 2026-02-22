@@ -1,0 +1,136 @@
+.login-wrapper {
+  min-height: 100vh;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-card {
+  border: none;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 420px;
+  width: 100%;
+}
+
+.login-header {
+  text-align: center;
+  padding: 2.5rem 2rem 1.5rem;
+  background: #d3d0d0;
+
+  .login-logo {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #321fdb, #6610f2);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    color: #fff;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    color: #1b2e4b;
+  }
+
+  p {
+    color: #8a93a2;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+}
+
+.login-body {
+  padding: 1.5rem 2rem 2rem;
+  background: #d3d0d0;
+
+  .form-label-modern {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4f5d73;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+  }
+  
+  .password-toggle{
+    position: absolute;
+    right: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #fcfdff;
+    z-index: 2;
+    cursor: pointer;
+    margin-right: 20px;
+    height: 24px;
+    width: 24px;
+  }
+
+  .input-icon-wrapper {
+    position: relative;
+
+    .input-icon {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8a93a2;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    input {
+      padding-left: 2.75rem;
+      height: 48px;
+      border-radius: 0.5rem;
+      border: 1.5px solid #d8dbe0;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-size: 0.95rem;
+
+      &:focus {
+        border-color: #321fdb;
+        box-shadow: 0 0 0 0.2rem rgba(50, 31, 219, 0.15);
+      }
+
+      &::placeholder {
+        color: #b1b7c1;
+      }
+    }
+  }
+
+  .remember-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-login {
+    height: 48px;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+    background: linear-gradient(135deg, #321fdb, #6610f2);
+    border: none;
+    transition: opacity 0.2s, transform 0.1s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+

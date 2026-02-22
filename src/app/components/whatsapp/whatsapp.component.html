@@ -1,0 +1,260 @@
+<div class="container-lg px-4">
+  <h2 class="mb-4">WhatsApp — Envio de Mensagens</h2>
+
+  <c-card>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a [active]="true" [cTabContent]="tabContent"  [tabPaneIdx]="0" cNavLink>
+            <fa-icon [icon]="faPaperPlane" class="me-1"></fa-icon> Enviar Texto
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent"  [tabPaneIdx]="1" cNavLink>
+            <fa-icon [icon]="faImage" class="me-1"></fa-icon> Enviar Mídia
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent"  [tabPaneIdx]="2" cNavLink>
+            <fa-icon [icon]="faBullhorn" class="me-1"></fa-icon> Texto em Massa
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent"  [tabPaneIdx]="3" cNavLink>
+            <fa-icon [icon]="faFileAlt" class="me-1"></fa-icon> Mídia em Massa
+          </a>
+        </c-nav-item>
+      </c-nav>
+
+      <c-tab-content #tabContent="cTabContent" [activeTabPaneIdx]="0">
+        <!-- ════════════════════════════════════════════════════════ -->
+        <!-- TAB 1 — Enviar Texto -->
+        <!-- ════════════════════════════════════════════════════════ -->
+        <c-tab-pane class="p-3">
+            <p class="text-body-secondary mb-3">
+              <strong>POST</strong> <code>/api/messages/send/text</code> — Envia uma mensagem de texto para um único número de WhatsApp via Evolution API.
+            </p>
+            <form [formGroup]="formTexto" (ngSubmit)="enviarTexto()">
+              <c-row>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel for="txtNumber">Número *</label>
+                    <input cFormControl id="txtNumber" formControlName="number" placeholder="5511999999999" />
+                  </div>
+                </c-col>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel for="txtDelay">Delay (ms)</label>
+                    <input cFormControl id="txtDelay" type="number" formControlName="delay" placeholder="1200" />
+                  </div>
+                </c-col>
+                <c-col [md]="12">
+                  <div class="mb-3">
+                    <label cLabel for="txtText">Mensagem *</label>
+                    <textarea cFormControl id="txtText" formControlName="text" rows="3" placeholder="Olá! Tudo bem?"></textarea>
+                  </div>
+                </c-col>
+              </c-row>
+              <button type="submit" cButton color="success" [disabled]="formTexto.invalid || enviando">
+                <fa-icon [icon]="faPaperPlane" class="me-1"></fa-icon> Enviar Texto
+              </button>
+            </form>
+        </c-tab-pane>
+
+        <!-- ════════════════════════════════════════════════════════ -->
+        <!-- TAB 2 — Enviar Mídia -->
+        <!-- ════════════════════════════════════════════════════════ -->
+        <c-tab-pane class="p-3">
+            <p class="text-body-secondary mb-3">
+              <strong>POST</strong> <code>/api/messages/send/media</code> — Envia uma mensagem com anexo de mídia (imagem, vídeo, documento ou áudio).
+            </p>
+            <form [formGroup]="formMidia" (ngSubmit)="enviarMidia()">
+              <c-row>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel for="mediaNumber">Número *</label>
+                    <input cFormControl id="mediaNumber" formControlName="number" placeholder="5511999999999" />
+                  </div>
+                </c-col>
+                <c-col [md]="3">
+                  <div class="mb-3">
+                    <label cLabel for="mediaType">Tipo de Mídia *</label>
+                    <select cFormControl id="mediaType" formControlName="mediatype">
+                      <option value="image">Imagem</option>
+                      <option value="video">Vídeo</option>
+                      <option value="audio">Áudio</option>
+                      <option value="document">Documento</option>
+                    </select>
+                  </div>
+                </c-col>
+                <c-col [md]="3">
+                  <div class="mb-3">
+                    <label cLabel for="mediaMime">MIME Type *</label>
+                    <input cFormControl id="mediaMime" formControlName="mimeType" placeholder="image/jpeg" />
+                  </div>
+                </c-col>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel for="mediaFileName">Nome do Arquivo *</label>
+                    <input cFormControl id="mediaFileName" formControlName="fileName" placeholder="foto.jpg" />
+                  </div>
+                </c-col>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel for="mediaUrl">URL do Arquivo *</label>
+                    <input cFormControl id="mediaUrl" formControlName="url" placeholder="https://exemplo.com/imagem.jpg" />
+                  </div>
+                </c-col>
+                <c-col [md]="12">
+                  <div class="mb-3">
+                    <label cLabel for="mediaCaption">Legenda</label>
+                    <input cFormControl id="mediaCaption" formControlName="caption" placeholder="Confira o documento anexo!" />
+                  </div>
+                </c-col>
+              </c-row>
+              <button type="submit" cButton color="success" [disabled]="formMidia.invalid || enviando">
+                <fa-icon [icon]="faPaperPlane" class="me-1"></fa-icon> Enviar Mídia
+              </button>
+            </form>
+        </c-tab-pane>
+
+        <!-- ════════════════════════════════════════════════════════ -->
+        <!-- TAB 3 — Texto em Massa -->
+        <!-- ════════════════════════════════════════════════════════ -->
+        <c-tab-pane class="p-3">
+            <p class="text-body-secondary mb-3">
+              <strong>POST</strong> <code>/api/messages/send/bulk</code> — Envia uma mensagem de texto para múltiplos contatos de forma assíncrona.
+              Um delay aleatório entre <code>delayMinMs</code> e <code>delayMaxMs</code> é aplicado entre cada envio.
+            </p>
+            <form [formGroup]="formBulkTexto" (ngSubmit)="enviarBulkTexto()">
+              <h6>Contatos</h6>
+              <div formArrayName="contatos">
+              <div *ngFor="let contato of contatosBulkTexto.controls; let i = index" [formGroupName]="i" class="mb-2">
+                <c-row>
+                  <c-col [md]="5">
+                    <input cFormControl formControlName="number" placeholder="5511988887777" />
+                  </c-col>
+                  <c-col [md]="5">
+                    <input cFormControl formControlName="nome" placeholder="Nome do contato" />
+                  </c-col>
+                  <c-col [md]="2">
+                    <button type="button" cButton color="danger" size="sm" variant="ghost" (click)="removeContato(contatosBulkTexto, i)">
+                      <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                  </c-col>
+                </c-row>
+              </div>
+              </div>
+              <button type="button" cButton color="light" size="sm" class="mb-3" (click)="addContato(contatosBulkTexto)">
+                <fa-icon [icon]="faPlus" class="me-1"></fa-icon> Adicionar Contato
+              </button>
+
+              <c-row>
+                <c-col [md]="12">
+                  <div class="mb-3">
+                    <label cLabel>Mensagem *</label>
+                    <textarea cFormControl formControlName="text" rows="3" placeholder="Olá, temos novidades!"></textarea>
+                  </div>
+                </c-col>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel>Delay Mínimo (ms)</label>
+                    <input cFormControl type="number" formControlName="delayMinMs" placeholder="3000" />
+                  </div>
+                </c-col>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel>Delay Máximo (ms)</label>
+                    <input cFormControl type="number" formControlName="delayMaxMs" placeholder="8000" />
+                  </div>
+                </c-col>
+              </c-row>
+              <button type="submit" cButton color="success" [disabled]="formBulkTexto.invalid || enviando">
+                <fa-icon [icon]="faBullhorn" class="me-1"></fa-icon> Enviar em Massa
+              </button>
+            </form>
+        </c-tab-pane>
+
+        <!-- ════════════════════════════════════════════════════════ -->
+        <!-- TAB 4 — Mídia em Massa -->
+        <!-- ════════════════════════════════════════════════════════ -->
+        <c-tab-pane class="p-3">
+            <p class="text-body-secondary mb-3">
+              <strong>POST</strong> <code>/api/messages/send/bulk/media</code> — Envia uma mensagem com anexo de mídia para múltiplos contatos de forma assíncrona.
+              Um delay aleatório entre <code>delayMinMs</code> e <code>delayMaxMs</code> é aplicado entre cada envio.
+            </p>
+            <form [formGroup]="formBulkMidia" (ngSubmit)="enviarBulkMidia()">
+              <h6>Contatos</h6>
+              <div formArrayName="contatos">
+              <div *ngFor="let contato of contatosBulkMidia.controls; let i = index" [formGroupName]="i" class="mb-2">
+                <c-row>
+                  <c-col [md]="5">
+                    <input cFormControl formControlName="number" placeholder="5511988887777" />
+                  </c-col>
+                  <c-col [md]="5">
+                    <input cFormControl formControlName="nome" placeholder="Nome do contato" />
+                  </c-col>
+                  <c-col [md]="2">
+                    <button type="button" cButton color="danger" size="sm" variant="ghost" (click)="removeContato(contatosBulkMidia, i)">
+                      <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                  </c-col>
+                </c-row>
+              </div>
+              </div>
+              <button type="button" cButton color="light" size="sm" class="mb-3" (click)="addContato(contatosBulkMidia)">
+                <fa-icon [icon]="faPlus" class="me-1"></fa-icon> Adicionar Contato
+              </button>
+
+              <c-row>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel>URL do Arquivo *</label>
+                    <input cFormControl formControlName="url" placeholder="https://exemplo.com/catalogo.pdf" />
+                  </div>
+                </c-col>
+                <c-col [md]="6">
+                  <div class="mb-3">
+                    <label cLabel>Legenda</label>
+                    <input cFormControl formControlName="caption" placeholder="Nosso catálogo atualizado!" />
+                  </div>
+                </c-col>
+                <c-col [md]="4">
+                  <div class="mb-3">
+                    <label cLabel>Tipo de Mídia *</label>
+                    <select cFormControl formControlName="mediatype">
+                      <option value="image">Imagem</option>
+                      <option value="video">Vídeo</option>
+                      <option value="audio">Áudio</option>
+                      <option value="document">Documento</option>
+                    </select>
+                  </div>
+                </c-col>
+                <c-col [md]="4">
+                  <div class="mb-3">
+                    <label cLabel>MIME Type *</label>
+                    <input cFormControl formControlName="mimeType" placeholder="application/pdf" />
+                  </div>
+                </c-col>
+                <c-col [md]="2">
+                  <div class="mb-3">
+                    <label cLabel>Delay Mín (ms)</label>
+                    <input cFormControl type="number" formControlName="delayMinMs" placeholder="3000" />
+                  </div>
+                </c-col>
+                <c-col [md]="2">
+                  <div class="mb-3">
+                    <label cLabel>Delay Máx (ms)</label>
+                    <input cFormControl type="number" formControlName="delayMaxMs" placeholder="8000" />
+                  </div>
+                </c-col>
+              </c-row>
+              <button type="submit" cButton color="success" [disabled]="formBulkMidia.invalid || enviando">
+                <fa-icon [icon]="faBullhorn" class="me-1"></fa-icon> Enviar Mídia em Massa
+              </button>
+            </form>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>
