@@ -242,6 +242,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'monitor',
+            loadComponent: () =>
+              import('./features/lotes/monitor-lotes/monitor-lotes.component').then(
+                (m) => m.MonitorLotesComponent,
+              ),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./components/lote/lote-details/lote-details.component').then(
