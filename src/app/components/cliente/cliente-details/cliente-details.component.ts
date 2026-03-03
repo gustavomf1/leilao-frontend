@@ -34,6 +34,7 @@ export class ClientesDetailsComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       nome:     ['', Validators.required],
+      email:    ['', [Validators.required, Validators.email]],
       cpf:      ['', Validators.required],
       telefone: ['', Validators.required],
       cidade:   ['', Validators.required],

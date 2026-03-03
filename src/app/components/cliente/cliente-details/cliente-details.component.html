@@ -35,6 +35,16 @@
 
           <c-col [md]="6">
             <div class="mb-3">
+              <label cLabel for="email">E-mail *</label>
+              <input cFormControl id="email" formControlName="email" placeholder="exemplo@email.com" type="email" />
+              <c-form-feedback *ngIf="form.get('email')?.invalid && form.get('email')?.touched" [valid]="false">
+                E-mail é obrigatório
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
               <label cLabel for="rg">RG *</label>
               <input cFormControl id="rg" formControlName="rg" placeholder="RG" />
               <c-form-feedback *ngIf="form.get('rg')?.invalid && form.get('rg')?.touched" [valid]="false">

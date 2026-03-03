@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
 import { ButtonDirective } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -18,11 +18,11 @@ import { AlertService } from '../../../shared/services/alert.service';
 export class ClientesListComponent implements OnInit {
   private service = inject(ClienteService);
   private alert = inject(AlertService);
+  private router = inject(Router);
 
   faPlus = faPlus;
   faPencil = faPencil;
   faTrash = faTrash;
-
   clientes: Cliente[] = [];
 
   ngOnInit() {
@@ -31,8 +31,13 @@ export class ClientesListComponent implements OnInit {
 
   carregar() {
     this.service.listar().subscribe({
-      next: (data) => this.clientes = data,
-      error: () => this.alert.error('Erro ao carregar clientes')
+      next: (data) => {
+        this.clientes = [...data]; 
+      },
+      error: (err) => {
+        console.error('Erro na API:', err);
+        this.alert.error('Erro ao carregar clientes');
+      }
     });
   }
 
