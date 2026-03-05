@@ -74,10 +74,11 @@
           </c-col>
 
           <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="fazenda_id">Fazenda (ID)</label>
-              <input cFormControl id="fazenda_id" type="number" formControlName="fazenda_id" placeholder="ID da fazenda" />
-            </div>
+            <app-subform label="Fazenda *" [displayValue]="nomeFazendaSelecionada"
+              modalTitle="Cadastrar Nova Fazenda" #pickerFazenda>
+              <app-fazendas-details (aoSalvar)="onFazendaSalva($event, pickerFazenda)"></app-fazendas-details>
+            </app-subform>
+            <input type="hidden" formControlName="fazenda_id" />
           </c-col>
         </c-row>
 

@@ -4,20 +4,25 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { faSave, faArrowLeft, faSearchPlus } from '@fortawesome/free-solid-svg-icons';
+import { SubformComponent } from '../../../shared/components/subform/subform.component';
+import { FazendasDetailsComponent } from '../../fazenda/fazenda-details/fazenda-details.component';
 
 @Component({
   selector: 'app-clientes-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
+    FazendasDetailsComponent, SubformComponent],
   templateUrl: './cliente-details.component.html',
 })
 export class ClientesDetailsComponent implements OnInit {
   private service = inject(ClienteService);
   private alert = inject(AlertService);
-
+  faSearchPlus = faSearchPlus;
+  modalFazendaVisivel = false;
+  nomeFazendaSelecionada = '';
   faSave = faSave;
   faArrowLeft = faArrowLeft;
 
@@ -29,16 +34,16 @@ export class ClientesDetailsComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.form = this.fb.group({
-      nome:     ['', Validators.required],
-      cpf:      ['', Validators.required],
+      nome: ['', Validators.required],
+      cpf: ['', Validators.required],
       telefone: ['', Validators.required],
-      cidade:   ['', Validators.required],
-      uf:       ['', [Validators.required, Validators.maxLength(2)]],
-      rg:       ['', Validators.required],
+      cidade: ['', Validators.required],
+      uf: ['', [Validators.required, Validators.maxLength(2)]],
+      rg: ['', Validators.required],
       fazenda_id: [null]
     });
 
@@ -68,5 +73,16 @@ export class ClientesDetailsComponent implements OnInit {
         error: () => this.alert.error('Erro ao salvar cliente')
       });
     }
+  }
+
+
+  onFazendaSalva(fazenda: any, picker: any) {
+    this.form.patchValue({
+      fazenda_id: fazenda.id
+    });
+
+    this.nomeFazendaSelecionada = fazenda.nome;
+
+    picker.setModal(false);
   }
 }
