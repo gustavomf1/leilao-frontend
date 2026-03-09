@@ -7,43 +7,84 @@
     </a>
   </div>
 
-  <c-card>
-    <c-card-body>
-      <table cTable hover responsive>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Código</th>
-            <th>Qtd. Animais</th>
-            <th>Sexo</th>
-            <th>Raça</th>
-            <th>Espécie</th>
-            <th>Peso (kg)</th>
-            <th>Preço (R$)</th>
-            <th class="text-center">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let lote of lotes">
-            <td>{{ lote.id }}</td>
-            <td>{{ lote.codigo }}</td>
-            <td>{{ lote.qntd_animais }}</td>
-            <td>{{ lote.sexo }}</td>
-            <td>{{ lote.raca }}</td>
-            <td>{{ lote.especie }}</td>
-            <td>{{ lote.peso }}</td>
-            <td>{{ lote.preco_compra }}</td>
-            <td class="text-center">
-              <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
-                <fa-icon [icon]="faPencil"></fa-icon>
-              </a>
-              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
-                <fa-icon [icon]="faTrash"></fa-icon>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <c-card class="monitor-container">
+    <c-card-header class="monitor-header">
+      <div class="header-left">
+        <h5 class="monitor-title mb-0">Lotes Cadastrados</h5>
+      </div>
+      <span class="lotes-count" *ngIf="(lotes$ | async)?.length as total">
+        <fa-icon [icon]="faLayerGroup" class="me-1"></fa-icon>
+        {{ total }} lote{{ total !== 1 ? 's' : '' }}
+      </span>
+    </c-card-header>
+
+    <c-card-body class="p-3">
+      <!-- Empty State -->
+      <div *ngIf="(lotes$ | async)?.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <fa-icon [icon]="faHorse" size="3x"></fa-icon>
+        </div>
+        <p class="empty-text">Nenhum lote cadastrado.</p>
+      </div>
+
+      <!-- Grid de Lotes -->
+      <c-row [gutter]="3">
+        <c-col
+          *ngFor="let lote of lotes$ | async; let i = index"
+          xs="12" sm="6" xl="4"
+          class="animate-in"
+          [style.animation-delay]="i * 60 + 'ms'"
+        >
+          <c-card class="lote-card h-100">
+            <c-card-header class="lote-card-header">
+              <div class="lote-id">
+                <fa-icon [icon]="faHashtag" class="me-1 opacity-75"></fa-icon>
+                {{ lote.codigo }}
+              </div>
+              <span class="lote-raca">
+                <fa-icon [icon]="faTag" class="me-1 opacity-75"></fa-icon>
+                {{ lote.raca }}
+              </span>
+            </c-card-header>
+
+            <c-card-body class="lote-card-body">
+              <div class="info-row">
+                <div class="info-label">
+                  <fa-icon [icon]="faPaw" class="me-1"></fa-icon>
+                  Quantidade
+                </div>
+                <div class="info-value">
+                  {{ lote.qntdAnimais }} <span class="unit">cab.</span>
+                </div>
+              </div>
+              <div class="price-block">
+                <div class="info-label">
+                  <fa-icon [icon]="faDollarSign" class="me-1"></fa-icon>
+                  Preço
+                </div>
+                <div class="price-value">
+                  {{ lote.precoCompra | currency:'BRL':'symbol':'1.2-2' }}
+                </div>
+              </div>
+            </c-card-body>
+
+            <c-card-footer class="lote-card-footer d-flex justify-content-between align-items-center">
+              <span>
+                <fa-icon [icon]="faUser" class="me-1 opacity-75"></fa-icon>
+                {{ lote.vendedorNome }}
+              </span>
+              <div class="d-flex gap-1">
+                <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
+                  <fa-icon [icon]="faPencil"></fa-icon>
+                </a>
+                <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
+                  <fa-icon [icon]="faTrash"></fa-icon>
+                </button>
+              </div>
+            </c-card-footer>
+          </c-card>
+        </c-col>
+      </c-row>
     </c-card-body>
   </c-card>
 </div>

@@ -1,0 +1,85 @@
+/* =============================================
+   Lote Details - Estilos
+   ============================================= */
+.details-container {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/* ---------- Header ---------- */
+.details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: var(--cui-card-cap-bg);
+  border-bottom: 1px solid var(--cui-border-color);
+}
+
+.details-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cui-body-color);
+}
+
+/* ---------- Form Fields ---------- */
+.field-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cui-secondary-color);
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+}
+
+/* ---------- Section Block ---------- */
+.section-block {
+  background: rgba(25, 135, 84, 0.05);
+  border-left: 3px solid var(--cui-success);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cui-success);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+/* ---------- Footer Actions ---------- */
+.details-footer {
+  padding: 1rem 1.25rem;
+  background: var(--cui-card-cap-bg);
+  border-top: 1px solid var(--cui-border-color-translucent);
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* ---------- Entrada animada ---------- */
+.animate-in {
+  animation: slideUp 0.35s ease both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

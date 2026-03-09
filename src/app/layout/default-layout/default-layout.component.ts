@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
-
 import { IconDirective } from '@coreui/icons-angular';
 import {
   ContainerComponent,
@@ -14,9 +13,9 @@ import {
   SidebarToggleDirective,
   SidebarTogglerDirective
 } from '@coreui/angular';
-
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems, navItemsLeilao } from './_nav';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal.component';
 
 function isOverflown(element: HTMLElement) {
   return (
@@ -43,10 +42,11 @@ function isOverflown(element: HTMLElement) {
     NgScrollbar,
     RouterOutlet,
     RouterLink,
-    ShadowOnScrollDirective
+    ShadowOnScrollDirective,
+    ConfirmModalComponent
   ]
 })
 export class DefaultLayoutComponent {
   public navItems = [...navItems];
-  public navItemsLeilao = [...navItemsLeilao]
+  public navItemsLeilao = [...navItemsLeilao];
 }

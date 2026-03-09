@@ -7,34 +7,46 @@ import SockJS from 'sockjs-client';
   providedIn: 'root'
 })
 export class LoteWebsocketService {
-
   private stompClient!: Client;
   public novoLoteSubject = new Subject<any>();
 
-  constructor() {
-    this.conectar();
+  conectar() {
+  console.log('>>> conectar() chamado');
+  const token = localStorage.getItem('auth_token');
+  console.log('>>> token:', token);
+
+  if (this.stompClient?.active) {
+    console.log('>>> já conectado');
+    return;
+  }
+  if (!token) {
+    console.log('>>> sem token');
+    return;
   }
 
-  private conectar() {
-        const token = localStorage.getItem('auth_token');
-        
-        this.stompClient = new Client({
-            webSocketFactory: () => new SockJS(`http://localhost:8080/ws-leilao?token=${token}`),
-            reconnectDelay: 5000,
-            onConnect: (frame) => {
-            console.log('Conectado ao WebSocket do AgroLance: ' + frame);
-            this.stompClient.subscribe('/topic/lotes', (mensagem) => {
-                if (mensagem.body) {
-                const lote = JSON.parse(mensagem.body);
-                this.novoLoteSubject.next(lote);
-                }
-            });
-            },
-            onStompError: (frame) => {
-            console.error('Erro no WebSocket:', frame);
-            }
-        });
-
-        this.stompClient.activate();
+  this.stompClient = new Client({
+    webSocketFactory: () => new SockJS(`http://localhost:8080/ws-leilao?token=${token}`),
+    reconnectDelay: 5000,
+    onConnect: (frame) => {
+      console.log('Conectado ao WebSocket do AgroLance: ' + frame);
+      this.stompClient.subscribe('/topic/lotes', (mensagem) => {
+        if (mensagem.body) {
+          const lote = JSON.parse(mensagem.body);
+          this.novoLoteSubject.next(lote);
+        }
+      });
+    },
+    onStompError: (frame) => {
+      console.error('Erro no WebSocket:', frame);
     }
+  });
+
+  this.stompClient.activate();
+}
+
+  desconectar() {
+    if (this.stompClient?.active) {
+      this.stompClient.deactivate();
+    }
+  }
 }

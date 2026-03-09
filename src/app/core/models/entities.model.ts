@@ -53,18 +53,19 @@ export interface Taxas {
 export interface Lote {
   id?: number;
   codigo: string;
-  qntd_animais: number;
+  qntdAnimais: number;
   sexo: string;
-  idade_em_meses: number;
+  idadeEmMeses: number;
   peso: number;
   raca: string;
   especie: string;
-  categoria_animal: string;
+  categoriaAnimal: string;
   obs: string;
-  leilao_id?: number;
-  vendedor_id?: number;
-  comprador_id?: number;
-  preco_compra: number;
+  leilaoId?: number;
+  vendedorId?: number;
+  compradorId?: number;
+  precoCompra: number;
+  vendedorNome?: string;
 }
 
 export interface Funcionario {

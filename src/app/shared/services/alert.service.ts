@@ -12,6 +12,12 @@ export interface Alert {
 export class AlertService {
   private alertSubject = new Subject<Alert>();
   alert$ = this.alertSubject.asObservable();
+  private confirmSubject = new Subject<{ message: string; callback: () => void }>();
+  confirm$ = this.confirmSubject.asObservable();
+
+  confirm(message: string, callback: () => void) {
+  this.confirmSubject.next({ message, callback });
+  }
 
   success(message: string) {
     this.alertSubject.next({ message, color: 'success', dismissible: true, delay: 4000 });
