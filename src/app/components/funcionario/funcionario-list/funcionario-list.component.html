@@ -20,7 +20,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let funcionario of funcionarios">
+          <tr *ngFor="let funcionario of funcionarios$ | async">
             <td>{{ funcionario.id }}</td>
             <td>{{ funcionario.nome }}</td>
             <td>{{ funcionario.email }}</td>

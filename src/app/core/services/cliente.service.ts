@@ -10,4 +10,8 @@ export class ClienteService extends ApiService<Cliente> {
   override deletar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/api/usuario/inativar/${id}`);
   }
+
+  buscarPorNome(nome: string): Observable<Cliente[]> {
+  return this.http.get<Cliente[]>(`${this.baseUrl}/api/usuario/cliente/buscar?nome=${nome}`);
+  }
 }

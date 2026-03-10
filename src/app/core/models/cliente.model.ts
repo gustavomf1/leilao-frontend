@@ -7,5 +7,5 @@ export interface Cliente {
   cidade: string;
   uf: string;
   rg: string;
-  fazenda_id?: number;
+  fazendaId?: number;
 }

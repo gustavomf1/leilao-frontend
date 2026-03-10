@@ -1,0 +1,53 @@
+<div class="p-2">
+
+  <!-- Busca -->
+  <div class="input-group mb-3">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Digite o nome do cliente (mín. 2 caracteres)..."
+      [(ngModel)]="busca"
+      (input)="onBusca()" />
+    <span class="input-group-text">
+      <fa-icon *ngIf="!carregando" [icon]="faSearch"></fa-icon>
+      <fa-icon *ngIf="carregando" [icon]="faCircleNotch" animation="spin"></fa-icon>
+    </span>
+  </div>
+
+  <!-- Resultados -->
+  <div *ngIf="buscaFeita && clientes.length === 0 && !mostrarCadastro" class="text-center py-2 text-secondary">
+    Nenhum cliente encontrado.
+  </div>
+
+  <div class="list-group mb-3" *ngIf="clientes.length > 0 && !mostrarCadastro" style="max-height: 250px; overflow-y: auto;">
+    <button
+      *ngFor="let cliente of clientes"
+      type="button"
+      class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+      (click)="selecionar(cliente)">
+      <div>
+        <div class="fw-semibold">{{ cliente.nome }}</div>
+        <small class="text-secondary">CPF: {{ cliente.cpf }} · {{ cliente.cidade }}/{{ cliente.uf }}</small>
+      </div>
+      <fa-icon [icon]="faCheck" class="text-success ms-2"></fa-icon>
+    </button>
+  </div>
+
+  <div *ngIf="!buscaFeita && !mostrarCadastro" class="text-center py-2 text-secondary" style="font-size: 0.85rem;">
+    Digite para buscar um cliente existente
+  </div>
+
+  <!-- Formulário de cadastro inline -->
+  <div *ngIf="mostrarCadastro && clientesDetailsComponent" class="border-top pt-3">
+    <ng-container *ngComponentOutlet="clientesDetailsComponent; inputs: { modoSubform: true }"></ng-container>
+  </div>
+
+  <!-- Botão cadastrar novo -->
+  <div class="border-top pt-3 mt-2">
+    <button type="button" class="btn btn-outline-primary btn-sm w-100" (click)="toggleCadastro()">
+      <fa-icon [icon]="mostrarCadastro ? faTimes : faPlus" class="me-1"></fa-icon>
+      {{ mostrarCadastro ? 'Cancelar cadastro' : 'Cadastrar novo cliente' }}
+    </button>
+  </div>
+
+</div>

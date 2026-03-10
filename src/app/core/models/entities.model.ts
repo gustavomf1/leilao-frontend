@@ -14,7 +14,7 @@ export interface Cliente {
   cidade: string;
   uf: string;
   rg: string;
-  fazenda_id?: number;
+  fazendaId?: number;
 }
 
 export interface Fazenda {
@@ -24,7 +24,8 @@ export interface Fazenda {
   uf: string;
   cidade: string;
   cnpj: string;
-  titular_id?: number;
+  titularId?: number;
+  titularNome?: string;
 }
 
 export interface Leilao {
