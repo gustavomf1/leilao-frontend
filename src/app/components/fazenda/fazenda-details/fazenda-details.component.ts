@@ -28,6 +28,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   @Input() modoSubform = false;
+  @Input() ocultarTitular = false;
   @Output() aoSalvar = new EventEmitter<any>();
   @ViewChild('pickerTitular') pickerTitular!: SubformComponent;
 
@@ -72,15 +73,15 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
           this.form.patchValue(data);
           if (data.titularId) {
             this.clienteService.buscarPorId(data.titularId).subscribe({
-            next: (cliente) => {
-            this.nomeTitularSelecionado = cliente.nome;
-            this.cdr.detectChanges();
-        }
+              next: (cliente) => {
+                this.nomeTitularSelecionado = cliente.nome;
+                this.cdr.detectChanges();
+              }
+            });
+          }
+        },
+        error: () => this.alert.error('Erro ao carregar fazenda')
       });
-    }
-  },
-  error: () => this.alert.error('Erro ao carregar fazenda')
-});
     }
   }
 
@@ -98,9 +99,13 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
       op.subscribe({
         next: (res) => {
           this.alert.success(this.isEdicao ? 'Fazenda atualizada!' : 'Fazenda cadastrada!');
-          this.aoSalvar.emit(res);
-          if (!this.aoSalvar.observed) {
-            this.router.navigate(['/fazendas/lista']);
+          if (this.modoSubform) {
+            this.subformService.emitir('fazenda', res);
+          } else {
+            this.aoSalvar.emit(res);
+            if (!this.aoSalvar.observed) {
+              this.router.navigate(['/fazendas/lista']);
+            }
           }
         },
         error: () => this.alert.error('Erro ao salvar fazenda')

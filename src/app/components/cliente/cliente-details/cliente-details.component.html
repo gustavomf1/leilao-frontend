@@ -88,11 +88,9 @@
             <app-subform
               label="Fazenda"
               [displayValue]="nomeFazendaSelecionada"
-              modalTitle="Cadastrar Nova Fazenda"
+              modalTitle="Selecionar Fazenda"
               #pickerFazenda>
-              <ng-container *ngIf="fazendasDetailsComponent">
-                <ng-container *ngComponentOutlet="fazendasDetailsComponent; inputs: { modoSubform: true }"></ng-container>
-              </ng-container>
+              <app-fazenda-picker></app-fazenda-picker>
             </app-subform>
             <input type="hidden" formControlName="fazendaId" />
           </c-col>

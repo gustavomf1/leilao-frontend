@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, Output, EventEmitter, Input, ViewChild, Type } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, Output, EventEmitter, Input, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -10,18 +10,22 @@ import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
+import { FazendaPickerComponent } from '../../../shared/components/fazenda-picker/fazenda-picker.component';
+import { FazendaService } from '../../../core/services/fazenda.service';
 
 @Component({
   selector: 'app-clientes-details',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
-    SubformComponent],
+    SubformComponent, FazendaPickerComponent],
   templateUrl: './cliente-details.component.html',
 })
 export class ClientesDetailsComponent implements OnInit, OnDestroy {
   private service = inject(ClienteService);
   private alert = inject(AlertService);
   private subformService = inject(SubformService);
+  private fazendaService = inject(FazendaService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() modoSubform = false;
   @Output() aoSalvar = new EventEmitter<any>();
@@ -33,7 +37,6 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   isEdicao = false;
   private entityId?: number;
   nomeFazendaSelecionada = '';
-  fazendasDetailsComponent?: Type<any>;
   private sub!: Subscription;
 
   constructor(
@@ -42,7 +45,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     this.form = this.fb.group({
       nome:      ['', Validators.required],
       email:     ['', [Validators.required, Validators.email]],
@@ -53,10 +56,6 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
       rg:        ['', Validators.required],
       fazendaId: [null]
     });
-
-    // lazy load para evitar dependência circular
-    const m = await import('../../fazenda/fazenda-details/fazenda-details.component');
-    this.fazendasDetailsComponent = m.FazendasDetailsComponent;
 
     this.sub = this.subformService.resultado$.subscribe(({ chave, dados }) => {
       if (chave === 'fazenda') {
@@ -72,7 +71,17 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
         this.isEdicao = true;
         this.entityId = +id;
         this.service.buscarPorId(this.entityId).subscribe({
-          next: (data) => this.form.patchValue(data),
+          next: (data) => {
+            this.form.patchValue(data);
+            if (data.fazendaId) {
+              this.fazendaService.buscarPorId(data.fazendaId).subscribe({
+                next: (fazenda) => {
+                  this.nomeFazendaSelecionada = fazenda.nome;
+                  this.cdr.detectChanges();
+                }
+              });
+            }
+          },
           error: () => this.alert.error('Erro ao carregar cliente')
         });
       }
@@ -92,6 +101,18 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
 
       op.subscribe({
         next: (res) => {
+          // vincula cliente como titular da fazenda se for novo cadastro
+          if (dados.fazendaId && !this.isEdicao) {
+            this.fazendaService.buscarPorId(dados.fazendaId).subscribe({
+              next: (fazenda) => {
+                this.fazendaService.atualizar(dados.fazendaId, {
+                  ...fazenda,
+                  titularId: res.id
+                }).subscribe();
+              }
+            });
+          }
+
           this.alert.success(this.isEdicao ? 'Cliente atualizado!' : 'Cliente cadastrado!');
           if (this.modoSubform) {
             this.subformService.emitir('titular', res);
