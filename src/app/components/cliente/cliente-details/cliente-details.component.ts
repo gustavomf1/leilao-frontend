@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, Output, EventEmitter, Input, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, Output, EventEmitter, Input, ViewChild, ChangeDetectorRef, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -10,14 +10,13 @@ import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
-import { FazendaPickerComponent } from '../../../shared/components/fazenda-picker/fazenda-picker.component';
 import { FazendaService } from '../../../core/services/fazenda.service';
 
 @Component({
   selector: 'app-clientes-details',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
-    SubformComponent, FazendaPickerComponent],
+    SubformComponent],
   templateUrl: './cliente-details.component.html',
 })
 export class ClientesDetailsComponent implements OnInit, OnDestroy {
@@ -37,6 +36,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   isEdicao = false;
   private entityId?: number;
   nomeFazendaSelecionada = '';
+  fazendaPickerComponent?: Type<any>;
   private sub!: Subscription;
 
   constructor(
@@ -46,6 +46,10 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    import('../../../shared/components/fazenda-picker/fazenda-picker.component').then(m => {
+      this.fazendaPickerComponent = m.FazendaPickerComponent;
+    });
+
     this.form = this.fb.group({
       nome:      ['', Validators.required],
       email:     ['', [Validators.required, Validators.email]],
@@ -101,7 +105,6 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
 
       op.subscribe({
         next: (res) => {
-          // vincula cliente como titular da fazenda se for novo cadastro
           if (dados.fazendaId && !this.isEdicao) {
             this.fazendaService.buscarPorId(dados.fazendaId).subscribe({
               next: (fazenda) => {

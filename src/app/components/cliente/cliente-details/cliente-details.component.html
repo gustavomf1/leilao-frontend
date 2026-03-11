@@ -90,7 +90,9 @@
               [displayValue]="nomeFazendaSelecionada"
               modalTitle="Selecionar Fazenda"
               #pickerFazenda>
-              <app-fazenda-picker></app-fazenda-picker>
+              <ng-container *ngIf="fazendaPickerComponent">
+                <ng-container *ngComponentOutlet="fazendaPickerComponent"></ng-container>
+              </ng-container>
             </app-subform>
             <input type="hidden" formControlName="fazendaId" />
           </c-col>
