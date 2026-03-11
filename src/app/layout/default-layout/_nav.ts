@@ -438,24 +438,24 @@ export const navItemsLeilao: INavData[] = [
     iconComponent: { name: 'cil-speedometer' }
   },
 
-  // ─── Usuários e Acessos ───────────────────────────────────────
+  // ─── Funcionários ─────────────────────────────────────────────
   {
     title: true,
-    name: 'Usuários e Acessos'
+    name: 'Funcionários'
   },
   {
-    name: 'Usuários',
-    url: '/usuarios',
-    iconComponent: { name: 'cil-people' },
+    name: 'Funcionários',
+    url: '/funcionarios',
+    iconComponent: { name: 'cil-contact' },
     children: [
       {
-        name: 'Listar Usuários',
-        url: '/usuarios/lista',
+        name: 'Listar Funcionários',
+        url: '/funcionarios/lista',
         icon: 'nav-icon-bullet'
       },
       {
-        name: 'Cadastrar Usuário',
-        url: '/usuarios/cadastrar',
+        name: 'Cadastrar Funcionário',
+        url: '/funcionarios/cadastrar',
         icon: 'nav-icon-bullet'
       }
     ]
@@ -576,29 +576,6 @@ export const navItemsLeilao: INavData[] = [
       {
         name: 'Cadastrar Lote',
         url: '/lotes/cadastrar',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-
-  // ─── Funcionários ─────────────────────────────────────────────
-  {
-    title: true,
-    name: 'Funcionários'
-  },
-  {
-    name: 'Funcionários',
-    url: '/funcionarios',
-    iconComponent: { name: 'cil-contact' },
-    children: [
-      {
-        name: 'Listar Funcionários',
-        url: '/funcionarios/lista',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Cadastrar Funcionário',
-        url: '/funcionarios/cadastrar',
         icon: 'nav-icon-bullet'
       }
     ]

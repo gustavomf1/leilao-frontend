@@ -4,5 +4,5 @@ import { Taxas } from '../models/entities.model';
 
 @Injectable({ providedIn: 'root' })
 export class TaxasService extends ApiService<Taxas> {
-    protected endpoint = 'taxas'; // sem construtor necessário
+    protected endpoint = 'taxas-comissao'; // sem construtor necessário
 }

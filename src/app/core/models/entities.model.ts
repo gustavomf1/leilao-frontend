@@ -48,7 +48,7 @@ export interface Condicoes {
 export interface Taxas {
   id?: number;
   porcentagem: number;
-  tipo_cliente: string;
+  tipoCliente: string;
 }
 
 export interface Lote {

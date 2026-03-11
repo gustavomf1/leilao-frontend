@@ -19,10 +19,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let taxa of taxas">
+          <tr *ngFor="let taxa of taxas$ | async">
             <td>{{ taxa.id }}</td>
             <td>{{ taxa.porcentagem }}%</td>
-            <td>{{ taxa.tipo_cliente }}</td>
+            <td>{{ taxa.tipoCliente }}</td>
             <td class="text-center">
               <a [routerLink]="['/taxas', taxa.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>

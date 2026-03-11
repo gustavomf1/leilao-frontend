@@ -13,6 +13,7 @@
     <c-card-body>
       <form [formGroup]="form" (ngSubmit)="salvar()">
         <c-row>
+
           <c-col [md]="6">
             <div class="mb-3">
               <label cLabel for="porcentagem">Porcentagem (%) *</label>
@@ -25,13 +26,14 @@
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="tipo_cliente">Tipo de Cliente *</label>
-              <input cFormControl id="tipo_cliente" formControlName="tipo_cliente" placeholder="Ex: Comprador, Vendedor" />
-              <c-form-feedback *ngIf="form.get('tipo_cliente')?.invalid && form.get('tipo_cliente')?.touched" [valid]="false">
+              <label cLabel for="tipoCliente">Tipo de Cliente *</label>
+              <input cFormControl id="tipoCliente" formControlName="tipoCliente" placeholder="Ex: Comprador, Vendedor" />
+              <c-form-feedback *ngIf="form.get('tipoCliente')?.invalid && form.get('tipoCliente')?.touched" [valid]="false">
                 Tipo de cliente é obrigatório
               </c-form-feedback>
             </div>
           </c-col>
+
         </c-row>
 
         <div class="d-flex gap-2 mt-3">
