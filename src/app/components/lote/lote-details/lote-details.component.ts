@@ -33,19 +33,19 @@ export class LotesDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      codigo:           ['', Validators.required],
-      qntd_animais:     [1, [Validators.required, Validators.min(1)]],
-      sexo:             ['', Validators.required],
-      idade_em_meses:   [0, [Validators.required, Validators.min(0)]],
-      peso:             [0, [Validators.required, Validators.min(0)]],
-      raca:             ['', Validators.required],
-      especie:          ['', Validators.required],
-      categoria_animal: ['', Validators.required],
-      obs:              [''],
-      leilao_id:        [null],
-      vendedor_id:      [null],
-      comprador_id:     [null],
-      preco_compra:     [0, [Validators.required, Validators.min(0)]]
+      codigo:          ['', Validators.required],
+      qntdAnimais:     [1, [Validators.required, Validators.min(1)]],
+      sexo:            ['', Validators.required],
+      idadeEmMeses:    [0, [Validators.required, Validators.min(0)]],
+      peso:            [0, [Validators.required, Validators.min(0)]],
+      raca:            ['', Validators.required],
+      especie:         ['', Validators.required],
+      categoriaAnimal: ['', Validators.required],
+      obs:             [''],
+      leilaoId:        [null],
+      vendedorId:      [null],
+      compradorId:     [null],
+      precoCompra:     [0, [Validators.required, Validators.min(0)]]
     });
 
     const id = this.route.snapshot.paramMap.get('id');

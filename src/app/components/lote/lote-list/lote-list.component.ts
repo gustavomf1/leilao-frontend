@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
@@ -8,6 +8,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Lote } from '../../../core/models/entities.model';
 import { LoteService } from '../../../core/services/lote.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-lotes-list',
@@ -18,20 +19,26 @@ import { AlertService } from '../../../shared/services/alert.service';
 export class LotesListComponent implements OnInit {
   private service = inject(LoteService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef);
 
   faPlus = faPlus;
   faPencil = faPencil;
   faTrash = faTrash;
 
   lotes: Lote[] = [];
+  public lotes$ = new Subject<Lote[]>();
 
   ngOnInit() {
     this.carregar();
+    this.cdr.detectChanges();
   }
 
   carregar() {
     this.service.listar().subscribe({
-      next: (data) => this.lotes = data,
+      next: (data) => {
+        this.lotes = data;
+        this.lotes$.next(this.lotes);
+      },
       error: () => this.alert.error('Erro ao carregar lotes')
     });
   }

@@ -34,12 +34,12 @@ export class ClientesDetailsComponent implements OnInit {
   ngOnInit() {
     this.form = this.fb.group({
       nome:     ['', Validators.required],
+      email:    ['', Validators.email],
       cpf:      ['', Validators.required],
       telefone: ['', Validators.required],
       cidade:   ['', Validators.required],
       uf:       ['', [Validators.required, Validators.maxLength(2)]],
       rg:       ['', Validators.required],
-      fazenda_id: [null]
     });
 
     const id = this.route.snapshot.paramMap.get('id');

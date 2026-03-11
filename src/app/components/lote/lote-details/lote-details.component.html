@@ -26,9 +26,9 @@
 
           <c-col [md]="4">
             <div class="mb-3">
-              <label cLabel for="qntd_animais">Qtd. Animais *</label>
-              <input cFormControl id="qntd_animais" type="number" formControlName="qntd_animais" placeholder="0" min="1" />
-              <c-form-feedback *ngIf="form.get('qntd_animais')?.invalid && form.get('qntd_animais')?.touched" [valid]="false">
+              <label cLabel for="qntdAnimais">Qtd. Animais *</label>
+              <input cFormControl id="qntdAnimais" type="number" formControlName="qntdAnimais" placeholder="0" min="1" />
+              <c-form-feedback *ngIf="form.get('qntdAnimais')?.invalid && form.get('qntdAnimais')?.touched" [valid]="false">
                 Quantidade é obrigatória (mín. 1)
               </c-form-feedback>
             </div>
@@ -67,9 +67,9 @@
 
           <c-col [md]="4">
             <div class="mb-3">
-              <label cLabel for="categoria_animal">Categoria *</label>
-              <input cFormControl id="categoria_animal" formControlName="categoria_animal" placeholder="Categoria" />
-              <c-form-feedback *ngIf="form.get('categoria_animal')?.invalid && form.get('categoria_animal')?.touched" [valid]="false">
+              <label cLabel for="categoriaAnimal">Categoria *</label>
+              <input cFormControl id="categoriaAnimal" formControlName="categoriaAnimal" placeholder="Categoria" />
+              <c-form-feedback *ngIf="form.get('categoriaAnimal')?.invalid && form.get('categoriaAnimal')?.touched" [valid]="false">
                 Categoria é obrigatória
               </c-form-feedback>
             </div>
@@ -78,9 +78,9 @@
           <!-- Medidas -->
           <c-col [md]="4">
             <div class="mb-3">
-              <label cLabel for="idade_em_meses">Idade (meses) *</label>
-              <input cFormControl id="idade_em_meses" type="number" formControlName="idade_em_meses" placeholder="0" min="0" />
-              <c-form-feedback *ngIf="form.get('idade_em_meses')?.invalid && form.get('idade_em_meses')?.touched" [valid]="false">
+              <label cLabel for="idadeEmMeses">Idade (meses) *</label>
+              <input cFormControl id="idadeEmMeses" type="number" formControlName="idadeEmMeses" placeholder="0" min="0" />
+              <c-form-feedback *ngIf="form.get('idadeEmMeses')?.invalid && form.get('idadeEmMeses')?.touched" [valid]="false">
                 Idade é obrigatória
               </c-form-feedback>
             </div>
@@ -98,9 +98,9 @@
 
           <c-col [md]="4">
             <div class="mb-3">
-              <label cLabel for="preco_compra">Preço de Compra (R$) *</label>
-              <input cFormControl id="preco_compra" type="number" formControlName="preco_compra" placeholder="0.00" step="0.01" min="0" />
-              <c-form-feedback *ngIf="form.get('preco_compra')?.invalid && form.get('preco_compra')?.touched" [valid]="false">
+              <label cLabel for="precoCompra">Preço de Compra (R$) *</label>
+              <input cFormControl id="precoCompra" type="number" formControlName="precoCompra" placeholder="0.00" step="0.01" min="0" />
+              <c-form-feedback *ngIf="form.get('precoCompra')?.invalid && form.get('precoCompra')?.touched" [valid]="false">
                 Preço é obrigatório
               </c-form-feedback>
             </div>
@@ -109,22 +109,22 @@
           <!-- Relacionamentos -->
           <c-col [md]="4">
             <div class="mb-3">
-              <label cLabel for="leilao_id">Leilão (ID)</label>
-              <input cFormControl id="leilao_id" type="number" formControlName="leilao_id" placeholder="ID do leilão" />
+              <label cLabel for="leilaoId">Leilão (ID)</label>
+              <input cFormControl id="leilaoId" type="number" formControlName="leilaoId" placeholder="ID do leilão" />
             </div>
           </c-col>
 
           <c-col [md]="4">
             <div class="mb-3">
-              <label cLabel for="vendedor_id">Vendedor (ID)</label>
-              <input cFormControl id="vendedor_id" type="number" formControlName="vendedor_id" placeholder="ID do vendedor" />
+              <label cLabel for="vendedorId">Vendedor (ID)</label>
+              <input cFormControl id="vendedorId" type="number" formControlName="vendedorId" placeholder="ID do vendedor" />
             </div>
           </c-col>
 
           <c-col [md]="4">
             <div class="mb-3">
-              <label cLabel for="comprador_id">Comprador (ID)</label>
-              <input cFormControl id="comprador_id" type="number" formControlName="comprador_id" placeholder="ID do comprador" />
+              <label cLabel for="compradorId">Comprador (ID)</label>
+              <input cFormControl id="compradorId" type="number" formControlName="compradorId" placeholder="ID do comprador" />
             </div>
           </c-col>
 

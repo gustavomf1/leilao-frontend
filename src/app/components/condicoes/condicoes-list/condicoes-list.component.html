@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let condicao of condicoes">
+          <tr *ngFor="let condicao of condicoes$ | async">
             <td>{{ condicao.id }}</td>
             <td>{{ condicao.tipo }}</td>
             <td>{{ condicao.descricao }}</td>

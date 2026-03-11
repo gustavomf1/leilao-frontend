@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import {
@@ -11,6 +11,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Usuario } from '../../../core/models/entities.model';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-usuarios-list',
@@ -22,20 +23,26 @@ import { AlertService } from '../../../shared/services/alert.service';
 export class UsuariosListComponent implements OnInit {
   private service = inject(UsuarioService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef);
 
   faPlus = faPlus;
   faPencil = faPencil;
   faTrash = faTrash;
 
   usuarios: Usuario[] = [];
+  public usuarios$ = new Subject<Usuario[]>();
 
   ngOnInit() {
     this.carregar();
+    this.cdr.detectChanges();
   }
 
   carregar() {
     this.service.listar().subscribe({
-      next: (data) => this.usuarios = data,
+      next: (data) => {
+        this.usuarios = data;
+        this.usuarios$.next(this.usuarios);
+      },
       error: (err) => this.alert.error('Erro ao carregar usuários')
     });
   }

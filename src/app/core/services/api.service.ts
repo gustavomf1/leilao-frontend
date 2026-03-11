@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
@@ -17,6 +17,7 @@ export abstract class ApiService<T> {
   }
 
   salvar(entity: T): Observable<T> {
+    console.log(entity)
     return this.http.post<T>(`${this.baseUrl}/api/${this.endpoint}`, entity);
   }
 

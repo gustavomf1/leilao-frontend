@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
@@ -8,6 +8,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Cliente } from '../../../core/models/entities.model';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-clientes-list',
@@ -18,20 +19,26 @@ import { AlertService } from '../../../shared/services/alert.service';
 export class ClientesListComponent implements OnInit {
   private service = inject(ClienteService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef);
 
   faPlus = faPlus;
   faPencil = faPencil;
   faTrash = faTrash;
 
   clientes: Cliente[] = [];
+  public clientes$ = new Subject<Cliente[]>();
 
   ngOnInit() {
     this.carregar();
+    this.cdr.detectChanges();
   }
 
   carregar() {
     this.service.listar().subscribe({
-      next: (data) => this.clientes = data,
+      next: (data) => {
+        this.clientes = data;
+        this.clientes$.next(this.clientes);
+      },
       error: () => this.alert.error('Erro ao carregar clientes')
     });
   }

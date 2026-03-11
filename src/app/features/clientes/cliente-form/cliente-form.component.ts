@@ -30,12 +30,12 @@ export class ClienteFormComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       nome: ['', Validators.required],
+      email:  [''],
       cpf: ['', Validators.required],
       rg: [''],
       telefone: ['', Validators.required],
       cidade: ['', Validators.required],
-      uf: ['', Validators.required],
-      fazenda_id: [null]
+      uf: ['', Validators.required]
     });
 
     const id = this.route.snapshot.paramMap.get('id');

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
@@ -8,6 +8,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Leilao } from '../../../core/models/entities.model';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-leiloes-list',
@@ -18,20 +19,26 @@ import { AlertService } from '../../../shared/services/alert.service';
 export class LeiloesListComponent implements OnInit {
   private service = inject(LeilaoService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef);
 
   faPlus = faPlus;
   faPencil = faPencil;
   faTrash = faTrash;
 
   leiloes: Leilao[] = [];
+  public leiloes$ = new Subject<Leilao[]>();
 
   ngOnInit() {
     this.carregar();
+    this.cdr.detectChanges();
   }
 
   carregar() {
     this.service.listar().subscribe({
-      next: (data) => this.leiloes = data,
+      next: (data) => {
+        this.leiloes = data;
+        this.leiloes$.next(this.leiloes);
+      },
       error: () => this.alert.error('Erro ao carregar leilões')
     });
   }

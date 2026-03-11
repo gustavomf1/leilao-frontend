@@ -21,7 +21,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let leilao of leiloes">
+          <tr *ngFor="let leilao of leiloes$ | async">
             <td>{{ leilao.id }}</td>
             <td>{{ leilao.descricao }}</td>
             <td>{{ leilao.local }}</td>

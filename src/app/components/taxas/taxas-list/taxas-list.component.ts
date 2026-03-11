@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
@@ -8,6 +8,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Taxas } from '../../../core/models/entities.model';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-taxas-list',
@@ -18,20 +19,26 @@ import { AlertService } from '../../../shared/services/alert.service';
 export class TaxasListComponent implements OnInit {
   private service = inject(TaxasService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef)
 
   faPlus = faPlus;
   faPencil = faPencil;
   faTrash = faTrash;
 
   taxas: Taxas[] = [];
+  public taxas$ = new Subject<Taxas[]>();
 
   ngOnInit() {
     this.carregar();
+    this.cdr.detectChanges();
   }
 
   carregar() {
     this.service.listar().subscribe({
-      next: (data) => this.taxas = data,
+      next: (data) => {
+        this.taxas = data;
+        this.taxas$.next(this.taxas);
+      },
       error: () => this.alert.error('Erro ao carregar taxas')
     });
   }
