@@ -14,7 +14,7 @@ export interface Cliente {
   cidade: string;
   uf: string;
   rg: string;
-  fazenda_id?: number;
+  fazendaId?: number;
 }
 
 export interface Fazenda {
@@ -24,7 +24,7 @@ export interface Fazenda {
   uf: string;
   cidade: string;
   cnpj: string;
-  titular_id?: number;
+  titularId?: number;
 }
 
 export interface Leilao {
@@ -34,8 +34,8 @@ export interface Leilao {
   cidade: string;
   descricao: string;
   data: string;
-  condicoes_id?: number;
-  taxas_id?: number;
+  condicoesId?: number;
+  taxasId?: number;
 }
 
 export interface Condicoes {
@@ -47,24 +47,24 @@ export interface Condicoes {
 export interface Taxas {
   id?: number;
   porcentagem: number;
-  tipo_cliente: string;
+  tipoCliente: string;
 }
 
 export interface Lote {
   id?: number;
   codigo: string;
-  qntd_animais: number;
+  qntdAnimais: number;
   sexo: string;
-  idade_em_meses: number;
+  idadeEmMeses: number;
   peso: number;
   raca: string;
   especie: string;
-  categoria_animal: string;
+  categoriaAnimal: string;
   obs: string;
-  leilao_id?: number;
-  vendedor_id?: number;
-  comprador_id?: number;
-  preco_compra: number;
+  leilaoId?: number;
+  vendedorId?: number;
+  compradorId?: number;
+  precoCompra: number;
 }
 
 export interface Funcionario {

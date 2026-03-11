@@ -24,15 +24,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let lote of lotes">
+          <tr *ngFor="let lote of lotes$ | async">
             <td>{{ lote.id }}</td>
             <td>{{ lote.codigo }}</td>
-            <td>{{ lote.qntd_animais }}</td>
+            <td>{{ lote.qntdAnimais }}</td>
             <td>{{ lote.sexo }}</td>
             <td>{{ lote.raca }}</td>
             <td>{{ lote.especie }}</td>
             <td>{{ lote.peso }}</td>
-            <td>{{ lote.preco_compra }}</td>
+            <td>{{ lote.precoCompra }}</td>
             <td class="text-center">
               <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>

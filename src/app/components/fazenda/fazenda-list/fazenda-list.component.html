@@ -21,7 +21,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let fazenda of fazendas">
+          <tr *ngFor="let fazenda of fazendas$ | async">
             <td>{{ fazenda.id }}</td>
             <td>{{ fazenda.nome }}</td>
             <td>{{ fazenda.inscricao }}</td>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
@@ -8,6 +8,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Funcionario } from '../../../core/models/entities.model';
 import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-funcionarios-list',
@@ -18,20 +19,26 @@ import { AlertService } from '../../../shared/services/alert.service';
 export class FuncionariosListComponent implements OnInit {
   private service = inject(FuncionarioService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef);
 
   faPlus = faPlus;
   faPencil = faPencil;
   faTrash = faTrash;
 
   funcionarios: Funcionario[] = [];
+  public funcionarios$ = new Subject<Funcionario[]>();
 
   ngOnInit() {
     this.carregar();
+    this.cdr.detectChanges();
   }
 
   carregar() {
     this.service.listar().subscribe({
-      next: (data) => this.funcionarios = data,
+      next: (data) => {
+        this.funcionarios = data;
+        this.funcionarios$.next(this.funcionarios);
+      },
       error: () => this.alert.error('Erro ao carregar funcionários')
     });
   }

@@ -104,9 +104,9 @@
               @for (lote of ultimosLotes; track lote.id) {
                 <tr>
                   <td><strong>{{ lote.codigo }}</strong></td>
-                  <td>{{ lote.qntd_animais }}</td>
+                  <td>{{ lote.qntdAnimais }}</td>
                   <td>{{ lote.raca }}</td>
-                  <td>R$ {{ lote.preco_compra.toFixed(2) }}</td>
+                  <td>R$ {{ lote.precoCompra.toFixed(2) }}</td>
                 </tr>
               }
             </tbody>

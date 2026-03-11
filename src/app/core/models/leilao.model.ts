@@ -5,6 +5,6 @@ export interface Leilao {
   cidade: string;
   descricao: string;
   data: string;
-  condicoes_id?: number;
-  taxas_id?: number;
+  condicoesId?: number;
+  taxasId?: number;
 }

@@ -38,7 +38,7 @@ export class FazendasDetailsComponent implements OnInit {
       uf:         ['', [Validators.required, Validators.maxLength(2)]],
       cidade:     ['', Validators.required],
       cnpj:       ['', Validators.required],
-      titular_id: [null]
+      titularId: [null]
     });
 
     const id = this.route.snapshot.paramMap.get('id');

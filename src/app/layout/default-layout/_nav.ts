@@ -437,30 +437,6 @@ export const navItemsLeilao: INavData[] = [
     url: '/dashboard',
     iconComponent: { name: 'cil-speedometer' }
   },
-
-  // ─── Usuários e Acessos ───────────────────────────────────────
-  {
-    title: true,
-    name: 'Usuários e Acessos'
-  },
-  {
-    name: 'Usuários',
-    url: '/usuarios',
-    iconComponent: { name: 'cil-people' },
-    children: [
-      {
-        name: 'Listar Usuários',
-        url: '/usuarios/lista',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Cadastrar Usuário',
-        url: '/usuarios/cadastrar',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-
   // ─── Núcleo de Negócio ────────────────────────────────────────
   {
     title: true,
