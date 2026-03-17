@@ -1,29 +1,43 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, Output, EventEmitter, Input, ViewChild, ChangeDetectorRef, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { Subscription } from 'rxjs';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { SubformService } from '../../../shared/services/subform.service';
+import { SubformComponent } from '../../../shared/components/subform/subform.component';
+import { FazendaService } from '../../../core/services/fazenda.service';
 
 @Component({
   selector: 'app-clientes-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
+    SubformComponent],
   templateUrl: './cliente-details.component.html',
 })
-export class ClientesDetailsComponent implements OnInit {
+export class ClientesDetailsComponent implements OnInit, OnDestroy {
   private service = inject(ClienteService);
   private alert = inject(AlertService);
+  private subformService = inject(SubformService);
+  private fazendaService = inject(FazendaService);
+  private cdr = inject(ChangeDetectorRef);
+
+  @Input() modoSubform = false;
+  @Output() aoSalvar = new EventEmitter<any>();
+  @ViewChild('pickerFazenda') pickerFazenda!: SubformComponent;
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
-
   form!: FormGroup;
   isEdicao = false;
   private entityId?: number;
+  nomeFazendaSelecionada = '';
+  fazendaPickerComponent?: Type<any>;
+  private sub!: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -32,25 +46,54 @@ export class ClientesDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.form = this.fb.group({
-      nome:     ['', Validators.required],
-      email:    ['', Validators.email],
-      cpf:      ['', Validators.required],
-      telefone: ['', Validators.required],
-      cidade:   ['', Validators.required],
-      uf:       ['', [Validators.required, Validators.maxLength(2)]],
-      rg:       ['', Validators.required],
+    import('../../../shared/components/fazenda-picker/fazenda-picker.component').then(m => {
+      this.fazendaPickerComponent = m.FazendaPickerComponent;
     });
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEdicao = true;
-      this.entityId = +id;
-      this.service.buscarPorId(this.entityId).subscribe({
-        next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar cliente')
-      });
+    this.form = this.fb.group({
+      nome:      ['', Validators.required],
+      email:     ['', [Validators.required, Validators.email]],
+      cpf:       ['', Validators.required],
+      telefone:  ['', Validators.required],
+      cidade:    ['', Validators.required],
+      uf:        ['', [Validators.required, Validators.maxLength(2)]],
+      rg:        ['', Validators.required],
+      fazendaId: [null]
+    });
+
+    this.sub = this.subformService.resultado$.subscribe(({ chave, dados }) => {
+      if (chave === 'fazenda') {
+        this.form.patchValue({ fazendaId: dados.id });
+        this.nomeFazendaSelecionada = dados.nome;
+        this.pickerFazenda?.setModal(false);
+      }
+    });
+
+    if (!this.modoSubform) {
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        this.isEdicao = true;
+        this.entityId = +id;
+        this.service.buscarPorId(this.entityId).subscribe({
+          next: (data) => {
+            this.form.patchValue(data);
+            if (data.fazendaId) {
+              this.fazendaService.buscarPorId(data.fazendaId).subscribe({
+                next: (fazenda) => {
+                  this.nomeFazendaSelecionada = fazenda.nome;
+                  this.cdr.detectChanges();
+                }
+              });
+            }
+          },
+          error: () => this.alert.error('Erro ao carregar cliente')
+        });
+      }
     }
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
   }
 
   salvar() {
@@ -61,9 +104,27 @@ export class ClientesDetailsComponent implements OnInit {
         : this.service.salvar(dados);
 
       op.subscribe({
-        next: () => {
+        next: (res) => {
+          if (dados.fazendaId && !this.isEdicao) {
+            this.fazendaService.buscarPorId(dados.fazendaId).subscribe({
+              next: (fazenda) => {
+                this.fazendaService.atualizar(dados.fazendaId, {
+                  ...fazenda,
+                  titularId: res.id
+                }).subscribe();
+              }
+            });
+          }
+
           this.alert.success(this.isEdicao ? 'Cliente atualizado!' : 'Cliente cadastrado!');
-          this.router.navigate(['/clientes/lista']);
+          if (this.modoSubform) {
+            this.subformService.emitir('titular', res);
+          } else {
+            this.aoSalvar.emit(res);
+            if (!this.aoSalvar.observed) {
+              this.router.navigate(['/clientes/lista']);
+            }
+          }
         },
         error: () => this.alert.error('Erro ao salvar cliente')
       });

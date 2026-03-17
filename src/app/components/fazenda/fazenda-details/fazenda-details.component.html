@@ -13,7 +13,8 @@
     <c-card-body>
       <form [formGroup]="form" (ngSubmit)="salvar()">
         <c-row>
-          <c-col [md]="6">
+
+          <c-col xs="12" md="6">
             <div class="mb-3">
               <label cLabel for="nome">Nome *</label>
               <input cFormControl id="nome" formControlName="nome" placeholder="Nome da fazenda" />
@@ -23,7 +24,7 @@
             </div>
           </c-col>
 
-          <c-col [md]="6">
+          <c-col xs="12" md="6">
             <div class="mb-3">
               <label cLabel for="inscricao">Inscrição *</label>
               <input cFormControl id="inscricao" formControlName="inscricao" placeholder="Inscrição estadual" />
@@ -33,7 +34,7 @@
             </div>
           </c-col>
 
-          <c-col [md]="6">
+          <c-col xs="12" md="6">
             <div class="mb-3">
               <label cLabel for="cnpj">CNPJ *</label>
               <input cFormControl id="cnpj" formControlName="cnpj" placeholder="00.000.000/0000-00" />
@@ -43,7 +44,7 @@
             </div>
           </c-col>
 
-          <c-col [md]="3">
+          <c-col xs="12" md="3">
             <div class="mb-3">
               <label cLabel for="cidade">Cidade *</label>
               <input cFormControl id="cidade" formControlName="cidade" placeholder="Cidade" />
@@ -53,7 +54,7 @@
             </div>
           </c-col>
 
-          <c-col [md]="3">
+          <c-col xs="12" md="3">
             <div class="mb-3">
               <label cLabel for="uf">UF *</label>
               <input cFormControl id="uf" formControlName="uf" placeholder="UF" maxlength="2" />
@@ -63,12 +64,17 @@
             </div>
           </c-col>
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="titularId">Titular (ID)</label>
-              <input cFormControl id="titularId" type="number" formControlName="titularId" placeholder="ID do titular" />
-            </div>
+          <c-col xs="12" md="6" *ngIf="!ocultarTitular">
+            <app-subform
+              label="Titular"
+              [displayValue]="nomeTitularSelecionado"
+              modalTitle="Selecionar Titular"
+              #pickerTitular>
+              <app-cliente-picker></app-cliente-picker>
+            </app-subform>
+            <input type="hidden" formControlName="titularId" />
           </c-col>
+
         </c-row>
 
         <div class="d-flex gap-2 mt-3">

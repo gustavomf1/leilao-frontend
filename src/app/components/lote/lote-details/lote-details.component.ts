@@ -13,6 +13,7 @@ import { AlertService } from '../../../shared/services/alert.service';
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
   templateUrl: './lote-details.component.html',
+  styleUrl: './lote-details.component.css'
 })
 export class LotesDetailsComponent implements OnInit {
   private service = inject(LoteService);
@@ -20,7 +21,6 @@ export class LotesDetailsComponent implements OnInit {
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
-
   form!: FormGroup;
   isEdicao = false;
   private entityId?: number;
@@ -65,7 +65,6 @@ export class LotesDetailsComponent implements OnInit {
       const op = this.isEdicao
         ? this.service.atualizar(this.entityId!, dados)
         : this.service.salvar(dados);
-
       op.subscribe({
         next: () => {
           this.alert.success(this.isEdicao ? 'Lote atualizado!' : 'Lote cadastrado!');

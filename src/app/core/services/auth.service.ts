@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core'; // 'inject' com 'i' minúsculo
 import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { LoteWebsocketService } from '../services/lote-websocket.service';
 import { tap } from 'rxjs';
 
 @Injectable({
@@ -9,7 +10,7 @@ import { tap } from 'rxjs';
 export class AuthService {
   // Agora o Angular sabe de onde vem essa função 'inject'
   private http = inject(HttpClient);
-
+  private wsService = inject(LoteWebsocketService);
   private readonly API = 'http://localhost:8080/api/login';
 
   login(dados: LoginRequest) {
@@ -17,6 +18,7 @@ export class AuthService {
       tap(res => {
         // Armazena o token para as próximas requisições
         localStorage.setItem('auth_token', res.token);
+        this.wsService.conectar();
       })
     );
   }
@@ -28,6 +30,7 @@ export class AuthService {
 
   // Dica: Adicione um método de logout para limpar o token depois
   logout() {
+    this.wsService.desconectar();
     localStorage.removeItem('auth_token');
   }
 }

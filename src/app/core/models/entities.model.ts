@@ -25,6 +25,7 @@ export interface Fazenda {
   cidade: string;
   cnpj: string;
   titularId?: number;
+  titularNome?: string;
 }
 
 export interface Leilao {
@@ -34,8 +35,8 @@ export interface Leilao {
   cidade: string;
   descricao: string;
   data: string;
-  condicoesId?: number;
-  taxasId?: number;
+  condicoes_id?: number;
+  taxas_id?: number;
 }
 
 export interface Condicoes {
@@ -65,6 +66,7 @@ export interface Lote {
   vendedorId?: number;
   compradorId?: number;
   precoCompra: number;
+  vendedorNome?: string;
 }
 
 export interface Funcionario {

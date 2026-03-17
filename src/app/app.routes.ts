@@ -6,9 +6,7 @@ export const routes: Routes = [
     path: '',
     loadComponent: () =>
       import('./layout').then((m) => m.DefaultLayoutComponent),
-    data: {
-      title: 'Home',
-    },
+    data: { title: 'Home' },
     canActivate: [authGuard],
     children: [
       {
@@ -60,31 +58,28 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./views/pages/routes').then((m) => m.routes),
       },
-      //Aqui começa os nossos componentes
       {
         path: 'usuarios',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/usuario/usuario-list/usuario-list.component').then(
-                (m) => m.UsuariosListComponent,
-              ),
+                (m) => m.UsuariosListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/usuario/usuario-details/usuario-details.component').then(
-                (m) => m.UsuariosDetailsComponent,
-              ),
+                (m) => m.UsuariosDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/usuario/usuario-details/usuario-details.component').then(
-                (m) => m.UsuariosDetailsComponent,
-              ),
+                (m) => m.UsuariosDetailsComponent),
           },
         ],
       },
@@ -94,24 +89,22 @@ export const routes: Routes = [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/cliente/cliente-list/cliente-list.component').then(
-                (m) => m.ClientesListComponent,
-              ),
+                (m) => m.ClientesListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/cliente/cliente-details/cliente-details.component').then(
-                (m) => m.ClientesDetailsComponent,
-              ),
+                (m) => m.ClientesDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/cliente/cliente-details/cliente-details.component').then(
-                (m) => m.ClientesDetailsComponent,
-              ),
+                (m) => m.ClientesDetailsComponent),
           },
         ],
       },
@@ -121,24 +114,22 @@ export const routes: Routes = [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/fazenda/fazenda-list/fazenda-list.component').then(
-                (m) => m.FazendasListComponent,
-              ),
+                (m) => m.FazendasListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/fazenda/fazenda-details/fazenda-details.component').then(
-                (m) => m.FazendasDetailsComponent,
-              ),
+                (m) => m.FazendasDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/fazenda/fazenda-details/fazenda-details.component').then(
-                (m) => m.FazendasDetailsComponent,
-              ),
+                (m) => m.FazendasDetailsComponent),
           },
         ],
       },
@@ -148,24 +139,22 @@ export const routes: Routes = [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/leilao/leilao-list/leilao-list.component').then(
-                (m) => m.LeiloesListComponent,
-              ),
+                (m) => m.LeiloesListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/leilao/leilao-details/leilao-details.component').then(
-                (m) => m.LeiloesDetailsComponent,
-              ),
+                (m) => m.LeiloesDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/leilao/leilao-details/leilao-details.component').then(
-                (m) => m.LeiloesDetailsComponent,
-              ),
+                (m) => m.LeiloesDetailsComponent),
           },
         ],
       },
@@ -175,24 +164,22 @@ export const routes: Routes = [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/condicoes/condicoes-list/condicoes-list.component').then(
-                (m) => m.CondicoesListComponent,
-              ),
+                (m) => m.CondicoesListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/condicoes/condicoes-details/condicoes-details.component').then(
-                (m) => m.CondicoesDetailsComponent,
-              ),
+                (m) => m.CondicoesDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/condicoes/condicoes-details/condicoes-details.component').then(
-                (m) => m.CondicoesDetailsComponent,
-              ),
+                (m) => m.CondicoesDetailsComponent),
           },
         ],
       },
@@ -202,24 +189,22 @@ export const routes: Routes = [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/taxas/taxas-list/taxas-list.component').then(
-                (m) => m.TaxasListComponent,
-              ),
+                (m) => m.TaxasListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/taxas/taxas-details/taxas-details.component').then(
-                (m) => m.TaxasDetailsComponent,
-              ),
+                (m) => m.TaxasDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/taxas/taxas-details/taxas-details.component').then(
-                (m) => m.TaxasDetailsComponent,
-              ),
+                (m) => m.TaxasDetailsComponent),
           },
         ],
       },
@@ -229,31 +214,28 @@ export const routes: Routes = [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/lote/lote-list/lote-list.component').then(
-                (m) => m.LotesListComponent,
-              ),
+                (m) => m.LotesListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/lote/lote-details/lote-details.component').then(
-                (m) => m.LotesDetailsComponent,
-              ),
+                (m) => m.LotesDetailsComponent),
           },
           {
             path: 'monitor',
             loadComponent: () =>
               import('./features/lotes/monitor-lotes/monitor-lotes.component').then(
-                (m) => m.MonitorLotesComponent,
-              ),
+                (m) => m.MonitorLotesComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/lote/lote-details/lote-details.component').then(
-                (m) => m.LotesDetailsComponent,
-              ),
+                (m) => m.LotesDetailsComponent),
           },
         ],
       },
@@ -263,24 +245,22 @@ export const routes: Routes = [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
           {
             path: 'lista',
+            runGuardsAndResolvers: 'always',
             loadComponent: () =>
               import('./components/funcionario/funcionario-list/funcionario-list.component').then(
-                (m) => m.FuncionariosListComponent,
-              ),
+                (m) => m.FuncionariosListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/funcionario/funcionario-details/funcionario-details.component').then(
-                (m) => m.FuncionariosDetailsComponent,
-              ),
+                (m) => m.FuncionariosDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
               import('./components/funcionario/funcionario-details/funcionario-details.component').then(
-                (m) => m.FuncionariosDetailsComponent,
-              ),
+                (m) => m.FuncionariosDetailsComponent),
           },
         ],
       },
@@ -288,8 +268,7 @@ export const routes: Routes = [
         path: 'whatsapp',
         loadComponent: () =>
           import('./components/whatsapp/whatsapp.component').then(
-            (m) => m.WhatsAppComponent,
-          ),
+            (m) => m.WhatsAppComponent),
       },
     ],
   },
@@ -297,41 +276,28 @@ export const routes: Routes = [
     path: '404',
     loadComponent: () =>
       import('./views/pages/page404/page404.component').then(
-        (m) => m.Page404Component,
-      ),
-    data: {
-      title: 'Page 404',
-    },
+        (m) => m.Page404Component),
+    data: { title: 'Page 404' },
   },
   {
     path: '500',
     loadComponent: () =>
       import('./views/pages/page500/page500.component').then(
-        (m) => m.Page500Component,
-      ),
-    data: {
-      title: 'Page 500',
-    },
+        (m) => m.Page500Component),
+    data: { title: 'Page 500' },
   },
   {
     path: 'login',
     loadComponent: () =>
       import('./views/pages/login/login.component').then(
-        (m) => m.LoginComponent,
-      ),
-    data: {
-      title: 'Login Page',
-    },
+        (m) => m.LoginComponent),
+    data: { title: 'Login Page' },
   },
   {
     path: 'register',
     loadComponent: () =>
       import('./views/pages/register/register.component').then(
-        (m) => m.RegisterComponent,
-      ),
-    data: {
-      title: 'Register Page',
-    },
+        (m) => m.RegisterComponent),
+    data: { title: 'Register Page' },
   },
-  // { path: '**', redirectTo: '404' },
 ];
