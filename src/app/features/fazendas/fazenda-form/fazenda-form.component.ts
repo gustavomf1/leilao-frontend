@@ -26,7 +26,7 @@ export class FazendaFormComponent implements OnInit {
     cnpj: ['', Validators.required],
     cidade: ['', Validators.required],
     uf: ['', Validators.required],
-    titular_id: [null as number | null]
+    titularId: [null as number | null]
   });
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class FazendaFormComponent implements OnInit {
             cnpj: fazenda.cnpj,
             cidade: fazenda.cidade,
             uf: fazenda.uf,
-            titular_id: fazenda.titular_id ?? null
+            titularId: fazenda.titularId ?? null
           });
         },
         error: (err) => {

@@ -26,8 +26,8 @@ export class LeilaoFormComponent implements OnInit {
     cidade: ['', Validators.required],
     descricao: ['', Validators.required],
     data: ['', Validators.required],
-    condicoes_id: [null as number | null],
-    taxas_id: [null as number | null]
+    condicoesId: [null as number | null],
+    taxasId: [null as number | null]
   });
 
   ngOnInit() {

@@ -38,8 +38,8 @@ export class LeiloesDetailsComponent implements OnInit {
       cidade:       ['', Validators.required],
       descricao:    ['', Validators.required],
       data:         ['', Validators.required],
-      condicoes_id: [null],
-      taxas_id:     [null]
+      condicoesId: [null],
+      taxasId:     [null]
     });
 
     const id = this.route.snapshot.paramMap.get('id');
