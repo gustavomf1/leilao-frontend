@@ -25,6 +25,13 @@ export class CondicoesDetailsComponent implements OnInit {
   isEdicao = false;
   private entityId?: number;
 
+  tiposCondicao = ['ELITE', 'LEITE', 'CORTE', 'PRENHEZ', 'OUTROS', 'DOACAO'];
+  aceitesIntegrado = [
+    { value: 'NORMAL', label: 'Normal' },
+    { value: 'DESCONTAR_TODAS_PARCELAS', label: 'Descontar em Todas as Parcelas' },
+    { value: 'DESCONTAR_PRIMEIRA_PARCELA', label: 'Descontar na Primeira Parcela' }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -33,8 +40,15 @@ export class CondicoesDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      tipo:      ['', Validators.required],
-      descricao: ['', Validators.required]
+      descricao:          ['', Validators.required],
+      captacao:           [null],
+      parcelas:           [null],
+      qtdDias:            [null],
+      percentualDesconto: [null],
+      comEntrada:         ['N'],
+      mesmoDia:           ['N'],
+      tipoCondicao:       [null],
+      aceiteIntegrado:    ['NORMAL']
     });
 
     const id = this.route.snapshot.paramMap.get('id');

@@ -13,16 +13,24 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Tipo</th>
             <th>Descrição</th>
+            <th>Tipo</th>
+            <th>Parcelas</th>
+            <th>Qtd Dias</th>
+            <th>% Desconto</th>
+            <th>Com Entrada</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let condicao of condicoes$ | async">
             <td>{{ condicao.id }}</td>
-            <td>{{ condicao.tipo }}</td>
             <td>{{ condicao.descricao }}</td>
+            <td>{{ condicao.tipoCondicao }}</td>
+            <td>{{ condicao.parcelas }}</td>
+            <td>{{ condicao.qtdDias }}</td>
+            <td>{{ condicao.percentualDesconto }}</td>
+            <td>{{ condicao.comEntrada === 'S' ? 'Sim' : 'Não' }}</td>
             <td class="text-center">
               <a [routerLink]="['/condicoes', condicao.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>

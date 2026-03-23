@@ -8,28 +8,104 @@
 
   <c-card>
     <c-card-header>
-      <strong>Dados da Condição</strong>
+      <strong>Condições de Pagamento</strong>
     </c-card-header>
     <c-card-body>
       <form [formGroup]="form" (ngSubmit)="salvar()">
-        <c-row>
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="tipo">Tipo *</label>
-              <input cFormControl id="tipo" formControlName="tipo" placeholder="Tipo da condição" />
-              <c-form-feedback *ngIf="form.get('tipo')?.invalid && form.get('tipo')?.touched" [valid]="false">
-                Tipo é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
 
-          <c-col [md]="6">
+        <!-- Descrição -->
+        <c-row>
+          <c-col [md]="12">
             <div class="mb-3">
               <label cLabel for="descricao">Descrição *</label>
-              <input cFormControl id="descricao" formControlName="descricao" placeholder="Descrição da condição" />
+              <input cFormControl id="descricao" formControlName="descricao" placeholder="Ex: 10 DIAS DIRETO" />
               <c-form-feedback *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" [valid]="false">
                 Descrição é obrigatória
               </c-form-feedback>
+            </div>
+          </c-col>
+        </c-row>
+
+        <!-- Captação, Parcelas, Qtd Dias, % Desconto -->
+        <c-row>
+          <c-col [md]="3">
+            <div class="mb-3">
+              <label cLabel for="captacao">Captação</label>
+              <input cFormControl type="number" id="captacao" formControlName="captacao" />
+            </div>
+          </c-col>
+
+          <c-col [md]="3">
+            <div class="mb-3">
+              <label cLabel for="parcelas">Parcelas</label>
+              <input cFormControl type="number" id="parcelas" formControlName="parcelas" />
+            </div>
+          </c-col>
+
+          <c-col [md]="3">
+            <div class="mb-3">
+              <label cLabel for="qtdDias">Qtd Dias</label>
+              <input cFormControl type="number" id="qtdDias" formControlName="qtdDias" />
+            </div>
+          </c-col>
+
+          <c-col [md]="3">
+            <div class="mb-3">
+              <label cLabel for="percentualDesconto">% Desconto</label>
+              <input cFormControl type="number" id="percentualDesconto" formControlName="percentualDesconto" />
+            </div>
+          </c-col>
+        </c-row>
+
+        <!-- Opções: Com Entrada / Mesmo Dia -->
+        <c-row>
+          <c-col [md]="12">
+            <div class="mb-3">
+              <label cLabel class="d-block mb-2">Opções</label>
+              <div class="d-flex gap-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="comEntrada"
+                    [checked]="form.get('comEntrada')?.value === 'S'"
+                    (change)="form.get('comEntrada')?.setValue($any($event.target).checked ? 'S' : 'N')" />
+                  <label class="form-check-label" for="comEntrada">Com Entrada</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="mesmoDia"
+                    [checked]="form.get('mesmoDia')?.value === 'S'"
+                    (change)="form.get('mesmoDia')?.setValue($any($event.target).checked ? 'S' : 'N')" />
+                  <label class="form-check-label" for="mesmoDia">Mesmo Dia</label>
+                </div>
+              </div>
+            </div>
+          </c-col>
+        </c-row>
+
+        <!-- Tipo -->
+        <c-row>
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel class="d-block mb-2">Tipo</label>
+              <div class="d-flex flex-wrap gap-3">
+                <div class="form-check" *ngFor="let tipo of tiposCondicao">
+                  <input class="form-check-input" type="radio" formControlName="tipoCondicao"
+                    [id]="'tipo_' + tipo" [value]="tipo" />
+                  <label class="form-check-label" [for]="'tipo_' + tipo">{{ tipo }}</label>
+                </div>
+              </div>
+            </div>
+          </c-col>
+
+          <!-- Aceite Integrado (Comissão Venda) -->
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel class="d-block mb-2">Aceite Integrado (Comissão Venda)</label>
+              <div class="d-flex flex-column gap-2">
+                <div class="form-check" *ngFor="let aceite of aceitesIntegrado">
+                  <input class="form-check-input" type="radio" formControlName="aceiteIntegrado"
+                    [id]="'aceite_' + aceite.value" [value]="aceite.value" />
+                  <label class="form-check-label" [for]="'aceite_' + aceite.value">{{ aceite.label }}</label>
+                </div>
+              </div>
             </div>
           </c-col>
         </c-row>

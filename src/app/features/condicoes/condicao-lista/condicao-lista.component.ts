@@ -26,7 +26,10 @@ export class CondicaoListaComponent implements OnInit {
   get condicoesFiltradas(): Condicoes[] {
     if (!this.filtro) return this.condicoes;
     const f = this.filtro.toLowerCase();
-    return this.condicoes.filter(c => c.tipo.toLowerCase().includes(f) || c.descricao.toLowerCase().includes(f));
+    return this.condicoes.filter(c =>
+      c.descricao.toLowerCase().includes(f) ||
+      (c.tipoCondicao && c.tipoCondicao.toLowerCase().includes(f))
+    );
   }
 
   excluir(id: number) {
