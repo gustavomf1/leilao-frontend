@@ -67,12 +67,25 @@ export interface Lote {
   precoCompra: number;
 }
 
+export interface Role {
+  id?: number;
+  nome: string;
+  descricao?: string;
+}
+
 export interface Funcionario {
   id?: number;
   nome: string;
   email: string;
   cpf: string;
   senha?: string;
+  isAdmin?: boolean;
+  roles?: Role[];
+}
+
+export interface AtribuirRoles {
+  roleIds: number[];
+  isAdmin: boolean;
 }
 
 // ─── WhatsApp (Evolution API) ───────────────────────────────────

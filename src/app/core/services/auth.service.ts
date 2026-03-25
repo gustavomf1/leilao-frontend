@@ -1,33 +1,75 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core'; // 'inject' com 'i' minúsculo
+import { Injectable, inject } from '@angular/core';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
+
+export interface TokenPayload {
+  sub: string;
+  nome: string;
+  tipo: string;
+  isAdmin: boolean;
+  roles: string[];
+  exp: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // Agora o Angular sabe de onde vem essa função 'inject'
   private http = inject(HttpClient);
 
-  private readonly API = 'http://localhost:8080/api/login';
+  private readonly API = `${environment.backendUrl}/api/login`;
 
   login(dados: LoginRequest) {
     return this.http.post<LoginResponse>(this.API, dados).pipe(
       tap(res => {
-        // Armazena o token para as próximas requisições
         localStorage.setItem('auth_token', res.token);
       })
     );
   }
 
   isLoggedIn(): boolean {
-    // Retorna true se houver token, false se for null/undefined
     return !!localStorage.getItem('auth_token');
   }
 
-  // Dica: Adicione um método de logout para limpar o token depois
   logout() {
     localStorage.removeItem('auth_token');
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('auth_token');
+  }
+
+  getTokenPayload(): TokenPayload | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = token.split('.')[1];
+      return JSON.parse(atob(payload));
+    } catch {
+      return null;
+    }
+  }
+
+  isAdmin(): boolean {
+    const payload = this.getTokenPayload();
+    return payload?.isAdmin === true;
+  }
+
+  getUserRoles(): string[] {
+    const payload = this.getTokenPayload();
+    return payload?.roles ?? [];
+  }
+
+  getUserNome(): string {
+    const payload = this.getTokenPayload();
+    return payload?.nome ?? '';
+  }
+
+  getUserTipo(): string {
+    const payload = this.getTokenPayload();
+    return payload?.tipo ?? '';
   }
 }

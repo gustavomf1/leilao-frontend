@@ -591,6 +591,17 @@ export const navItemsLeilao: INavData[] = [
     iconComponent: { name: 'cil-speech' }
   },
 
+  // ─── Administração ────────────────────────────────────────────
+  {
+    title: true,
+    name: 'Administração'
+  },
+  {
+    name: 'Permissões',
+    url: '/admin/roles',
+    iconComponent: { name: 'cil-shield-alt' }
+  },
+
   // ─── Sistema ──────────────────────────────────────────────────
   {
     title: true,
