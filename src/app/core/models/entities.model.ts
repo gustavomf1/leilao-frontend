@@ -25,6 +25,7 @@ export interface Fazenda {
   cidade: string;
   cnpj: string;
   titularId?: number;
+  titularNome?: string;
 }
 
 export interface Leilao {
@@ -34,14 +35,21 @@ export interface Leilao {
   cidade: string;
   descricao: string;
   data: string;
-  condicoesId?: number;
-  taxasId?: number;
+  condicoes_id?: number;
+  taxas_id?: number;
 }
 
 export interface Condicoes {
   id?: number;
-  tipo: string;
   descricao: string;
+  captacao?: number;
+  parcelas?: number;
+  qtdDias?: number;
+  percentualDesconto?: number;
+  comEntrada?: string;
+  mesmoDia?: string;
+  tipoCondicao?: string;
+  aceiteIntegrado?: string;
 }
 
 export interface Taxas {
@@ -65,6 +73,7 @@ export interface Lote {
   vendedorId?: number;
   compradorId?: number;
   precoCompra: number;
+  vendedorNome?: string;
 }
 
 export interface Role {

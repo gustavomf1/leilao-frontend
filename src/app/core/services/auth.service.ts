@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { LoteWebsocketService } from '../services/lote-websocket.service';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 
@@ -20,11 +21,13 @@ export class AuthService {
   private http = inject(HttpClient);
 
   private readonly API = `${environment.backendUrl}/api/login`;
+  private wsService = inject(LoteWebsocketService);
 
   login(dados: LoginRequest) {
     return this.http.post<LoginResponse>(this.API, dados).pipe(
       tap(res => {
         localStorage.setItem('auth_token', res.token);
+        this.wsService.conectar();
       })
     );
   }
@@ -34,6 +37,7 @@ export class AuthService {
   }
 
   logout() {
+    this.wsService.desconectar();
     localStorage.removeItem('auth_token');
   }
 

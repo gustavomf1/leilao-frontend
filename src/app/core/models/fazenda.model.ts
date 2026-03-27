@@ -6,4 +6,5 @@ export interface Fazenda {
   cidade: string;
   cnpj: string;
   titularId?: number;
+  titularNome?: string;
 }

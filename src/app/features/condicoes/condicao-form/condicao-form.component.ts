@@ -20,9 +20,23 @@ export class CondicaoFormComponent implements OnInit {
   isEdicao = false;
   condicaoId?: number;
 
+  tiposCondicao = ['ELITE', 'LEITE', 'CORTE', 'PRENHEZ', 'OUTROS', 'DOACAO'];
+  aceitesIntegrado = [
+    { value: 'NORMAL', label: 'Normal' },
+    { value: 'DESCONTAR_TODAS_PARCELAS', label: 'Descontar em Todas as Parcelas' },
+    { value: 'DESCONTAR_PRIMEIRA_PARCELA', label: 'Descontar na Primeira Parcela' }
+  ];
+
   form = this.fb.group({
-    tipo: ['', Validators.required],
-    descricao: ['', Validators.required]
+    descricao:          ['', Validators.required],
+    captacao:           [null as number | null],
+    parcelas:           [null as number | null],
+    qtdDias:            [null as number | null],
+    percentualDesconto: [null as number | null],
+    comEntrada:         ['N'],
+    mesmoDia:           ['N'],
+    tipoCondicao:       [null as string | null],
+    aceiteIntegrado:    ['NORMAL']
   });
 
   ngOnInit() {
