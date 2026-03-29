@@ -16,3 +16,42 @@
 .btn-delete { background: #ef4444; color: white; border: none; padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
 .btn-delete:hover { background: #dc2626; }
 .empty-state { text-align: center; padding: 3rem; color: #94a3b8; }
+
+
+.dialog-mode {
+  padding: 1rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dialog-mode .page-header {
+  margin-bottom: 1rem;
+}
+
+.dialog-mode .page-title {
+  font-size: 1.2rem;
+}
+
+.dialog-mode .btn-primary {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+.dialog-mode .search-input {
+  max-width: 100%;
+}
+
+.dialog-mode .table-card {
+  box-shadow: none;
+  border: 1px solid #e2e8f0;
+}
+
+.dialog-mode .data-table th,
+.dialog-mode .data-table td {
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.dialog-mode .empty-state {
+  padding: 1.5rem;
+}

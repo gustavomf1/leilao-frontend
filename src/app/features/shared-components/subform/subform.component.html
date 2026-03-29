@@ -1,0 +1,26 @@
+<div class="subform-card">
+  <div class="subform-header">
+    <button type="button" class="btn-add" (click)="create.emit()">
+      + Nova
+    </button>
+  </div>
+
+  <div class="subform-list">
+    <div class="subform-item" *ngFor="let control of formArray.controls; let i = index">
+      <span class="item-name">
+        {{ control.value?.[displayField] }}
+      </span>
+
+      <button
+        type="button"
+        class="btn-remove"
+        (click)="remover(i)">
+        Remover
+      </button>
+    </div>
+
+    <div *ngIf="formArray.length === 0" class="empty-state">
+      Nenhum item cadastrado.
+    </div>
+  </div>
+</div>
