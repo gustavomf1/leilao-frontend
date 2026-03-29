@@ -1,0 +1,163 @@
+<div class="container-lg px-4">
+  <h2 class="mb-4">
+    <fa-icon [icon]="faUserShield" class="me-2"></fa-icon>
+    Gerenciamento de Permissões
+  </h2>
+
+  <!-- ─── CRUD de Roles ─────────────────────────────────────── -->
+  <c-card class="mb-4">
+    <c-card-header>
+      <strong>Roles do Sistema</strong>
+    </c-card-header>
+    <c-card-body>
+      <!-- Form inline para criar/editar role -->
+      <div class="row g-3 align-items-end mb-4">
+        <div class="col-md-4">
+          <label cLabel>Nome *</label>
+          <input cFormControl [(ngModel)]="novaRole.nome" placeholder="Ex: GERENCIAR_LEILOES" />
+        </div>
+        <div class="col-md-5">
+          <label cLabel>Descrição</label>
+          <input cFormControl [(ngModel)]="novaRole.descricao" placeholder="Ex: Permite gerenciar leilões" />
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button cButton color="primary" size="sm" (click)="salvarRole()">
+            <fa-icon [icon]="editandoRole ? faSave : faPlus" class="me-1"></fa-icon>
+            {{ editandoRole ? 'Salvar' : 'Criar Role' }}
+          </button>
+          <button *ngIf="editandoRole" cButton color="secondary" size="sm" variant="ghost" (click)="limparFormRole()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de Roles -->
+      <table cTable hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of roles">
+            <td>{{ role.id }}</td>
+            <td><c-badge color="info">{{ role.nome }}</c-badge></td>
+            <td>{{ role.descricao }}</td>
+            <td class="text-center">
+              <button cButton color="info" size="sm" variant="ghost" (click)="editarRole(role)">
+                <fa-icon [icon]="faPencil"></fa-icon>
+              </button>
+              <button cButton color="danger" size="sm" variant="ghost" (click)="deletarRole(role.id!)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="roles.length === 0">
+            <td colspan="4" class="text-center text-muted">Nenhuma role cadastrada</td>
+          </tr>
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+
+  <!-- ─── Funcionários e suas Roles ──────────────────────────── -->
+  <c-card>
+    <c-card-header>
+      <strong>Permissões dos Funcionários</strong>
+    </c-card-header>
+    <c-card-body>
+      <table cTable hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Admin</th>
+            <th>Roles</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let func of funcionarios">
+            <td>{{ func.id }}</td>
+            <td>{{ func.nome }}</td>
+            <td>{{ func.email }}</td>
+            <td>
+              <c-badge [color]="func.isAdmin ? 'success' : 'secondary'">
+                {{ func.isAdmin ? 'Sim' : 'Não' }}
+              </c-badge>
+            </td>
+            <td>
+              <span *ngIf="!func.roles || func.roles.length === 0" class="text-muted">Nenhuma</span>
+              <c-badge *ngFor="let role of func.roles" color="info" class="me-1">
+                {{ role.nome }}
+              </c-badge>
+            </td>
+            <td class="text-center">
+              <button cButton color="warning" size="sm" variant="ghost" (click)="abrirModalRoles(func)">
+                <fa-icon [icon]="faShieldHalved" class="me-1"></fa-icon>
+                Configurar
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="funcionarios.length === 0">
+            <td colspan="6" class="text-center text-muted">Nenhum funcionário cadastrado</td>
+          </tr>
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+</div>
+
+<!-- ─── Modal de Configuração de Roles ─────────────────────── -->
+<c-modal [(visible)]="modalVisivel" alignment="center">
+  <c-modal-header>
+    <h5 cModalTitle>
+      <fa-icon [icon]="faShieldHalved" class="me-2"></fa-icon>
+      Configurar Permissões — {{ funcionarioSelecionado?.nome }}
+    </h5>
+    <button cButtonClose (click)="fecharModal()"></button>
+  </c-modal-header>
+  <c-modal-body>
+    <!-- Admin Toggle -->
+    <div class="mb-4">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="isAdminSwitch"
+               [(ngModel)]="isAdminSelecionado" />
+        <label class="form-check-label fw-bold" for="isAdminSwitch">
+          <fa-icon [icon]="faUserShield" class="me-1"></fa-icon>
+          Administrador
+        </label>
+      </div>
+      <small class="text-muted">Administradores podem gerenciar roles e permissões de outros funcionários.</small>
+    </div>
+
+    <hr />
+
+    <!-- Roles Checkboxes -->
+    <h6 class="mb-3">Roles</h6>
+    <div *ngIf="roles.length === 0" class="text-muted">
+      Nenhuma role cadastrada. Crie roles acima primeiro.
+    </div>
+    <div *ngFor="let role of roles" class="form-check mb-2">
+      <input class="form-check-input" type="checkbox"
+             [id]="'role-' + role.id"
+             [checked]="rolesSelecionadas.has(role.id!)"
+             (change)="toggleRole(role.id!)" />
+      <label class="form-check-label" [for]="'role-' + role.id">
+        <strong>{{ role.nome }}</strong>
+        <span *ngIf="role.descricao" class="text-muted ms-2">— {{ role.descricao }}</span>
+      </label>
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="fecharModal()">Cancelar</button>
+    <button cButton color="primary" (click)="salvarRolesFuncionario()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      Salvar Permissões
+    </button>
+  </c-modal-footer>
+</c-modal>
