@@ -13,6 +13,7 @@ import { Lote } from '../../../core/models/entities.model';
 import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-lotes-list',
@@ -26,6 +27,7 @@ export class LotesListComponent implements OnInit {
   private wsService = inject(LoteWebsocketService);
   private alert = inject(AlertService);
   private zone = inject(NgZone);
+  auth = inject(AuthService);
 
   lotes: any[] = [];
   lotes$ = new Subject<any[]>();

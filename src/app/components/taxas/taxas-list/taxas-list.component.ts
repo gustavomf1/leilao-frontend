@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Taxas } from '../../../core/models/entities.model';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-taxas-list',
@@ -20,6 +21,7 @@ export class TaxasListComponent implements OnInit {
   private service = inject(TaxasService);
   private alert = inject(AlertService);
   private zone = inject(NgZone);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;

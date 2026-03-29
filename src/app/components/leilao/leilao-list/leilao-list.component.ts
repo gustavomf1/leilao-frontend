@@ -8,6 +8,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Leilao } from '../../../core/models/entities.model';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -20,6 +21,7 @@ export class LeiloesListComponent implements OnInit {
   private service = inject(LeilaoService);
   private alert = inject(AlertService);
   private cdr = inject(ChangeDetectorRef);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;

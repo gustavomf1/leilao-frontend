@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Funcionario } from '../../../core/models/entities.model';
 import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-funcionarios-list',
@@ -19,6 +20,7 @@ export class FuncionariosListComponent implements OnInit {
   private service = inject(FuncionarioService);
   private alert = inject(AlertService);
   private zone = inject(NgZone);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;
