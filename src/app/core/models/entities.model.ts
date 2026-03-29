@@ -124,6 +124,14 @@ export interface Funcionario {
   roles?: Role[];
 }
 
+export interface Pix {
+  pixId?: number;
+  tipo: 'CPF_CNPJ' | 'TELEFONE' | 'EMAIL' | 'CHAVE_ALEATORIA';
+  chave: string;
+  usuarioId?: number;
+  usuarioNome?: string;
+}
+
 export interface AtribuirRoles {
   roleIds: number[];
   isAdmin: boolean;
