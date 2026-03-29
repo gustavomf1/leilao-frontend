@@ -13,6 +13,7 @@ import { routes } from './app.routes';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { provideNgxMask } from 'ngx-mask';
 
 
 export const appConfig: ApplicationConfig = {
@@ -34,7 +35,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FontAwesomeModule),
     provideHttpClient(
       withInterceptors([authInterceptor])
-    )
-
+    ),
+    provideNgxMask()
   ]
 };

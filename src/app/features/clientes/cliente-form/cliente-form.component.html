@@ -21,7 +21,7 @@
 
       <div class="form-group">
         <label for="cpf">CPF</label>
-        <input id="cpf" type="text" formControlName="cpf" placeholder="000.000.000-00" />
+        <input id="cpf" type="text" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00"/>
         @if (form.get('cpf')?.invalid && form.get('cpf')?.touched) {
         <span class="error-msg">CPF é obrigatório.</span>
         }
@@ -29,12 +29,12 @@
 
       <div class="form-group">
         <label for="rg">RG</label>
-        <input id="rg" type="text" formControlName="rg" placeholder="RG" />
+        <input id="rg" type="text" formControlName="rg" placeholder="RG" mask="00.000.000-0"/>
       </div>
 
       <div class="form-group">
         <label for="telefone">Telefone</label>
-        <input id="telefone" type="text" formControlName="telefone" placeholder="(00) 00000-0000" />
+        <input id="telefone" type="text" formControlName="telefone" placeholder="(00) 00000-0000" mask="(00) 00000-0000||(00) 0000-0000" />
         @if (form.get('telefone')?.invalid && form.get('telefone')?.touched) {
         <span class="error-msg">Telefone é obrigatório.</span>
         }

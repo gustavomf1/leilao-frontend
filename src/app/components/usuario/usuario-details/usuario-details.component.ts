@@ -10,11 +10,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-usuarios-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule, NgxMaskDirective],
   templateUrl: './usuario-details.component.html',
   styleUrl: './usuario-details.component.scss'
 })

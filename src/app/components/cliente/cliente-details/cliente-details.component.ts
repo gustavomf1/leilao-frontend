@@ -11,12 +11,13 @@ import { AlertService } from '../../../shared/services/alert.service';
 import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
 import { FazendaService } from '../../../core/services/fazenda.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-clientes-details',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
-    SubformComponent],
+    SubformComponent, NgxMaskDirective],
   templateUrl: './cliente-details.component.html',
 })
 export class ClientesDetailsComponent implements OnInit, OnDestroy {

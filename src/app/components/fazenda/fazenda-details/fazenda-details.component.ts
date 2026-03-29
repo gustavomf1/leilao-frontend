@@ -12,12 +12,13 @@ import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
 import { ClientePickerComponent } from '../../../shared/components/cliente-picker/cliente-picker.component';
 import { ClienteService } from '../../../core/services/cliente.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-fazendas-details',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
-    SubformComponent, ClientePickerComponent],
+    SubformComponent, ClientePickerComponent, NgxMaskDirective],
   templateUrl: './fazenda-details.component.html',
 })
 export class FazendasDetailsComponent implements OnInit, OnDestroy {

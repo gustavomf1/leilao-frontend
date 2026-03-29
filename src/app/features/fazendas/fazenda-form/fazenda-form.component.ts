@@ -5,11 +5,12 @@ import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Optional, Inject } from '@angular/core';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-fazenda-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgxMaskDirective],
   templateUrl: './fazenda-form.component.html',
   styleUrl: './fazenda-form.component.css'
 })

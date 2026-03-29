@@ -7,11 +7,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-funcionarios-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule, NgxMaskDirective],
   templateUrl: './funcionario-details.component.html',
 })
 export class FuncionariosDetailsComponent implements OnInit {

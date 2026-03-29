@@ -6,6 +6,8 @@ import { ClienteService } from '../../../core/services/cliente.service';
 import { SubformComponent } from '../../shared-components/subform/subform.component';
 import { FazendaFormComponent } from '../../fazendas/fazenda-form/fazenda-form.component';
 import { MatDialog } from '@angular/material/dialog';
+import { NgxMaskDirective } from 'ngx-mask';
+
 @Component({
   selector: 'app-cliente-form',
   standalone: true,
@@ -13,7 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    SubformComponent // 👈 ISSO AQUI É O QUE ESTÁ FALTANDO
+    SubformComponent,
+    NgxMaskDirective // 👈 ISSO AQUI É O QUE ESTÁ FALTANDO
   ], templateUrl: './cliente-form.component.html',
   styleUrl: './cliente-form.component.css'
 })
