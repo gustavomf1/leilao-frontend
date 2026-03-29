@@ -113,7 +113,7 @@
 </div>
 
 <!-- ─── Modal de Configuração de Roles ─────────────────────── -->
-<c-modal [visible]="modalVisivel" (visibleChange)="fecharModal()" alignment="center">
+<c-modal [(visible)]="modalVisivel" alignment="center">
   <c-modal-header>
     <h5 cModalTitle>
       <fa-icon [icon]="faShieldHalved" class="me-2"></fa-icon>
