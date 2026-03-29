@@ -12,6 +12,7 @@ import { Usuario } from '../../../core/models/entities.model';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { Subject } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-usuarios-list',
@@ -24,6 +25,7 @@ export class UsuariosListComponent implements OnInit {
   private service = inject(UsuarioService);
   private alert = inject(AlertService);
   private cdr = inject(ChangeDetectorRef);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;

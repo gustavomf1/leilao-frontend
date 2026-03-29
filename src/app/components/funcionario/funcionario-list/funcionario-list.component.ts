@@ -13,6 +13,7 @@ import { Funcionario, Pix } from '../../../core/models/entities.model';
 import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { PixService } from '../../../core/services/pix.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-funcionarios-list',
@@ -31,6 +32,7 @@ export class FuncionariosListComponent implements OnInit {
   private alert = inject(AlertService);
   private zone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;

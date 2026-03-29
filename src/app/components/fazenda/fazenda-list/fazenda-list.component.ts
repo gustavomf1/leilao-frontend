@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Fazenda } from '../../../core/models/entities.model';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-fazendas-list',
@@ -19,6 +20,7 @@ export class FazendasListComponent implements OnInit {
   private service = inject(FazendaService);
   private alert = inject(AlertService);
   private zone = inject(NgZone);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;

@@ -1,7 +1,7 @@
 <div class="container-lg px-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Funcionários</h2>
-    <a routerLink="/funcionarios/cadastrar" cButton color="primary" size="sm">
+    <a *ngIf="auth.hasPermission('FUNCIONARIOS', 'CRIAR')" routerLink="/funcionarios/cadastrar" cButton color="primary" size="sm">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Funcionário
     </a>
@@ -29,10 +29,10 @@
               <button cButton color="success" size="sm" variant="ghost" (click)="abrirModalPix(funcionario)" title="Gerenciar Pix">
                 <fa-icon [icon]="faKey"></fa-icon>
               </button>
-              <a [routerLink]="['/funcionarios', funcionario.id]" cButton color="info" size="sm" variant="ghost">
+              <a *ngIf="auth.hasPermission('FUNCIONARIOS', 'EDITAR')" [routerLink]="['/funcionarios', funcionario.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>
               </a>
-              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(funcionario.id!)">
+              <button *ngIf="auth.hasPermission('FUNCIONARIOS', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(funcionario.id!)">
                 <fa-icon [icon]="faTrash"></fa-icon>
               </button>
             </td>

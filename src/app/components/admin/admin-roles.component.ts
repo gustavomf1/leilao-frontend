@@ -9,7 +9,10 @@ import {
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus, faPencil, faTrash, faShieldHalved, faSave, faUserShield } from '@fortawesome/free-solid-svg-icons';
-import { Role, Funcionario, AtribuirRoles } from '../../core/models/entities.model';
+import {
+  Role, Funcionario, AtribuirRoles, Permissao,
+  ACOES, AMBIENTES, AMBIENTE_LABELS, ACAO_LABELS
+} from '../../core/models/entities.model';
 import { RoleService } from '../../core/services/role.service';
 import { FuncionarioService } from '../../core/services/funcionario.service';
 import { AlertService } from '../../shared/services/alert.service';
@@ -40,12 +43,18 @@ export class AdminRolesComponent implements OnInit {
   faSave = faSave;
   faUserShield = faUserShield;
 
+  acoes = ACOES;
+  ambientes = AMBIENTES;
+  ambienteLabels = AMBIENTE_LABELS;
+  acaoLabels = ACAO_LABELS;
+
   roles: Role[] = [];
   funcionarios: Funcionario[] = [];
 
   // Role form
   novaRole: Role = { nome: '', descricao: '' };
   editandoRole: Role | null = null;
+  permissaoMatrix: Record<string, Record<string, boolean>> = {};
 
   // Funcionario roles modal
   funcionarioSelecionado: Funcionario | null = null;
@@ -54,6 +63,7 @@ export class AdminRolesComponent implements OnInit {
   modalVisivel = false;
 
   ngOnInit() {
+    this.initMatrix();
     this.carregarRoles();
     this.carregarFuncionarios();
   }
@@ -77,6 +87,8 @@ export class AdminRolesComponent implements OnInit {
       this.alert.error('Nome da role é obrigatório');
       return;
     }
+
+    this.novaRole.permissoes = this.matrixToPermissoes();
 
     if (this.editandoRole?.id) {
       this.roleService.atualizar(this.editandoRole.id, this.novaRole).subscribe({
@@ -102,6 +114,7 @@ export class AdminRolesComponent implements OnInit {
   editarRole(role: Role) {
     this.editandoRole = role;
     this.novaRole = { nome: role.nome, descricao: role.descricao };
+    this.permissoesToMatrix(role.permissoes ?? []);
   }
 
   deletarRole(id: number) {
@@ -116,6 +129,7 @@ export class AdminRolesComponent implements OnInit {
   limparFormRole() {
     this.novaRole = { nome: '', descricao: '' };
     this.editandoRole = null;
+    this.initMatrix();
   }
 
   abrirModalRoles(funcionario: Funcionario) {
@@ -161,5 +175,50 @@ export class AdminRolesComponent implements OnInit {
   getRolesDoFuncionario(funcionario: Funcionario): string {
     if (!funcionario.roles || funcionario.roles.length === 0) return 'Nenhuma';
     return funcionario.roles.map(r => r.nome).join(', ');
+  }
+
+  initMatrix() {
+    this.permissaoMatrix = {};
+    for (const amb of this.ambientes) {
+      this.permissaoMatrix[amb] = {};
+      for (const acao of this.acoes) {
+        this.permissaoMatrix[amb][acao] = false;
+      }
+    }
+  }
+
+  permissoesToMatrix(permissoes: Permissao[]) {
+    this.initMatrix();
+    for (const p of permissoes) {
+      if (this.permissaoMatrix[p.ambiente]) {
+        this.permissaoMatrix[p.ambiente][p.acao] = true;
+      }
+    }
+  }
+
+  matrixToPermissoes(): Permissao[] {
+    const result: Permissao[] = [];
+    for (const amb of this.ambientes) {
+      for (const acao of this.acoes) {
+        if (this.permissaoMatrix[amb]?.[acao]) {
+          result.push({ acao, ambiente: amb });
+        }
+      }
+    }
+    return result;
+  }
+
+  toggleAllAmbiente(ambiente: string) {
+    const allChecked = this.acoes.every(a => this.permissaoMatrix[ambiente][a]);
+    for (const acao of this.acoes) {
+      this.permissaoMatrix[ambiente][acao] = !allChecked;
+    }
+  }
+
+  toggleAllAcao(acao: string) {
+    const allChecked = this.ambientes.every(a => this.permissaoMatrix[a][acao]);
+    for (const amb of this.ambientes) {
+      this.permissaoMatrix[amb][acao] = !allChecked;
+    }
   }
 }
