@@ -76,11 +76,43 @@ export interface Lote {
   vendedorNome?: string;
 }
 
+export interface Permissao {
+  acao: string;
+  ambiente: string;
+}
+
 export interface Role {
   id?: number;
   nome: string;
   descricao?: string;
+  permissoes?: Permissao[];
 }
+
+export const ACOES = ['CRIAR', 'EDITAR', 'DELETAR', 'VISUALIZAR'] as const;
+
+export const AMBIENTES = [
+  'DASHBOARD', 'FUNCIONARIOS', 'CLIENTES', 'FAZENDAS',
+  'LEILOES', 'CONDICOES', 'TAXAS', 'LOTES', 'WHATSAPP'
+] as const;
+
+export const AMBIENTE_LABELS: Record<string, string> = {
+  DASHBOARD: 'Dashboard',
+  FUNCIONARIOS: 'Funcionários',
+  CLIENTES: 'Clientes',
+  FAZENDAS: 'Fazendas',
+  LEILOES: 'Leilões',
+  CONDICOES: 'Condições',
+  TAXAS: 'Taxas',
+  LOTES: 'Lotes',
+  WHATSAPP: 'WhatsApp'
+};
+
+export const ACAO_LABELS: Record<string, string> = {
+  CRIAR: 'Criar',
+  EDITAR: 'Editar',
+  DELETAR: 'Deletar',
+  VISUALIZAR: 'Visualizar'
+};
 
 export interface Funcionario {
   id?: number;

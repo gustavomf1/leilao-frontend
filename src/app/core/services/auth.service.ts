@@ -11,6 +11,7 @@ export interface TokenPayload {
   tipo: string;
   isAdmin: boolean;
   roles: string[];
+  permissoes: string[];
   exp: number;
 }
 
@@ -75,5 +76,14 @@ export class AuthService {
   getUserTipo(): string {
     const payload = this.getTokenPayload();
     return payload?.tipo ?? '';
+  }
+
+  getPermissoes(): string[] {
+    return this.getTokenPayload()?.permissoes ?? [];
+  }
+
+  hasPermission(ambiente: string, acao: string): boolean {
+    if (this.isAdmin()) return true;
+    return this.getPermissoes().includes(`${ambiente}:${acao}`);
   }
 }

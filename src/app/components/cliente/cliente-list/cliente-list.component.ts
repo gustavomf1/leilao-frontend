@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Cliente } from '../../../core/models/entities.model';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-clientes-list',
@@ -20,6 +21,7 @@ export class ClientesListComponent implements OnInit {
   private service = inject(ClienteService);
   private alert = inject(AlertService);
   private zone = inject(NgZone);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;

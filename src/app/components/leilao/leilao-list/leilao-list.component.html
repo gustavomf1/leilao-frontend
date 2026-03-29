@@ -1,7 +1,7 @@
 <div class="container-lg px-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Leilões</h2>
-    <a routerLink="/leiloes/cadastrar" cButton color="primary" size="sm">
+    <a *ngIf="auth.hasPermission('LEILOES', 'CRIAR')" routerLink="/leiloes/cadastrar" cButton color="primary" size="sm">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Leilão
     </a>
@@ -28,10 +28,10 @@
             <td>{{ leilao.cidade }}/{{ leilao.uf }}</td>
             <td>{{ leilao.data }}</td>
             <td class="text-center">
-              <a [routerLink]="['/leiloes', leilao.id]" cButton color="info" size="sm" variant="ghost">
+              <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', leilao.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>
               </a>
-              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(leilao.id!)">
+              <button *ngIf="auth.hasPermission('LEILOES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(leilao.id!)">
                 <fa-icon [icon]="faTrash"></fa-icon>
               </button>
             </td>

@@ -1,7 +1,7 @@
 <div class="container-lg px-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Condições</h2>
-    <a routerLink="/condicoes/cadastrar" cButton color="primary" size="sm">
+    <a *ngIf="auth.hasPermission('CONDICOES', 'CRIAR')" routerLink="/condicoes/cadastrar" cButton color="primary" size="sm">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Nova Condição
     </a>
@@ -32,10 +32,10 @@
             <td>{{ condicao.percentualDesconto }}</td>
             <td>{{ condicao.comEntrada === 'S' ? 'Sim' : 'Não' }}</td>
             <td class="text-center">
-              <a [routerLink]="['/condicoes', condicao.id]" cButton color="info" size="sm" variant="ghost">
+              <a *ngIf="auth.hasPermission('CONDICOES', 'EDITAR')" [routerLink]="['/condicoes', condicao.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>
               </a>
-              <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(condicao.id!)">
+              <button *ngIf="auth.hasPermission('CONDICOES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(condicao.id!)">
                 <fa-icon [icon]="faTrash"></fa-icon>
               </button>
             </td>

@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Condicoes } from '../../../core/models/entities.model';
 import { CondicoesService } from '../../../core/services/condicoes.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-condicoes-list',
@@ -20,6 +21,7 @@ export class CondicoesListComponent implements OnInit {
   private service = inject(CondicoesService);
   private alert = inject(AlertService);
   private zone = inject(NgZone);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;
