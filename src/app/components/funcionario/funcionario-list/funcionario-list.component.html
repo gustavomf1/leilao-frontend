@@ -26,6 +26,9 @@
             <td>{{ funcionario.email }}</td>
             <td>{{ funcionario.cpf }}</td>
             <td class="text-center">
+              <button cButton color="success" size="sm" variant="ghost" (click)="abrirModalPix(funcionario)" title="Gerenciar Pix">
+                <fa-icon [icon]="faKey"></fa-icon>
+              </button>
               <a [routerLink]="['/funcionarios', funcionario.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>
               </a>
@@ -39,3 +42,67 @@
     </c-card-body>
   </c-card>
 </div>
+
+<!-- ─── Modal de Chaves Pix ─────────────────────────────────── -->
+<c-modal [(visible)]="modalPixVisivel" alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>
+      <fa-icon [icon]="faKey" class="me-2"></fa-icon>
+      Chaves Pix — {{ funcionarioSelecionado?.nome }}
+    </h5>
+    <button cButtonClose (click)="fecharModalPix()"></button>
+  </c-modal-header>
+  <c-modal-body>
+
+    <!-- Formulário para adicionar nova chave -->
+    <div class="row g-3 align-items-end mb-4">
+      <div class="col-md-4">
+        <label cLabel>Tipo</label>
+        <select cFormSelect [(ngModel)]="novoPix.tipo">
+          <option *ngFor="let tipo of tiposPix" [value]="tipo">{{ tipo }}</option>
+        </select>
+      </div>
+      <div class="col-md-5">
+        <label cLabel>Chave</label>
+        <input cFormControl [(ngModel)]="novoPix.chave" placeholder="Ex: email@email.com" />
+      </div>
+      <div class="col-md-3">
+        <button cButton color="primary" size="sm" (click)="adicionarPix()">
+          <fa-icon [icon]="faPlus" class="me-1"></fa-icon>
+          Adicionar
+        </button>
+      </div>
+    </div>
+
+    <hr />
+
+    <!-- Lista de chaves cadastradas -->
+    <table cTable hover responsive>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Chave</th>
+          <th class="text-center">Remover</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pix of pixKeys">
+          <td><c-badge color="info">{{ pix.tipo }}</c-badge></td>
+          <td>{{ pix.chave }}</td>
+          <td class="text-center">
+            <button cButton color="danger" size="sm" variant="ghost" (click)="deletarPix(pix.pixId!)">
+              <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="pixKeys.length === 0">
+          <td colspan="3" class="text-center text-muted">Nenhuma chave cadastrada</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="fecharModalPix()">Fechar</button>
+  </c-modal-footer>
+</c-modal>
