@@ -12,16 +12,20 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th>Porcentagem</th>
-          <th>Tipo de Cliente</th>
+          <th>Comissão Vendedor</th>
+          <th>Comissão Comprador</th>
+          <th>Espécie</th>
+          <th>Tipo de Leilão</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody>
         @for (taxa of taxasFiltradas; track taxa.id) {
           <tr>
-            <td>{{ taxa.porcentagem }}%</td>
-            <td>{{ taxa.tipo_cliente }}</td>
+            <td>{{ taxa.comissaoVendedor }}%</td>
+            <td>{{ taxa.comissaoComprador }}%</td>
+            <td>{{ taxa.especie }}</td>
+            <td>{{ taxa.tipoLeilao }}</td>
             <td>
               <div class="actions">
                 <a [routerLink]="['../form', taxa.id]" class="btn-edit">Editar</a>

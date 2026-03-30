@@ -21,8 +21,10 @@ export class TaxaFormComponent implements OnInit {
   taxaId?: number;
 
   form = this.fb.group({
-    porcentagem: [0, [Validators.required, Validators.min(0)]],
-    tipo_cliente: ['', Validators.required]
+    comissaoVendedor: [0, [Validators.required, Validators.min(0)]],
+    comissaoComprador: [0, [Validators.required, Validators.min(0)]],
+    especie: ['', Validators.required],
+    tipoLeilao: ['', Validators.required]
   });
 
   ngOnInit() {

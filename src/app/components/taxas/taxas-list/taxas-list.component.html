@@ -13,16 +13,20 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Porcentagem</th>
-            <th>Tipo de Cliente</th>
+            <th>Comissão Vendedor</th>
+            <th>Comissão Comprador</th>
+            <th>Espécie</th>
+            <th>Tipo de Leilão</th> 
             <th class="text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let taxa of taxas$ | async">
             <td>{{ taxa.id }}</td>
-            <td>{{ taxa.porcentagem }}%</td>
-            <td>{{ taxa.tipoCliente }}</td>
+            <td>{{ taxa.comissaoVendedor }}%</td>
+            <td>{{ taxa.comissaoComprador }}%</td>
+            <td>{{ taxa.especie }}</td>
+            <td>{{ taxa.tipoLeilao }}</td>
             <td class="text-center">
               <a *ngIf="auth.hasPermission('TAXAS', 'EDITAR')" [routerLink]="['/taxas', taxa.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>

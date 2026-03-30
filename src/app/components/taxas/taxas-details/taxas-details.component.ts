@@ -33,8 +33,10 @@ export class TaxasDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      porcentagem:  [0, [Validators.required, Validators.min(0)]],
-      tipoCliente: ['', Validators.required]
+      comissaoVendedor: [0, [Validators.required, Validators.min(0)]],
+      comissaoComprador: [0, [Validators.required, Validators.min(0)]],
+      especie: ['', Validators.required],
+      tipoLeilao: ['', Validators.required]
     });
 
     const id = this.route.snapshot.paramMap.get('id');

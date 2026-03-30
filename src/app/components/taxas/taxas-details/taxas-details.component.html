@@ -16,20 +16,40 @@
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="porcentagem">Porcentagem (%) *</label>
-              <input cFormControl id="porcentagem" type="number" formControlName="porcentagem" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('porcentagem')?.invalid && form.get('porcentagem')?.touched" [valid]="false">
-                Porcentagem é obrigatória
+              <label cLabel for="comissaoVendedor">Comissão Vendedor (%) *</label>
+              <input cFormControl id="comissaoVendedor" type="number" formControlName="comissaoVendedor" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('comissaoVendedor')?.invalid && form.get('comissaoVendedor')?.touched" [valid]="false">
+                Comissão Vendedor é obrigatória
               </c-form-feedback>
             </div>
           </c-col>
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="tipoCliente">Tipo de Cliente *</label>
-              <input cFormControl id="tipoCliente" formControlName="tipoCliente" placeholder="Ex: Comprador, Vendedor" />
-              <c-form-feedback *ngIf="form.get('tipoCliente')?.invalid && form.get('tipoCliente')?.touched" [valid]="false">
-                Tipo de cliente é obrigatório
+              <label cLabel for="comissaoComprador">Comissão Comprador (%) *</label>
+              <input cFormControl id="comissaoComprador" type="number" formControlName="comissaoComprador" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('comissaoComprador')?.invalid && form.get('comissaoComprador')?.touched" [valid]="false">
+                Comissão Comprador é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="especie">Espécie *</label>
+              <input cFormControl id="especie" type="text" formControlName="especie" placeholder="Ex: Bovino, Equino" />
+              <c-form-feedback *ngIf="form.get('especie')?.invalid && form.get('especie')?.touched" [valid]="false">
+                Espécie é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="tipoLeilao">Tipo*</label>
+              <input cFormControl id="tipoLeilao" type="text" formControlName="tipoLeilao" placeholder="Ex: Elite, Corte" />
+              <c-form-feedback *ngIf="form.get('tipoLeilao')?.invalid && form.get('tipoLeilao')?.touched" [valid]="false">
+                Tipo de Leilão é obrigatório
               </c-form-feedback>
             </div>
           </c-col>

@@ -1,5 +1,7 @@
 export interface Taxas {
   id?: number;
-  porcentagem: number;
-  tipo_cliente: string;
+  comissaoVendedor: number;
+  comissaoComprador: number;
+  especie: string;
+  tipoLeilao: string;
 }

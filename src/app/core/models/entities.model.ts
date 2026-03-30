@@ -54,8 +54,10 @@ export interface Condicoes {
 
 export interface Taxas {
   id?: number;
-  porcentagem: number;
-  tipoCliente: string;
+  comissaoVendedor: number;
+  comissaoComprador: number;
+  especie: string;
+  tipoLeilao: string;
 }
 
 export interface Lote {

@@ -26,7 +26,7 @@ export class TaxaListaComponent implements OnInit {
   get taxasFiltradas(): Taxas[] {
     if (!this.filtro) return this.taxas;
     const f = this.filtro.toLowerCase();
-    return this.taxas.filter(t => t.tipo_cliente.toLowerCase().includes(f));
+    return this.taxas.filter(t => t.tipoLeilao.toLowerCase().includes(f));
   }
 
   excluir(id: number) {

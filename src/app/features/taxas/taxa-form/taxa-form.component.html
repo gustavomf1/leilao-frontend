@@ -6,12 +6,22 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form-grid">
       <div class="form-group">
-        <label>Porcentagem (%)</label>
-        <input type="number" formControlName="porcentagem" placeholder="Porcentagem" step="0.01">
+        <label>Comissão Vendedor (%)</label>
+        <input type="number" formControlName="comissaoVendedor" placeholder="Comissão Vendedor" step="0.01">
       </div>
       <div class="form-group">
-        <label>Tipo de Cliente</label>
-        <input type="text" formControlName="tipo_cliente" placeholder="Ex: Comprador, Vendedor">
+        <label>Comissão Comprador (%)</label>
+        <input type="number" formControlName="comissaoComprador" placeholder="Comissão Comprador" step="0.01">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Espécie</label>
+        <input type="text" formControlName="especie" placeholder="Ex: Bovino, Equino">
+      </div>
+      <div class="form-group">
+        <label>Tipo de Leilão</label>
+        <input type="text" formControlName="tipoLeilao" placeholder="Ex: Leilão Online, Leilão Presencial">
       </div>
     </div>
     <div class="form-actions">
