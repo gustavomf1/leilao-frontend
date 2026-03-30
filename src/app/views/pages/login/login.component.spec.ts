@@ -5,10 +5,6 @@ import { LoginComponent } from './login.component';
 import { IconModule } from '@coreui/icons-angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from '../../../icons/icon-subset';
-import { Subject } from 'rxjs';
-import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
-
-const mockWsService = {novoLoteSubject: new Subject(), conectar: () => {}, desconectar: () => {}};
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -18,7 +14,7 @@ describe('LoginComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     imports: [FormModule, CardModule, GridModule, ButtonModule, IconModule, LoginComponent],
-    providers: [IconSetService, { provide: LoteWebsocketService, useValue: mockWsService }]
+    providers: [IconSetService]
 })
     .compileComponents();
   });

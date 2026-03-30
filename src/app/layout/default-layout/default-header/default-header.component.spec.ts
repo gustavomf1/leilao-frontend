@@ -16,10 +16,6 @@ import {
 import { IconModule, IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from '../../../icons/icon-subset';
 import { DefaultHeaderComponent } from './default-header.component';
-import { Subject } from 'rxjs';
-import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
-
-const mockWsService = {novoLoteSubject: new Subject(), conectar: () => {}, desconectar: () => {}};
 
 describe('DefaultHeaderComponent', () => {
   let component: DefaultHeaderComponent;
@@ -29,7 +25,7 @@ describe('DefaultHeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     imports: [GridModule, HeaderModule, IconModule, NavModule, BadgeModule, AvatarModule, DropdownModule, BreadcrumbModule, SidebarModule, ProgressModule, ButtonGroupModule, ReactiveFormsModule, DefaultHeaderComponent],
-    providers: [IconSetService, provideRouter([]), { provide: LoteWebsocketService, useValue: mockWsService }]
+    providers: [IconSetService, provideRouter([])]
 })
       .compileComponents();
   });

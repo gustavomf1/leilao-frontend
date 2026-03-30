@@ -1,10 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
-import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 
 import { UsuariosListComponent } from './usuario-list.component';
-
-const mockWsService = {novoLoteSubject: new Subject(), conectar: () => {}, desconectar: () => {}};
 
 describe('UsuariosListComponent', () => {
   let component: UsuariosListComponent;
@@ -12,10 +8,7 @@ describe('UsuariosListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UsuariosListComponent],
-      providers: [
-        { provide: LoteWebsocketService, useValue: mockWsService }
-      ]
+      imports: [UsuariosListComponent]
     })
     .compileComponents();
 
