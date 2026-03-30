@@ -36,7 +36,7 @@ export class TaxasListComponent implements OnInit {
   carregar() {
     this.service.listar().subscribe({
       next: (data) => this.zone.run(() => this.taxas$.next(data)),
-      error: () => this.alert.error('Erro ao carregar taxas')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxas')
     });
   }
 
@@ -44,7 +44,7 @@ export class TaxasListComponent implements OnInit {
     this.alert.confirm('Deseja realmente excluir esta taxa?', () => {
       this.service.deletar(id).subscribe({
         next: () => { this.alert.success('Taxa excluída!'); this.carregar(); },
-        error: () => this.alert.error('Erro ao excluir taxa')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir taxa')
       });
     });
   }

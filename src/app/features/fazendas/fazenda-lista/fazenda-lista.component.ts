@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Fazenda } from '../../../core/models/fazenda.model';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-fazenda-lista',
@@ -36,7 +37,7 @@ export class FazendaListaComponent implements OnInit {
         this.fazendasFiltradas = dados;
       },
       error: (err) => {
-        console.error('Erro ao carregar fazendas:', err);
+        this.alert.error(err.error?.mensagem || 'Erro ao carregar fazendas');
       }
     });
   }
@@ -58,10 +59,11 @@ export class FazendaListaComponent implements OnInit {
           this.carregarFazendas();
         },
         error: (err) => {
-          console.error('Erro ao excluir fazenda:', err);
-          alert('Erro ao excluir fazenda.');
+          this.alert.error(err.error?.mensagem || 'Erro ao excluir fazenda');
         }
       });
     }
   }
+
+  private alert = inject(AlertService);
 }

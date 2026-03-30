@@ -87,7 +87,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
               });
             }
           },
-          error: () => this.alert.error('Erro ao carregar cliente')
+          error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar cliente')
         });
       }
     }
@@ -127,7 +127,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
             }
           }
         },
-        error: () => this.alert.error('Erro ao salvar cliente')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar cliente')
       });
     }
   }

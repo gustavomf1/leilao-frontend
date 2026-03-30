@@ -35,7 +35,7 @@ export class FazendasListComponent implements OnInit {
   carregar() {
     this.service.listar().subscribe({
       next: (data) => this.zone.run(() => this.fazendas$.next(data)),
-      error: () => this.alert.error('Erro ao carregar fazendas')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar fazendas')
     });
   }
 
@@ -46,7 +46,7 @@ export class FazendasListComponent implements OnInit {
           this.alert.success('Fazenda excluída!');
           this.fazendas$.next(this.fazendas$.value.filter(f => f.id !== id));
         },
-        error: () => this.alert.error('Erro ao excluir fazenda')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir fazenda')
       });
     });
   }

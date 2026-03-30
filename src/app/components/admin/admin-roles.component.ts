@@ -71,14 +71,14 @@ export class AdminRolesComponent implements OnInit {
   carregarRoles() {
     this.roleService.listar().subscribe({
       next: (data) => { this.roles = data; this.cdr.detectChanges(); },
-      error: () => this.alert.error('Erro ao carregar roles')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar roles')
     });
   }
 
   carregarFuncionarios() {
     this.funcionarioService.listar().subscribe({
       next: (data) => { this.funcionarios = data; this.cdr.detectChanges(); },
-      error: () => this.alert.error('Erro ao carregar funcionários')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar funcionários')
     });
   }
 
@@ -97,7 +97,7 @@ export class AdminRolesComponent implements OnInit {
           this.limparFormRole();
           this.carregarRoles();
         },
-        error: () => this.alert.error('Erro ao atualizar role')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao atualizar role')
       });
     } else {
       this.roleService.criar(this.novaRole).subscribe({
@@ -106,7 +106,7 @@ export class AdminRolesComponent implements OnInit {
           this.limparFormRole();
           this.carregarRoles();
         },
-        error: () => this.alert.error('Erro ao criar role')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao criar role')
       });
     }
   }
@@ -121,7 +121,7 @@ export class AdminRolesComponent implements OnInit {
     if (confirm('Deseja realmente excluir esta role?')) {
       this.roleService.deletar(id).subscribe({
         next: () => { this.alert.success('Role excluída!'); this.carregarRoles(); },
-        error: () => this.alert.error('Erro ao excluir role')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir role')
       });
     }
   }
@@ -168,7 +168,7 @@ export class AdminRolesComponent implements OnInit {
         this.fecharModal();
         this.carregarFuncionarios();
       },
-      error: () => this.alert.error('Erro ao atualizar permissões')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao atualizar permissões')
     });
   }
 

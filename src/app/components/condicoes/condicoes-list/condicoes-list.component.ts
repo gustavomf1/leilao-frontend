@@ -36,7 +36,7 @@ export class CondicoesListComponent implements OnInit {
   carregar() {
     this.service.listar().subscribe({
       next: (data) => this.zone.run(() => this.condicoes$.next(data)),
-      error: () => this.alert.error('Erro ao carregar condições')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar condições')
     });
   }
 
@@ -44,7 +44,7 @@ export class CondicoesListComponent implements OnInit {
     this.alert.confirm('Deseja realmente excluir esta condição?', () => {
       this.service.deletar(id).subscribe({
         next: () => { this.alert.success('Condição excluída!'); this.carregar(); },
-        error: () => this.alert.error('Erro ao excluir condição')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir condição')
       });
     });
   }

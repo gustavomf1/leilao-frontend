@@ -49,7 +49,7 @@ export class FuncionariosDetailsComponent implements OnInit {
       this.form.get('senha')?.updateValueAndValidity();
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar funcionário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar funcionário')
       });
     }
   }
@@ -70,7 +70,7 @@ export class FuncionariosDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Funcionário atualizado!' : 'Funcionário cadastrado!');
           this.router.navigate(['/funcionarios/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar funcionário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar funcionário')
       });
     }
   }
