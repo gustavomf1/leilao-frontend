@@ -57,7 +57,7 @@ export class CondicoesDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar condição')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar condição')
       });
     }
   }
@@ -74,7 +74,7 @@ export class CondicoesDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Condição atualizada!' : 'Condição cadastrada!');
           this.router.navigate(['/condicoes/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar condição')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar condição')
       });
     }
   }

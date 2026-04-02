@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { TaxasService } from '../../../core/services/taxas.service';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-taxa-form',
@@ -16,6 +17,7 @@ export class TaxaFormComponent implements OnInit {
   private service = inject(TaxasService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private alert = inject(AlertService);
 
   isEdicao = false;
   taxaId?: number;
@@ -30,7 +32,10 @@ export class TaxaFormComponent implements OnInit {
     if (id) {
       this.isEdicao = true;
       this.taxaId = +id;
-      this.service.buscarPorId(this.taxaId).subscribe(data => this.form.patchValue(data));
+      this.service.buscarPorId(this.taxaId).subscribe({
+        next: data => this.form.patchValue(data),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxa')
+      });
     }
   }
 
@@ -38,7 +43,10 @@ export class TaxaFormComponent implements OnInit {
     if (this.form.valid) {
       const dados = this.form.getRawValue() as any;
       const op = this.isEdicao ? this.service.atualizar(this.taxaId!, dados) : this.service.salvar(dados);
-      op.subscribe(() => this.router.navigate(['/app/taxas']));
+      op.subscribe({
+        next: () => this.router.navigate(['/app/taxas']),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar taxa')
+      });
     }
   }
 

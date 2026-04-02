@@ -35,7 +35,7 @@ export class EspecieListComponent implements OnInit {
   carregar() {
     this.service.listarTodas().subscribe({
       next: (data) => this.especies$.next(data),
-      error: () => this.alert.error('Erro ao carregar espécies'),
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar espécies'),
     });
   }
 
@@ -44,7 +44,7 @@ export class EspecieListComponent implements OnInit {
     this.alert.confirm(`Deseja ${acao} a espécie "${especie.nome}"?`, () => {
       this.service.inativar(especie.id!).subscribe({
         next: () => { this.alert.success(`Espécie ${acao === 'ativar' ? 'ativada' : 'inativada'}!`); this.carregar(); },
-        error: () => this.alert.error(`Erro ao ${acao} espécie`),
+        error: (err) => this.alert.error(err.error?.mensagem || `Erro ao ${acao} espécie`),
       });
     });
   }

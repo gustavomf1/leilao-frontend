@@ -55,7 +55,7 @@ export class ClientesListComponent implements OnInit {
   carregar() {
     this.service.listar().subscribe({
       next: (data) => this.zone.run(() => this.clientes$.next(data)),
-      error: () => this.alert.error('Erro ao carregar clientes')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar clientes')
     });
   }
 
@@ -66,7 +66,7 @@ export class ClientesListComponent implements OnInit {
           this.alert.success('Cliente excluído!');
           this.clientes$.next(this.clientes$.value.filter(c => c.id !== id));
         },
-        error: () => this.alert.error('Erro ao excluir cliente')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir cliente')
       });
     });
   }
@@ -76,7 +76,7 @@ export class ClientesListComponent implements OnInit {
     this.novoPix = { tipo: 'CPF_CNPJ', chave: '' };
     this.pixService.listarPorUsuario(cliente.id!).subscribe({
       next: (data) => { this.pixKeys = data; this.cdr.detectChanges(); },
-      error: () => this.alert.error('Erro ao carregar chaves Pix')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar chaves Pix')
     });
     this.modalPixVisivel = true;
   }
@@ -105,7 +105,7 @@ export class ClientesListComponent implements OnInit {
           next: (data) => { this.pixKeys = data; this.cdr.detectChanges(); }
         });
       },
-      error: () => this.alert.error('Erro ao adicionar chave Pix')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao adicionar chave Pix')
     });
   }
 
@@ -117,7 +117,7 @@ export class ClientesListComponent implements OnInit {
           this.pixKeys = this.pixKeys.filter(p => p.pixId !== pixId);
           this.cdr.detectChanges();
         },
-        error: () => this.alert.error('Erro ao remover chave Pix')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao remover chave Pix')
       });
     });
   }

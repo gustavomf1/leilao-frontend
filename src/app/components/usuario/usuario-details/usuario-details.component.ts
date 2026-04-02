@@ -50,7 +50,7 @@ export class UsuariosDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar usuário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar usuário')
       });
     }
   }
@@ -67,7 +67,7 @@ export class UsuariosDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Usuário atualizado!' : 'Usuário cadastrado!');
           this.router.navigate(['/usuarios/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar usuário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar usuário')
       });
     }
   }

@@ -41,7 +41,7 @@ export class LeiloesListComponent implements OnInit {
         this.leiloes = data;
         this.leiloes$.next(this.leiloes);
       },
-      error: () => this.alert.error('Erro ao carregar leilões')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar leilões')
     });
   }
 
@@ -49,7 +49,7 @@ export class LeiloesListComponent implements OnInit {
     if (confirm('Deseja realmente excluir este leilão?')) {
       this.service.deletar(id).subscribe({
         next: () => { this.alert.success('Leilão excluído!'); this.carregar(); },
-        error: () => this.alert.error('Erro ao excluir leilão')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir leilão')
       });
     }
   }

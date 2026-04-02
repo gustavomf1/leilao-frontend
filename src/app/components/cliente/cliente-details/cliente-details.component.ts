@@ -75,6 +75,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
       if (id) {
         this.isEdicao = true;
         this.entityId = +id;
+        this.form.get('cpf')?.disable();
         this.service.buscarPorId(this.entityId).subscribe({
           next: (data) => {
             this.form.patchValue(data);
@@ -87,7 +88,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
               });
             }
           },
-          error: () => this.alert.error('Erro ao carregar cliente')
+          error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar cliente')
         });
       }
     }
@@ -98,8 +99,11 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   }
 
   salvar() {
-    if (this.form.valid) {
-      const dados = this.form.getRawValue();
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const dados = this.form.getRawValue();
       const op = this.isEdicao
         ? this.service.atualizar(this.entityId!, dados)
         : this.service.salvar(dados);
@@ -127,8 +131,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
             }
           }
         },
-        error: () => this.alert.error('Erro ao salvar cliente')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar cliente')
       });
-    }
   }
 }

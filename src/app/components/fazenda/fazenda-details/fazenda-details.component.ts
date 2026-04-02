@@ -81,7 +81,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
             });
           }
         },
-        error: () => this.alert.error('Erro ao carregar fazenda')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar fazenda')
       });
     }
   }
@@ -109,7 +109,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
             }
           }
         },
-        error: () => this.alert.error('Erro ao salvar fazenda')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar fazenda')
       });
     }
   }

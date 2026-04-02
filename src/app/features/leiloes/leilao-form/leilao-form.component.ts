@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { LeilaoService } from '../../../core/services/leilao.service';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-leilao-form',
@@ -16,6 +17,7 @@ export class LeilaoFormComponent implements OnInit {
   private service = inject(LeilaoService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private alert = inject(AlertService);
 
   isEdicao = false;
   leilaoId?: number;
@@ -35,8 +37,9 @@ export class LeilaoFormComponent implements OnInit {
     if (id) {
       this.isEdicao = true;
       this.leilaoId = +id;
-      this.service.buscarPorId(this.leilaoId).subscribe(data => {
-        this.form.patchValue(data);
+      this.service.buscarPorId(this.leilaoId).subscribe({
+        next: data => this.form.patchValue(data),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar leilão')
       });
     }
   }
@@ -47,7 +50,10 @@ export class LeilaoFormComponent implements OnInit {
       const op = this.isEdicao
         ? this.service.atualizar(this.leilaoId!, dados)
         : this.service.salvar(dados);
-      op.subscribe(() => this.router.navigate(['/app/leiloes']));
+      op.subscribe({
+        next: () => this.router.navigate(['/app/leiloes']),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar leilão')
+      });
     }
   }
 

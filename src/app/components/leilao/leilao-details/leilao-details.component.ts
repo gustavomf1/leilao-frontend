@@ -106,7 +106,7 @@ export class LeiloesDetailsComponent implements OnInit {
             this.condicaoSelecionada = this.condicoes.find(c => c.id === data.condicoes_id);
           }
         },
-        error: () => this.alert.error('Erro ao carregar leilão'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar leilão'),
       });
     }
   }
@@ -193,7 +193,7 @@ export class LeiloesDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Leilão atualizado!' : 'Leilão cadastrado!');
           this.router.navigate(['/leiloes/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar leilão'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar leilão'),
       });
     }
   }
