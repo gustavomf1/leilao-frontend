@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { ClienteService } from '../../../core/services/cliente.service';
+import { AlertService } from '../../../shared/services/alert.service';
 import { SubformComponent } from '../../shared-components/subform/subform.component';
 import { FazendaFormComponent } from '../../fazendas/fazenda-form/fazenda-form.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +27,7 @@ export class ClienteFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private alert = inject(AlertService);
   form!: FormGroup;
   isEdicao = false;
   clienteId?: number;
@@ -53,7 +55,7 @@ export class ClienteFormComponent implements OnInit {
       this.clienteId = +id;
       this.clienteService.buscarPorId(this.clienteId).subscribe({
         next: (cliente) => this.form.patchValue(cliente),
-        error: (err) => console.error('Erro ao carregar cliente:', err)
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar cliente')
       });
     }
   }
@@ -86,12 +88,12 @@ export class ClienteFormComponent implements OnInit {
     if (this.isEdicao && this.clienteId) {
       this.clienteService.atualizar(this.clienteId, cliente).subscribe({
         next: () => this.router.navigate(['/app/clientes']),
-        error: (err) => console.error('Erro ao atualizar cliente:', err)
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao atualizar cliente')
       });
     } else {
       this.clienteService.salvar(cliente).subscribe({
         next: () => this.router.navigate(['/app/clientes']),
-        error: (err) => console.error('Erro ao salvar cliente:', err)
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar cliente')
       });
     }
   }

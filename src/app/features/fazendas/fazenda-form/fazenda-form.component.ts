@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FazendaService } from '../../../core/services/fazenda.service';
+import { AlertService } from '../../../shared/services/alert.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Optional, Inject } from '@angular/core';
 import { NgxMaskDirective } from 'ngx-mask';
@@ -22,6 +23,7 @@ export class FazendaFormComponent implements OnInit {
 
   private dialogRef = inject(MatDialogRef<FazendaFormComponent>, { optional: true });
   private dialogData = inject(MAT_DIALOG_DATA, { optional: true });
+  private alert = inject(AlertService);
 
   editando = false;
   fazendaId?: number;
@@ -53,8 +55,7 @@ export class FazendaFormComponent implements OnInit {
           });
         },
         error: (err) => {
-          console.error('Erro ao carregar fazenda:', err);
-          alert('Erro ao carregar fazenda.');
+          this.alert.error(err.error?.mensagem || 'Erro ao carregar fazenda');
           this.voltar();
         }
       });
@@ -79,10 +80,7 @@ export class FazendaFormComponent implements OnInit {
             this.voltar();
           }
         },
-        error: (err) => {
-          console.error('Erro ao atualizar fazenda:', err);
-          alert('Erro ao atualizar fazenda.');
-        }
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao atualizar fazenda')
       });
     } else {
       this.fazendaService.salvar(dados).subscribe({
@@ -93,10 +91,7 @@ export class FazendaFormComponent implements OnInit {
             this.voltar();
           }
         },
-        error: (err) => {
-          console.error('Erro ao salvar fazenda:', err);
-          alert('Erro ao salvar fazenda.');
-        }
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar fazenda')
       });
     }
   }
