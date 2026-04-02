@@ -8,7 +8,7 @@
 
   <c-card>
     <c-card-header>
-      <strong>Dados da Taxa</strong>
+      <strong>Dados da Taxa de Comissão</strong>
     </c-card-header>
     <c-card-body>
       <form [formGroup]="form" (ngSubmit)="salvar()">
@@ -16,21 +16,63 @@
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="porcentagem">Porcentagem (%) *</label>
-              <input cFormControl id="porcentagem" type="number" formControlName="porcentagem" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('porcentagem')?.invalid && form.get('porcentagem')?.touched" [valid]="false">
-                Porcentagem é obrigatória
+              <label cLabel for="especieId">Espécie *</label>
+              <select cFormControl id="especieId" formControlName="especieId">
+                <option [ngValue]="null" disabled>Selecione a espécie</option>
+                <option *ngFor="let e of especies" [ngValue]="e.id">{{ e.nome }}</option>
+              </select>
+              <c-form-feedback *ngIf="form.get('especieId')?.invalid && form.get('especieId')?.touched" [valid]="false">
+                Espécie é obrigatória
               </c-form-feedback>
             </div>
           </c-col>
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="tipoCliente">Tipo de Cliente *</label>
-              <input cFormControl id="tipoCliente" formControlName="tipoCliente" placeholder="Ex: Comprador, Vendedor" />
-              <c-form-feedback *ngIf="form.get('tipoCliente')?.invalid && form.get('tipoCliente')?.touched" [valid]="false">
-                Tipo de cliente é obrigatório
+              <label cLabel for="tipoLeilao">Tipo de Leilão *</label>
+              <select cFormControl id="tipoLeilao" formControlName="tipoLeilao">
+                <option value="" disabled>Selecione o tipo</option>
+                <option *ngFor="let t of tiposLeilao" [value]="t.value">{{ t.label }}</option>
+              </select>
+              <c-form-feedback *ngIf="form.get('tipoLeilao')?.invalid && form.get('tipoLeilao')?.touched" [valid]="false">
+                Tipo de leilão é obrigatório
               </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="comissaoVendedor">Comissão Vendedor (%) *</label>
+              <input cFormControl id="comissaoVendedor" type="number" formControlName="comissaoVendedor" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('comissaoVendedor')?.invalid && form.get('comissaoVendedor')?.touched" [valid]="false">
+                Comissão do vendedor é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="comissaoComprador">Comissão Comprador (%) *</label>
+              <input cFormControl id="comissaoComprador" type="number" formControlName="comissaoComprador" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('comissaoComprador')?.invalid && form.get('comissaoComprador')?.touched" [valid]="false">
+                Comissão do comprador é obrigatória
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="12">
+            <div class="mb-3">
+              <label class="form-label">Taxas por *</label>
+              <div class="d-flex gap-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="taxaPorAnimal" formControlName="taxaPor" value="ANIMAL" />
+                  <label class="form-check-label" for="taxaPorAnimal">Animal</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="taxaPorLote" formControlName="taxaPor" value="LOTE" />
+                  <label class="form-check-label" for="taxaPorLote">Lote</label>
+                </div>
+              </div>
             </div>
           </c-col>
 

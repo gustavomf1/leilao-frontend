@@ -6,7 +6,7 @@ import { ButtonDirective } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
-import { Taxas } from '../../../core/models/entities.model';
+import { Taxas, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -28,6 +28,7 @@ export class TaxasListComponent implements OnInit {
   faTrash = faTrash;
 
   taxas$ = new BehaviorSubject<Taxas[]>([]);
+  tipoLabels = TIPO_LEILAO_LABELS;
 
   ngOnInit() {
     this.carregar();

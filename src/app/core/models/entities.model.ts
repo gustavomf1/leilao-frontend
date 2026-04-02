@@ -52,10 +52,34 @@ export interface Condicoes {
   aceiteIntegrado?: string;
 }
 
+export type TipoLeilao = 'ELITE' | 'CORTE' | 'LEITE' | 'PRENHEZ' | 'OUTROS' | 'DOACAO';
+
+export type TaxaPor = 'ANIMAL' | 'LOTE';
+
+export const TIPO_LEILAO_LABELS: Record<TipoLeilao, string> = {
+  ELITE:   'Elite',
+  CORTE:   'Corte',
+  LEITE:   'Leite',
+  PRENHEZ: 'Prenhez',
+  OUTROS:  'Outros',
+  DOACAO:  'Doação',
+};
+
+export interface Especie {
+  id?: number;
+  nome: string;
+  inativo?: string;
+}
+
 export interface Taxas {
   id?: number;
-  porcentagem: number;
-  tipoCliente: string;
+  comissaoVendedor: number;
+  comissaoComprador: number;
+  especieId: number;
+  especieNome?: string;
+  tipoLeilao: TipoLeilao;
+  taxaPor: TaxaPor;
+  inativo?: string;
 }
 
 export interface Lote {
@@ -92,7 +116,7 @@ export const ACOES = ['CRIAR', 'EDITAR', 'DELETAR', 'VISUALIZAR'] as const;
 
 export const AMBIENTES = [
   'DASHBOARD', 'FUNCIONARIOS', 'CLIENTES', 'FAZENDAS',
-  'LEILOES', 'CONDICOES', 'TAXAS', 'LOTES', 'WHATSAPP'
+  'LEILOES', 'CONDICOES', 'TAXAS', 'ESPECIES', 'LOTES', 'WHATSAPP'
 ] as const;
 
 export const AMBIENTE_LABELS: Record<string, string> = {
@@ -103,6 +127,7 @@ export const AMBIENTE_LABELS: Record<string, string> = {
   LEILOES: 'Leilões',
   CONDICOES: 'Condições',
   TAXAS: 'Taxas',
+  ESPECIES: 'Espécies',
   LOTES: 'Lotes',
   WHATSAPP: 'WhatsApp'
 };
