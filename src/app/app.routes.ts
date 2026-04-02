@@ -242,20 +242,14 @@ export const routes: Routes = [
             path: 'lista',
             runGuardsAndResolvers: 'always',
             loadComponent: () =>
-              import('./components/lote/lote-list/lote-list.component').then(
-                (m) => m.LotesListComponent),
+              import('./components/lote/lote-monitor/monitor-lotes.component').then(
+                (m) => m.MonitorLotesComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/lote/lote-details/lote-details.component').then(
                 (m) => m.LotesDetailsComponent),
-          },
-          {
-            path: 'monitor',
-            loadComponent: () =>
-              import('./features/lotes/monitor-lotes/monitor-lotes.component').then(
-                (m) => m.MonitorLotesComponent),
           },
           {
             path: ':id',
