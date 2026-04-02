@@ -55,7 +55,7 @@ export class FuncionariosListComponent implements OnInit {
   carregar() {
     this.service.listar().subscribe({
       next: (data) => this.zone.run(() => this.funcionarios$.next(data)),
-      error: () => this.alert.error('Erro ao carregar funcionários')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar funcionários')
     });
   }
 
@@ -66,7 +66,7 @@ export class FuncionariosListComponent implements OnInit {
           this.alert.success('Funcionário excluído!');
           this.funcionarios$.next(this.funcionarios$.value.filter(f => f.id !== id));
         },
-        error: () => this.alert.error('Erro ao excluir funcionário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir funcionário')
       });
     });
   }
@@ -87,7 +87,7 @@ export class FuncionariosListComponent implements OnInit {
   carregarPix(usuarioId: number) {
     this.pixService.listarPorUsuario(usuarioId).subscribe({
       next: (data) => { this.pixKeys = data; this.cdr.detectChanges(); },
-      error: () => this.alert.error('Erro ao carregar chaves Pix')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar chaves Pix')
     });
   }
 
@@ -107,7 +107,7 @@ export class FuncionariosListComponent implements OnInit {
         this.novoPix = { tipo: 'CPF_CNPJ', chave: '' };
         this.carregarPix(this.funcionarioSelecionado!.id!);
       },
-      error: () => this.alert.error('Erro ao adicionar chave Pix')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao adicionar chave Pix')
     });
   }
 
@@ -119,7 +119,7 @@ export class FuncionariosListComponent implements OnInit {
           this.pixKeys = this.pixKeys.filter(p => p.pixId !== pixId);
           this.cdr.detectChanges();
         },
-        error: () => this.alert.error('Erro ao remover chave Pix')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao remover chave Pix')
       });
     });
   }

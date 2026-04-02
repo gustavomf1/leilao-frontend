@@ -72,7 +72,7 @@ export class LotesListComponent implements OnInit {
           this.lotes = this.lotes.filter(l => l.id !== id);
           this.lotes$.next([...this.lotes]);
         },
-        error: () => this.alert.error('Erro ao excluir lote')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir lote')
       });
     });
   }

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { Cliente } from '../../../core/models/cliente.model';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-cliente-lista',
@@ -14,6 +15,7 @@ import { Cliente } from '../../../core/models/cliente.model';
 })
 export class ClienteListaComponent implements OnInit {
   private clienteService = inject(ClienteService);
+  private alert = inject(AlertService);
 
   clientes: Cliente[] = [];
   filtro: string = '';
@@ -25,7 +27,7 @@ export class ClienteListaComponent implements OnInit {
   carregarClientes(): void {
     this.clienteService.listar().subscribe({
       next: (dados) => this.clientes = dados,
-      error: (err) => console.error('Erro ao carregar clientes:', err)
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar clientes')
     });
   }
 
@@ -45,7 +47,7 @@ export class ClienteListaComponent implements OnInit {
     if (confirm('Tem certeza que deseja excluir este cliente?')) {
       this.clienteService.excluir(id).subscribe({
         next: () => this.carregarClientes(),
-        error: (err) => console.error('Erro ao excluir cliente:', err)
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir cliente')
       });
     }
   }

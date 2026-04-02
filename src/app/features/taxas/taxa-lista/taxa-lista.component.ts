@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { Taxas } from '../../../core/models/taxas.model';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-taxa-lista',
@@ -14,13 +15,17 @@ import { Taxas } from '../../../core/models/taxas.model';
 })
 export class TaxaListaComponent implements OnInit {
   private service = inject(TaxasService);
+  private alert = inject(AlertService);
   taxas: Taxas[] = [];
   filtro = '';
 
   ngOnInit() { this.carregar(); }
 
   carregar() {
-    this.service.listar().subscribe(data => this.taxas = data);
+    this.service.listar().subscribe({
+      next: data => this.taxas = data,
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxas')
+    });
   }
 
   get taxasFiltradas(): Taxas[] {
@@ -31,7 +36,10 @@ export class TaxaListaComponent implements OnInit {
 
   excluir(id: number) {
     if (confirm('Deseja realmente excluir esta taxa?')) {
-      this.service.excluir(id).subscribe(() => this.carregar());
+      this.service.excluir(id).subscribe({
+        next: () => this.carregar(),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir taxa')
+      });
     }
   }
 }

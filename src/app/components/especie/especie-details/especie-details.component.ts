@@ -42,7 +42,7 @@ export class EspecieDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar espécie'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar espécie'),
       });
     }
   }
@@ -59,7 +59,7 @@ export class EspecieDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Espécie atualizada!' : 'Espécie cadastrada!');
           this.router.navigate(['/especies/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar espécie'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar espécie'),
       });
     }
   }

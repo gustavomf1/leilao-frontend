@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CondicoesService } from '../../../core/services/condicoes.service';
 import { Condicoes } from '../../../core/models/condicoes.model';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-condicao-lista',
@@ -14,13 +15,17 @@ import { Condicoes } from '../../../core/models/condicoes.model';
 })
 export class CondicaoListaComponent implements OnInit {
   private service = inject(CondicoesService);
+  private alert = inject(AlertService);
   condicoes: Condicoes[] = [];
   filtro = '';
 
   ngOnInit() { this.carregar(); }
 
   carregar() {
-    this.service.listar().subscribe(data => this.condicoes = data);
+    this.service.listar().subscribe({
+      next: data => this.condicoes = data,
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar condições')
+    });
   }
 
   get condicoesFiltradas(): Condicoes[] {
@@ -34,7 +39,10 @@ export class CondicaoListaComponent implements OnInit {
 
   excluir(id: number) {
     if (confirm('Deseja realmente excluir esta condição?')) {
-      this.service.excluir(id).subscribe(() => this.carregar());
+      this.service.excluir(id).subscribe({
+        next: () => this.carregar(),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir condição')
+      });
     }
   }
 }

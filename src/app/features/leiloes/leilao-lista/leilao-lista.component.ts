@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { Leilao } from '../../../core/models/leilao.model';
+import { AlertService } from '../../../shared/services/alert.service';
 
 @Component({
   selector: 'app-leilao-lista',
@@ -14,6 +15,7 @@ import { Leilao } from '../../../core/models/leilao.model';
 })
 export class LeilaoListaComponent implements OnInit {
   private service = inject(LeilaoService);
+  private alert = inject(AlertService);
   leiloes: Leilao[] = [];
   filtro = '';
 
@@ -22,7 +24,10 @@ export class LeilaoListaComponent implements OnInit {
   }
 
   carregar() {
-    this.service.listar().subscribe(data => this.leiloes = data);
+    this.service.listar().subscribe({
+      next: data => this.leiloes = data,
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar leilões')
+    });
   }
 
   get leiloesFiltrados(): Leilao[] {
@@ -37,7 +42,10 @@ export class LeilaoListaComponent implements OnInit {
 
   excluir(id: number) {
     if (confirm('Deseja realmente excluir este leilão?')) {
-      this.service.excluir(id).subscribe(() => this.carregar());
+      this.service.excluir(id).subscribe({
+        next: () => this.carregar(),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir leilão')
+      });
     }
   }
 }

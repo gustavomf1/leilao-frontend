@@ -51,7 +51,7 @@ export class TaxasDetailsComponent implements OnInit {
 
     this.especieService.listar().subscribe({
       next: (data) => { this.especies = data; this.cdr.detectChanges(); },
-      error: () => this.alert.error('Erro ao carregar espécies'),
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar espécies'),
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -60,7 +60,7 @@ export class TaxasDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar taxa'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxa'),
       });
     }
   }
@@ -77,7 +77,7 @@ export class TaxasDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Taxa atualizada!' : 'Taxa cadastrada!');
           this.router.navigate(['/taxas/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar taxa'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar taxa'),
       });
     }
   }
