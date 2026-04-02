@@ -43,6 +43,7 @@ export class ClienteFormComponent implements OnInit {
       nome: ['', Validators.required],
       email:  [''],
       cpf: ['', Validators.required],
+      rg: [''],
       telefone: ['', Validators.required],
       cidade: ['', Validators.required],
       uf: ['', Validators.required],
