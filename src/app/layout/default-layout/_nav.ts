@@ -213,7 +213,7 @@ export const navItemsLeilao: INavData[] = [
   {
     title: true,
     name: 'Configuração do Evento',
-    attributes: { ambientes: 'LEILOES,CONDICOES,TAXAS' }
+    attributes: { ambientes: 'LEILOES,CONDICOES,TAXAS,ESPECIES' }
   },
   {
     name: 'Leilões',
@@ -272,6 +272,27 @@ export const navItemsLeilao: INavData[] = [
         url: '/taxas/cadastrar',
         icon: 'nav-icon-bullet',
         attributes: { ambiente: 'TAXAS', acao: 'CRIAR' }
+      }
+    ]
+  },
+
+  {
+    name: 'Espécies',
+    url: '/especies',
+    iconComponent: { name: 'cil-animal' },
+    attributes: { ambiente: 'ESPECIES' },
+    children: [
+      {
+        name: 'Listar Espécies',
+        url: '/especies/lista',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'VISUALIZAR' }
+      },
+      {
+        name: 'Cadastrar Espécie',
+        url: '/especies/cadastrar',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'CRIAR' }
       }
     ]
   },

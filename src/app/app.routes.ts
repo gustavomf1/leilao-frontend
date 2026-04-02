@@ -185,6 +185,31 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'especies',
+        children: [
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
+          {
+            path: 'lista',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/especie/especie-list/especie-list.component').then(
+                (m) => m.EspecieListComponent),
+          },
+          {
+            path: 'cadastrar',
+            loadComponent: () =>
+              import('./components/especie/especie-details/especie-details.component').then(
+                (m) => m.EspecieDetailsComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./components/especie/especie-details/especie-details.component').then(
+                (m) => m.EspecieDetailsComponent),
+          },
+        ],
+      },
+      {
         path: 'taxas',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },

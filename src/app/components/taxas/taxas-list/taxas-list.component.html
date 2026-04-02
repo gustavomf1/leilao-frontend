@@ -1,6 +1,6 @@
 <div class="container-lg px-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Taxas</h2>
+    <h2 class="mb-0">Taxas de Comissão</h2>
     <a *ngIf="auth.hasPermission('TAXAS', 'CRIAR')" routerLink="/taxas/cadastrar" cButton color="primary" size="sm">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Nova Taxa
@@ -13,16 +13,28 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Porcentagem</th>
-            <th>Tipo de Cliente</th>
+            <th>Espécie</th>
+            <th>Tipo de Leilão</th>
+            <th class="text-end">Comissão Vendedor</th>
+            <th class="text-end">Comissão Comprador</th>
+            <th class="text-center">Taxas por</th>
+            <th class="text-center">Status</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let taxa of taxas$ | async">
             <td>{{ taxa.id }}</td>
-            <td>{{ taxa.porcentagem }}%</td>
-            <td>{{ taxa.tipoCliente }}</td>
+            <td>{{ taxa.especieNome }}</td>
+            <td>{{ tipoLabels[taxa.tipoLeilao] }}</td>
+            <td class="text-end">{{ taxa.comissaoVendedor | number:'1.2-2' }}%</td>
+            <td class="text-end">{{ taxa.comissaoComprador | number:'1.2-2' }}%</td>
+            <td class="text-center">{{ taxa.taxaPor === 'ANIMAL' ? 'Animal' : 'Lote' }}</td>
+            <td class="text-center">
+              <span [class]="taxa.inativo === 'S' ? 'badge bg-danger' : 'badge bg-success'">
+                {{ taxa.inativo === 'S' ? 'Inativo' : 'Ativo' }}
+              </span>
+            </td>
             <td class="text-center">
               <a *ngIf="auth.hasPermission('TAXAS', 'EDITAR')" [routerLink]="['/taxas', taxa.id]" cButton color="info" size="sm" variant="ghost">
                 <fa-icon [icon]="faPencil"></fa-icon>

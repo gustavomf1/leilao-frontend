@@ -1,0 +1,45 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Espécies</h2>
+    <a routerLink="/especies/cadastrar" cButton color="primary" size="sm">
+      <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+      Nova Espécie
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-body>
+      <table cTable hover responsive>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let especie of especies$ | async">
+            <td>{{ especie.id }}</td>
+            <td>{{ especie.nome }}</td>
+            <td class="text-center">
+              <span [class]="especie.inativo === 'S' ? 'badge bg-danger' : 'badge bg-success'">
+                {{ especie.inativo === 'S' ? 'Inativo' : 'Ativo' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <a [routerLink]="['/especies', especie.id]" cButton color="info" size="sm" variant="ghost">
+                <fa-icon [icon]="faPencil"></fa-icon>
+              </a>
+              <button cButton [color]="especie.inativo === 'S' ? 'success' : 'warning'" size="sm" variant="ghost"
+                      (click)="toggleInativo(especie)"
+                      [title]="especie.inativo === 'S' ? 'Ativar' : 'Inativar'">
+                <fa-icon [icon]="especie.inativo === 'S' ? faToggleOff : faToggleOn"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+</div>
