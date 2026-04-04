@@ -1,7 +1,7 @@
 <div class="container-lg px-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Lotes</h2>
-    <a routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
+    <a *ngIf="auth.hasPermission('LOTES', 'CRIAR')" routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Lote
     </a>
@@ -74,10 +74,10 @@
                 {{ lote.vendedorNome }}
               </span>
               <div class="d-flex gap-1">
-                <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
+                <a *ngIf="auth.hasPermission('LOTES', 'EDITAR')" [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
                   <fa-icon [icon]="faPencil"></fa-icon>
                 </a>
-                <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
+                <button *ngIf="auth.hasPermission('LOTES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
                   <fa-icon [icon]="faTrash"></fa-icon>
                 </button>
               </div>

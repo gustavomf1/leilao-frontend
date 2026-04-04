@@ -46,6 +46,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@stomp/stompjs": "^7.3.0",
     "chart.js": "^4.5.1",
+    "ngx-mask": "^21.0.1",
     "ngx-scrollbar": "^13.0.3",
     "rxjs": "~7.8.2",
     "sockjs-client": "^1.6.1",

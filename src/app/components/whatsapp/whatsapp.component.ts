@@ -97,7 +97,7 @@ export class WhatsAppComponent {
       this.enviando = true;
       this.whatsapp.enviarTexto(this.formTexto.getRawValue()).subscribe({
         next: () => { this.alert.success('Mensagem de texto enviada!'); this.enviando = false; },
-        error: () => { this.alert.error('Erro ao enviar mensagem de texto'); this.enviando = false; }
+        error: (err) => { this.alert.error(err.error?.mensagem || 'Erro ao enviar mensagem de texto'); this.enviando = false; }
       });
     }
   }
@@ -107,7 +107,7 @@ export class WhatsAppComponent {
       this.enviando = true;
       this.whatsapp.enviarMidia(this.formMidia.getRawValue()).subscribe({
         next: () => { this.alert.success('Mensagem com mídia enviada!'); this.enviando = false; },
-        error: () => { this.alert.error('Erro ao enviar mensagem com mídia'); this.enviando = false; }
+        error: (err) => { this.alert.error(err.error?.mensagem || 'Erro ao enviar mensagem com mídia'); this.enviando = false; }
       });
     }
   }
@@ -117,7 +117,7 @@ export class WhatsAppComponent {
       this.enviando = true;
       this.whatsapp.enviarTextoEmMassa(this.formBulkTexto.getRawValue()).subscribe({
         next: () => { this.alert.success('Envio em massa de texto iniciado!'); this.enviando = false; },
-        error: () => { this.alert.error('Erro no envio em massa de texto'); this.enviando = false; }
+        error: (err) => { this.alert.error(err.error?.mensagem || 'Erro no envio em massa de texto'); this.enviando = false; }
       });
     } else if (this.contatosBulkTexto.length === 0) {
       this.alert.error('Adicione pelo menos um contato');
@@ -129,7 +129,7 @@ export class WhatsAppComponent {
       this.enviando = true;
       this.whatsapp.enviarMidiaEmMassa(this.formBulkMidia.getRawValue()).subscribe({
         next: () => { this.alert.success('Envio em massa de mídia iniciado!'); this.enviando = false; },
-        error: () => { this.alert.error('Erro no envio em massa de mídia'); this.enviando = false; }
+        error: (err) => { this.alert.error(err.error?.mensagem || 'Erro no envio em massa de mídia'); this.enviando = false; }
       });
     } else if (this.contatosBulkMidia.length === 0) {
       this.alert.error('Adicione pelo menos um contato');

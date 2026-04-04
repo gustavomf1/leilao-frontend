@@ -9,6 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Condicoes } from '../../../core/models/entities.model';
 import { CondicoesService } from '../../../core/services/condicoes.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-condicoes-list',
@@ -20,6 +21,7 @@ export class CondicoesListComponent implements OnInit {
   private service = inject(CondicoesService);
   private alert = inject(AlertService);
   private zone = inject(NgZone);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;
@@ -34,7 +36,7 @@ export class CondicoesListComponent implements OnInit {
   carregar() {
     this.service.listar().subscribe({
       next: (data) => this.zone.run(() => this.condicoes$.next(data)),
-      error: () => this.alert.error('Erro ao carregar condições')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar condições')
     });
   }
 
@@ -42,7 +44,7 @@ export class CondicoesListComponent implements OnInit {
     this.alert.confirm('Deseja realmente excluir esta condição?', () => {
       this.service.deletar(id).subscribe({
         next: () => { this.alert.success('Condição excluída!'); this.carregar(); },
-        error: () => this.alert.error('Erro ao excluir condição')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir condição')
       });
     });
   }

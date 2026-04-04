@@ -5,18 +5,17 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { FuncionarioService } from '../../../core/services/funcionario.service';
+import { EspecieService } from '../../../core/services/especie.service';
 import { AlertService } from '../../../shared/services/alert.service';
-import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
-  selector: 'app-funcionarios-details',
+  selector: 'app-especie-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule, NgxMaskDirective],
-  templateUrl: './funcionario-details.component.html',
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
+  templateUrl: './especie-details.component.html',
 })
-export class FuncionariosDetailsComponent implements OnInit {
-  private service = inject(FuncionarioService);
+export class EspecieDetailsComponent implements OnInit {
+  private service = inject(EspecieService);
   private alert = inject(AlertService);
 
   faSave = faSave;
@@ -29,27 +28,21 @@ export class FuncionariosDetailsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
-      nome:  ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      cpf:   ['', Validators.required],
-      senha: ['', this.isEdicao ? [] : [Validators.required, Validators.minLength(6)]]
+      nome: ['', [Validators.required, Validators.maxLength(50)]],
     });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdicao = true;
       this.entityId = +id;
-      // Em edição, senha não é obrigatória
-      this.form.get('senha')?.clearValidators();
-      this.form.get('senha')?.updateValueAndValidity();
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar funcionário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar espécie'),
       });
     }
   }
@@ -57,20 +50,16 @@ export class FuncionariosDetailsComponent implements OnInit {
   salvar() {
     if (this.form.valid) {
       const dados = this.form.getRawValue();
-      // Se edição e senha vazia, não enviar campo senha
-      if (this.isEdicao && !dados.senha) {
-        delete dados.senha;
-      }
       const op = this.isEdicao
         ? this.service.atualizar(this.entityId!, dados)
         : this.service.salvar(dados);
 
       op.subscribe({
         next: () => {
-          this.alert.success(this.isEdicao ? 'Funcionário atualizado!' : 'Funcionário cadastrado!');
-          this.router.navigate(['/funcionarios/lista']);
+          this.alert.success(this.isEdicao ? 'Espécie atualizada!' : 'Espécie cadastrada!');
+          this.router.navigate(['/especies/lista']);
         },
-        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar funcionário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar espécie'),
       });
     }
   }

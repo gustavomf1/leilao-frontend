@@ -185,6 +185,31 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'especies',
+        children: [
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
+          {
+            path: 'lista',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/especie/especie-list/especie-list.component').then(
+                (m) => m.EspecieListComponent),
+          },
+          {
+            path: 'cadastrar',
+            loadComponent: () =>
+              import('./components/especie/especie-details/especie-details.component').then(
+                (m) => m.EspecieDetailsComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./components/especie/especie-details/especie-details.component').then(
+                (m) => m.EspecieDetailsComponent),
+          },
+        ],
+      },
+      {
         path: 'taxas',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
@@ -217,20 +242,14 @@ export const routes: Routes = [
             path: 'lista',
             runGuardsAndResolvers: 'always',
             loadComponent: () =>
-              import('./components/lote/lote-list/lote-list.component').then(
-                (m) => m.LotesListComponent),
+              import('./components/lote/lote-monitor/monitor-lotes.component').then(
+                (m) => m.MonitorLotesComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/lote/lote-details/lote-details.component').then(
                 (m) => m.LotesDetailsComponent),
-          },
-          {
-            path: 'monitor',
-            loadComponent: () =>
-              import('./features/lotes/monitor-lotes/monitor-lotes.component').then(
-                (m) => m.MonitorLotesComponent),
           },
           {
             path: ':id',

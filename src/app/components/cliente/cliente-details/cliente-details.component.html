@@ -27,7 +27,7 @@
           <c-col xs="12" md="6">
             <div class="mb-3">
               <label cLabel for="cpf">CPF *</label>
-              <input cFormControl id="cpf" formControlName="cpf" placeholder="000.000.000-00" />
+              <input cFormControl id="cpf" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00"/>
               <c-form-feedback *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched" [valid]="false">
                 CPF é obrigatório
               </c-form-feedback>
@@ -47,7 +47,7 @@
           <c-col xs="12" md="6">
             <div class="mb-3">
               <label cLabel for="rg">RG *</label>
-              <input cFormControl id="rg" formControlName="rg" placeholder="RG" />
+              <input cFormControl id="rg" formControlName="rg" placeholder="RG" mask="00.000.000-0"/>
               <c-form-feedback *ngIf="form.get('rg')?.invalid && form.get('rg')?.touched" [valid]="false">
                 RG é obrigatório
               </c-form-feedback>
@@ -57,7 +57,7 @@
           <c-col xs="12" md="6">
             <div class="mb-3">
               <label cLabel for="telefone">Telefone *</label>
-              <input cFormControl id="telefone" formControlName="telefone" placeholder="(00) 00000-0000" />
+              <input cFormControl id="telefone" formControlName="telefone" placeholder="(00) 00000-0000" mask="(00) 00000-0000||(00) 0000-0000"/>
               <c-form-feedback *ngIf="form.get('telefone')?.invalid && form.get('telefone')?.touched" [valid]="false">
                 Telefone é obrigatório
               </c-form-feedback>

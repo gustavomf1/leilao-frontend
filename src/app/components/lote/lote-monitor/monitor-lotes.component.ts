@@ -69,7 +69,7 @@ export class MonitorLotesComponent implements OnInit {
       next: (novoLote) => {
         this.zone.run(() => {
           console.log('Novo lote no monitor:', novoLote);
-          
+
           // Cria uma nova referência de array para o Angular notar a mudança
           this.lotes = [novoLote, ...this.lotes].slice(0, 10);
           this.lotes$.next([...this.lotes])

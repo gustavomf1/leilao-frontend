@@ -8,6 +8,7 @@ import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Leilao } from '../../../core/models/entities.model';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -20,6 +21,7 @@ export class LeiloesListComponent implements OnInit {
   private service = inject(LeilaoService);
   private alert = inject(AlertService);
   private cdr = inject(ChangeDetectorRef);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;
@@ -39,7 +41,7 @@ export class LeiloesListComponent implements OnInit {
         this.leiloes = data;
         this.leiloes$.next(this.leiloes);
       },
-      error: () => this.alert.error('Erro ao carregar leilões')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar leilões')
     });
   }
 
@@ -47,7 +49,7 @@ export class LeiloesListComponent implements OnInit {
     if (confirm('Deseja realmente excluir este leilão?')) {
       this.service.deletar(id).subscribe({
         next: () => { this.alert.success('Leilão excluído!'); this.carregar(); },
-        error: () => this.alert.error('Erro ao excluir leilão')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir leilão')
       });
     }
   }

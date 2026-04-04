@@ -10,11 +10,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-usuarios-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule, NgxMaskDirective],
   templateUrl: './usuario-details.component.html',
   styleUrl: './usuario-details.component.scss'
 })
@@ -49,7 +50,7 @@ export class UsuariosDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar usuário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar usuário')
       });
     }
   }
@@ -66,7 +67,7 @@ export class UsuariosDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Usuário atualizado!' : 'Usuário cadastrado!');
           this.router.navigate(['/usuarios/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar usuário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar usuário')
       });
     }
   }

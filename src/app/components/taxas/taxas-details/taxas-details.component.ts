@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -6,7 +6,9 @@ import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/ang
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { TaxasService } from '../../../core/services/taxas.service';
+import { EspecieService } from '../../../core/services/especie.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { Especie, TipoLeilao, TIPO_LEILAO_LABELS, TaxaPor } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-taxas-details',
@@ -16,7 +18,9 @@ import { AlertService } from '../../../shared/services/alert.service';
 })
 export class TaxasDetailsComponent implements OnInit {
   private service = inject(TaxasService);
+  private especieService = inject(EspecieService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef);
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
@@ -25,16 +29,29 @@ export class TaxasDetailsComponent implements OnInit {
   isEdicao = false;
   private entityId?: number;
 
+  especies: Especie[] = [];
+  tiposLeilao: { value: TipoLeilao; label: string }[] = Object.entries(TIPO_LEILAO_LABELS).map(
+    ([value, label]) => ({ value: value as TipoLeilao, label })
+  );
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
-      porcentagem:  [0, [Validators.required, Validators.min(0)]],
-      tipoCliente: ['', Validators.required]
+      comissaoVendedor:  [0, [Validators.required, Validators.min(0)]],
+      comissaoComprador: [0, [Validators.required, Validators.min(0)]],
+      especieId:         [null, Validators.required],
+      tipoLeilao:        ['', Validators.required],
+      taxaPor:           ['ANIMAL', Validators.required],
+    });
+
+    this.especieService.listar().subscribe({
+      next: (data) => { this.especies = data; this.cdr.detectChanges(); },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar espécies'),
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -43,7 +60,7 @@ export class TaxasDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar taxa')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxa'),
       });
     }
   }
@@ -60,7 +77,7 @@ export class TaxasDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Taxa atualizada!' : 'Taxa cadastrada!');
           this.router.navigate(['/taxas/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar taxa')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar taxa'),
       });
     }
   }

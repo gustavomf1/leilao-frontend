@@ -54,7 +54,7 @@ export class LotesDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar lote')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar lote')
       });
     }
   }
@@ -70,7 +70,7 @@ export class LotesDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Lote atualizado!' : 'Lote cadastrado!');
           this.router.navigate(['/lotes/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar lote')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar lote')
       });
     }
   }
