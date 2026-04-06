@@ -15,7 +15,7 @@ import {
   SidebarTogglerDirective
 } from '@coreui/angular';
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
-import { navItems, navItemsLeilao } from './_nav';
+import { navItems, navItemsLeilao, navItemsManejo } from './_nav';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal.component';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -48,7 +48,11 @@ export class DefaultLayoutComponent implements OnInit {
   public filteredNavItems: INavData[] = [];
 
   ngOnInit() {
-    this.filteredNavItems = this.filterNavItems(navItemsLeilao);
+    if (this.authService.isManejo()) {
+      this.filteredNavItems = [...navItemsManejo];
+    } else {
+      this.filteredNavItems = this.filterNavItems(navItemsLeilao);
+    }
   }
 
   private filterNavItems(items: INavData[]): INavData[] {

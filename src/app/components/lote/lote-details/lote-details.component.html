@@ -1,6 +1,10 @@
 <div class="container-lg px-4 animate-in">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">{{ isEdicao ? 'Editar Lote' : 'Novo Lote' }}</h2>
+    <div>
+      <h2 class="mb-0">{{ isEdicao ? 'Editar Lote' : 'Novo Lote' }}</h2>
+      <small *ngIf="isManejoMode" class="text-secondary">Modo Manejo — preencha os dados do animal</small>
+      <small *ngIf="isEscritorioMode" class="text-secondary">Modo Escritório — valide e complete os dados</small>
+    </div>
     <a routerLink="/lotes/lista" cButton color="secondary" size="sm" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
     </a>
@@ -12,10 +16,9 @@
     </c-card-header>
 
     <c-card-body class="p-4">
-      <form [formGroup]="form" (ngSubmit)="salvar()">
+      <form [formGroup]="form" (ngSubmit)="tentarSalvar()">
         <c-row [gutter]="3">
 
-          <!-- Identificação -->
           <c-col [md]="4">
             <div class="field-group">
               <label class="field-label">Código *</label>
@@ -96,35 +99,48 @@
             </div>
           </c-col>
 
-          <!-- Preço em destaque -->
-          <c-col [md]="4">
-            <div class="field-group section-block">
-              <label class="section-title">Preço de Compra (R$) *</label>
-              <input cFormControl type="number" formControlName="precoCompra" placeholder="0.00" step="0.01" min="0" />
-              <c-form-feedback *ngIf="form.get('precoCompra')?.invalid && form.get('precoCompra')?.touched" [valid]="false">
-                Preço é obrigatório
-              </c-form-feedback>
+          <!-- Nome do vendedor — texto livre para manejo -->
+          <c-col [md]="6">
+            <div class="field-group">
+              <label class="field-label">
+                {{ isManejoMode ? 'Nome do Vendedor' : 'Nome do Vendedor (rascunho)' }}
+              </label>
+              <input cFormControl formControlName="vendedorNomeRascunho"
+                     placeholder="Como o vendedor é conhecido (ex: Zezin)" />
+              <small class="text-secondary" *ngIf="isManejoMode">
+                Digite o nome como você conhece — o escritório irá confirmar depois.
+              </small>
             </div>
           </c-col>
 
-          <c-col [md]="4">
+          <!-- Campos só para escritório/admin -->
+          <c-col [md]="4" *ngIf="!isManejoMode">
             <div class="field-group">
               <label class="field-label">Leilão (ID)</label>
               <input cFormControl type="number" formControlName="leilaoId" placeholder="ID do leilão" />
             </div>
           </c-col>
 
-          <c-col [md]="4">
+          <c-col [md]="6" *ngIf="!isManejoMode">
             <div class="field-group">
-              <label class="field-label">Vendedor (ID)</label>
-              <input cFormControl type="number" formControlName="vendedorId" placeholder="ID do vendedor" />
+              <label class="field-label">Vendedor (ID confirmado)</label>
+              <input cFormControl type="number" formControlName="vendedorId" placeholder="ID do vendedor confirmado" />
+              <small class="text-secondary">Vincule o vendedor real após confirmar o nome.</small>
             </div>
           </c-col>
 
-          <c-col [md]="4">
+          <c-col [md]="6" *ngIf="!isManejoMode">
+            <div class="field-group section-block">
+              <label class="section-title">Preço de Compra (R$)</label>
+              <input cFormControl type="number" formControlName="precoCompra" placeholder="0.00" step="0.01" min="0" />
+            </div>
+          </c-col>
+
+          <c-col [md]="6" *ngIf="!isManejoMode">
             <div class="field-group">
               <label class="field-label">Comprador (ID)</label>
               <input cFormControl type="number" formControlName="compradorId" placeholder="ID do comprador" />
+              <small class="text-secondary">Preenchido ao finalizar o leilão.</small>
             </div>
           </c-col>
 
@@ -149,3 +165,35 @@
     </c-card-body>
   </c-card>
 </div>
+
+<!-- ── Modal de confirmação (Manejo) ───────────────────────────── -->
+<c-modal [visible]="modalVisible" (visibleChange)="modalVisible = $event" alignment="center">
+  <c-modal-header>
+    <h5 cModalTitle>Confirmar cadastro do lote</h5>
+  </c-modal-header>
+
+  <c-modal-body>
+    <p class="text-secondary mb-3">
+      Revise os dados abaixo antes de enviar. Após confirmar, o lote seguirá para preenchimento do preço.
+    </p>
+    <table class="table table-sm table-borderless mb-0">
+      <tbody>
+        <tr *ngFor="let item of resumoParaConfirmacao">
+          <td class="text-secondary fw-semibold" style="width: 40%; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em;">
+            {{ item.label }}
+          </td>
+          <td class="fw-bold">{{ item.valor }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="cancelarModal()">
+      <fa-icon [icon]="faTimes" class="me-1"></fa-icon> Voltar e corrigir
+    </button>
+    <button cButton color="primary" (click)="confirmarModal()">
+      <fa-icon [icon]="faCheck" class="me-1"></fa-icon> Confirmar e enviar
+    </button>
+  </c-modal-footer>
+</c-modal>

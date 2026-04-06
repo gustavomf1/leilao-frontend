@@ -102,6 +102,23 @@ export interface Taxas {
   inativo?: string;
 }
 
+export type StatusLote =
+  | 'AGUARDANDO_ESCRITORIO'
+  | 'AGUARDANDO_LANCE'
+  | 'FINALIZADO';
+
+export const STATUS_LOTE_LABELS: Record<StatusLote, string> = {
+  AGUARDANDO_ESCRITORIO: 'Aguardando Escritório',
+  AGUARDANDO_LANCE:      'Aguardando Lance',
+  FINALIZADO:            'Finalizado',
+};
+
+export const STATUS_LOTE_COLOR: Record<StatusLote, string> = {
+  AGUARDANDO_ESCRITORIO: 'warning',
+  AGUARDANDO_LANCE:      'info',
+  FINALIZADO:            'dark',
+};
+
 export interface Lote {
   id?: number;
   codigo: string;
@@ -116,8 +133,10 @@ export interface Lote {
   leilaoId?: number;
   vendedorId?: number;
   compradorId?: number;
-  precoCompra: number;
+  precoCompra?: number;
   vendedorNome?: string;
+  vendedorNomeRascunho?: string;
+  status?: StatusLote;
 }
 
 export interface Permissao {
