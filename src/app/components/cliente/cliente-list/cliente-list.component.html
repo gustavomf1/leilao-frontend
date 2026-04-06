@@ -1,14 +1,19 @@
 <div class="container-lg px-4">
+
+  <!-- ── Cabeçalho ── -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Clientes</h2>
-    <a *ngIf="auth.hasPermission('CLIENTES', 'CRIAR')" routerLink="/clientes/cadastrar" cButton color="primary" size="sm">
+    <a *ngIf="auth.hasPermission('CLIENTES', 'CRIAR')"
+       routerLink="/clientes/cadastrar"
+       cButton color="primary">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Cliente
     </a>
   </div>
 
-  <c-card>
-    <c-card-body>
+  <!-- ── DESKTOP: Tabela ── -->
+  <c-card class="d-mobile-none">
+    <c-card-body class="p-0">
       <table cTable hover responsive>
         <thead>
           <tr>
@@ -16,25 +21,30 @@
             <th>Nome</th>
             <th>CPF</th>
             <th>Telefone</th>
-            <th>Cidade/UF</th>
+            <th>Cidade / UF</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let cliente of clientes$ | async">
-            <td>{{ cliente.id }}</td>
-            <td>{{ cliente.nome }}</td>
+            <td class="text-muted" style="font-size:.8rem">{{ cliente.id }}</td>
+            <td><strong>{{ cliente.nome }}</strong></td>
             <td>{{ cliente.cpf }}</td>
             <td>{{ cliente.telefone }}</td>
-            <td>{{ cliente.cidade }}/{{ cliente.uf }}</td>
+            <td>{{ cliente.cidade }} / {{ cliente.uf }}</td>
             <td class="text-center">
-              <button cButton color="success" size="sm" variant="ghost" (click)="abrirModalPix(cliente)" title="Gerenciar Pix">
+              <button cButton color="success" size="sm" variant="ghost"
+                      (click)="abrirModalPix(cliente)" title="Chaves Pix">
                 <fa-icon [icon]="faKey"></fa-icon>
               </button>
-              <a *ngIf="auth.hasPermission('CLIENTES', 'EDITAR')" [routerLink]="['/clientes', cliente.id]" cButton color="info" size="sm" variant="ghost">
+              <a *ngIf="auth.hasPermission('CLIENTES', 'EDITAR')"
+                 [routerLink]="['/clientes', cliente.id]"
+                 cButton color="info" size="sm" variant="ghost" title="Editar">
                 <fa-icon [icon]="faPencil"></fa-icon>
               </a>
-              <button *ngIf="auth.hasPermission('CLIENTES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(cliente.id!)">
+              <button *ngIf="auth.hasPermission('CLIENTES', 'DELETAR')"
+                      cButton color="danger" size="sm" variant="ghost"
+                      (click)="deletar(cliente.id!)" title="Inativar">
                 <fa-icon [icon]="faTrash"></fa-icon>
               </button>
             </td>
@@ -43,6 +53,35 @@
       </table>
     </c-card-body>
   </c-card>
+
+  <!-- ── MOBILE: Cards ── -->
+  <div class="d-desktop-none">
+    <div *ngFor="let cliente of clientes$ | async" class="ja-mobile-card">
+      <div class="ja-mc-title">{{ cliente.nome }}</div>
+      <div class="ja-mc-subtitle">CPF: {{ cliente.cpf }}</div>
+      <div class="ja-mc-meta">
+        <span><span class="label">Tel</span> {{ cliente.telefone }}</span>
+        <span><span class="label">Cidade</span> {{ cliente.cidade }} / {{ cliente.uf }}</span>
+      </div>
+      <div class="ja-mc-actions">
+        <button cButton color="success" size="sm" variant="ghost"
+                (click)="abrirModalPix(cliente)">
+          <fa-icon [icon]="faKey" class="me-1"></fa-icon> Pix
+        </button>
+        <a *ngIf="auth.hasPermission('CLIENTES', 'EDITAR')"
+           [routerLink]="['/clientes', cliente.id]"
+           cButton color="info" size="sm" variant="ghost">
+          <fa-icon [icon]="faPencil" class="me-1"></fa-icon> Editar
+        </a>
+        <button *ngIf="auth.hasPermission('CLIENTES', 'DELETAR')"
+                cButton color="danger" size="sm" variant="ghost"
+                (click)="deletar(cliente.id!)">
+          <fa-icon [icon]="faTrash" class="me-1"></fa-icon> Remover
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ─── Modal de Chaves Pix ─────────────────────────────────── -->
@@ -57,25 +96,22 @@
   <c-modal-body>
 
     <div class="row g-3 align-items-end mb-4">
-      <div class="col-md-4">
+      <div class="col-12 col-md-4">
         <label cLabel>Tipo</label>
         <select cFormSelect [(ngModel)]="novoPix.tipo">
           <option *ngFor="let tipo of tiposPix" [value]="tipo">{{ tipo }}</option>
         </select>
       </div>
-      <div class="col-md-5">
+      <div class="col-12 col-md-5">
         <label cLabel>Chave</label>
         <input cFormControl [(ngModel)]="novoPix.chave" placeholder="Ex: email@email.com" />
       </div>
-      <div class="col-md-3">
-        <button cButton color="primary" size="sm" (click)="adicionarPix()">
-          <fa-icon [icon]="faPlus" class="me-1"></fa-icon>
-          Adicionar
+      <div class="col-12 col-md-3">
+        <button cButton color="primary" (click)="adicionarPix()">
+          <fa-icon [icon]="faPlus" class="me-1"></fa-icon> Adicionar
         </button>
       </div>
     </div>
-
-    <hr />
 
     <table cTable hover responsive>
       <thead>
@@ -96,7 +132,9 @@
           </td>
         </tr>
         <tr *ngIf="pixKeys.length === 0">
-          <td colspan="3" class="text-center text-muted">Nenhuma chave cadastrada</td>
+          <td colspan="3" class="text-center text-muted py-3">
+            Nenhuma chave cadastrada
+          </td>
         </tr>
       </tbody>
     </table>
