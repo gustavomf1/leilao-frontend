@@ -39,6 +39,26 @@ export interface Leilao {
   taxas_id?: number;
 }
 
+export interface LeilaoDetalhes {
+  id: number;
+  local: string;
+  uf: string;
+  cidade: string;
+  descricao: string;
+  data: string;
+  inativo: string;
+  condicao: Condicoes;
+  taxa: {
+    id: number;
+    comissaoVendedor: number;
+    comissaoComprador: number;
+    especie: Especie;
+    tipoLeilao: string;
+    taxaPor: string;
+    inativo: string;
+  };
+}
+
 export interface Condicoes {
   id?: number;
   descricao: string;
