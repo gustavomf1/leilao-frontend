@@ -2,7 +2,55 @@
 @use "@coreui/coreui/scss/mixins/color-mode" as *;
 
 body {
-  background-color: var(--cui-tertiary-bg);
+  background-color: var(--ja-surface, var(--cui-tertiary-bg));
+}
+
+// ─── Sidebar ──────────────────────────────────────────────────
+// Sempre preta — verde só no ícone/borda do item ativo
+.sidebar {
+  --cui-sidebar-bg:                      #111111;
+  --cui-sidebar-brand-bg:                #080808;
+  --cui-sidebar-color:                   rgba(255,255,255,.75);
+  --cui-sidebar-border-width:            0;
+  --cui-sidebar-nav-link-color:          rgba(255,255,255,.58);
+  --cui-sidebar-nav-link-icon-color:     rgba(255,255,255,.32);
+  --cui-sidebar-nav-link-hover-bg:       rgba(255,255,255,.055);
+  --cui-sidebar-nav-link-hover-color:    #fff;
+  --cui-sidebar-nav-link-hover-icon-color: rgba(255,255,255,.65);
+  --cui-sidebar-nav-link-active-bg:      rgba(34, 197, 94, .07);
+  --cui-sidebar-nav-link-active-color:   #fff;
+  --cui-sidebar-nav-link-active-icon-color: #22c55e;
+  --cui-sidebar-nav-title-color:         rgba(255,255,255,.22);
+  --cui-sidebar-toggler-bg:              #080808;
+  --cui-sidebar-toggler-hover-bg:        #000;
+  --cui-sidebar-toggler-indicator-color: rgba(255,255,255,.4);
+
+  box-shadow: 2px 0 24px rgba(0,0,0,.5) !important;
+}
+
+// Barra verde no item ativo
+.sidebar-nav .nav-link.active {
+  border-left: 3px solid #22c55e !important;
+  padding-left: calc(var(--cui-sidebar-nav-link-padding-x, 1rem) - 3px) !important;
+}
+
+// Títulos de seção
+.sidebar-nav .nav-title {
+  font-family: 'Nunito', sans-serif !important;
+  font-size: .63rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  padding: 1.25rem 1rem .4rem !important;
+}
+
+// Área da marca
+.sidebar-brand {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .01em !important;
+  color: #fff !important;
 }
 
 .wrapper {
@@ -55,7 +103,7 @@ body {
 
 @include color-mode(dark) {
   body {
-    background-color: var(--cui-dark-bg-subtle);
+    background-color: #080808;
   }
 
   .footer {
