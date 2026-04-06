@@ -1,10 +1,13 @@
-/* =============================================
-   Lote Details - Estilos
-   ============================================= */
+/* ============================================================
+   Lote Details — Formulário (tema preto/verde + responsivo)
+   ============================================================ */
+
 .details-container {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255,255,255,.06) !important;
+  border-radius: 14px !important;
+  box-shadow:
+    0 0 0 1px rgba(34,197,94,.06),
+    0 8px 32px rgba(0,0,0,.25) !important;
   overflow: hidden;
 }
 
@@ -13,73 +16,130 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
-  background: var(--cui-card-cap-bg);
-  border-bottom: 1px solid var(--cui-border-color);
+  padding: .85rem 1.25rem;
+  background: rgba(0,0,0,.2) !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
 }
 
 .details-title {
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem;
+  font-weight: 700;
   color: var(--cui-body-color);
+  letter-spacing: .01em;
 }
 
-/* ---------- Form Fields ---------- */
-.field-label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--cui-secondary-color);
-  margin-bottom: 0.35rem;
-  font-weight: 500;
-}
-
+/* ---------- Campos ---------- */
 .field-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.1rem;
 }
 
-/* ---------- Section Block ---------- */
+.field-label {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  font-weight: 800;
+  color: var(--cui-secondary-color);
+  margin-bottom: .35rem;
+  opacity: .8;
+}
+
+/* ---------- Bloco de preço (acento verde) ---------- */
 .section-block {
-  background: rgba(25, 135, 84, 0.05);
-  border-left: 3px solid var(--cui-success);
+  background: rgba(34,197,94,.05);
+  border-left: 3px solid #22c55e;
   border-radius: 0 8px 8px 0;
-  padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
+  padding: .85rem 1.1rem;
+  margin-bottom: .5rem;
 }
 
 .section-title {
-  font-size: 0.72rem;
+  font-size: .65rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--cui-success);
-  font-weight: 700;
-  margin-bottom: 0.75rem;
+  letter-spacing: .09em;
+  font-weight: 800;
+  color: #22c55e;
+  margin-bottom: .55rem;
+  display: block;
 }
 
-/* ---------- Footer Actions ---------- */
+/* ---------- Footer de ações ---------- */
 .details-footer {
-  padding: 1rem 1.25rem;
-  background: var(--cui-card-cap-bg);
-  border-top: 1px solid var(--cui-border-color-translucent);
+  padding: .85rem 1.25rem;
+  background: rgba(0,0,0,.15) !important;
+  border-top: 1px solid rgba(255,255,255,.06) !important;
   display: flex;
-  gap: 0.5rem;
+  gap: .5rem;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 /* ---------- Entrada animada ---------- */
 .animate-in {
-  animation: slideUp 0.35s ease both;
+  animation: slideUp .32s cubic-bezier(.22,.68,0,1.2) both;
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
+  from { opacity: 0; transform: translateY(14px) scale(.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============================================================
+   RESPONSIVO MOBILE
+   ============================================================ */
+@media (max-width: 767px) {
+
+  /* Título da página + botão voltar em coluna */
+  .container-lg > .d-flex {
+    gap: .5rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  /* Card sem padding lateral excessivo */
+  .details-container {
+    border-radius: 10px !important;
   }
+
+  .details-header {
+    padding: .7rem 1rem;
+  }
+
+  .details-title {
+    font-size: .88rem;
+  }
+
+  /* Body com padding reduzido */
+  c-card-body.p-4,
+  .p-4 {
+    padding: 1rem !important;
+  }
+
+  /* Campos ocupam 100% — CoreUI c-col já cuida, mas garantindo */
+  .field-group {
+    margin-bottom: .9rem;
+  }
+
+  /* Bloco de preço */
+  .section-block {
+    padding: .75rem .9rem;
+  }
+
+  /* Footer: botões em largura total no mobile */
+  .details-footer {
+    padding: .75rem 1rem;
+    flex-direction: column-reverse;
+
+    a, button {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+}
+
+/* Telas muito pequenas (< 380px) */
+@media (max-width: 379px) {
+  .details-title { font-size: .8rem; }
+  .field-label   { font-size: .6rem; }
 }

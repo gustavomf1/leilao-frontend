@@ -50,13 +50,19 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       const dados = this.loginForm.getRawValue() as any;
       this.authService.login(dados).subscribe({
-        next: (res) => {
+        next: () => {
           this.alert.success("Login efetuado com sucesso!");
-          const redirectUri = localStorage.getItem('redirectUri')
-          if(redirectUri){
-            this.router.navigateByUrl(redirectUri)
+          if (this.authService.isManejo()) {
+            this.router.navigate(['/lotes/cadastrar']);
+            return;
           }
-          this.router.navigate(["dashboard"])
+          const redirectUri = localStorage.getItem('redirectUri');
+          if (redirectUri) {
+            localStorage.removeItem('redirectUri');
+            this.router.navigateByUrl(redirectUri);
+            return;
+          }
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.alert.error(err.error.mensagem);

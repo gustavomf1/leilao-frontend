@@ -125,6 +125,25 @@ export const navItems: INavData[] = [
   }
 ];
 
+// Nav exclusivo para funcionários de manejo — acesso restrito a lotes
+export const navItemsManejo: INavData[] = [
+  {
+    title: true,
+    name: 'Movimentação'
+  },
+  {
+    name: 'Lotes',
+    url: '/lotes',
+    iconComponent: { name: 'cil-tags' },
+    children: [
+      { name: 'Listar Lotes',    url: '/lotes/lista',     icon: 'nav-icon-bullet' },
+      { name: 'Cadastrar Lote',  url: '/lotes/cadastrar', icon: 'nav-icon-bullet' }
+    ]
+  },
+  { title: true, name: 'Sistema', class: 'mt-auto' },
+  { name: 'Configurações', url: '/configuracoes', iconComponent: { name: 'cil-settings' } }
+];
+
 // Cada item de nav pode ter attributes.ambiente e attributes.acao para filtrar por permissão
 // 'lista' requer VISUALIZAR, 'cadastrar' requer CRIAR
 export const navItemsLeilao: INavData[] = [

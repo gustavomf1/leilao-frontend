@@ -34,10 +34,11 @@ export class FuncionariosDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      nome:  ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      cpf:   ['', Validators.required],
-      senha: ['', this.isEdicao ? [] : [Validators.required, Validators.minLength(6)]]
+      nome:     ['', Validators.required],
+      email:    ['', [Validators.required, Validators.email]],
+      cpf:      ['', Validators.required],
+      senha:    ['', this.isEdicao ? [] : [Validators.required, Validators.minLength(6)]],
+      isManejo: [false]
     });
 
     const id = this.route.snapshot.paramMap.get('id');
