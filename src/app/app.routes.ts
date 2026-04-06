@@ -152,6 +152,12 @@ export const routes: Routes = [
                 (m) => m.LeiloesDetailsComponent),
           },
           {
+            path: ':id/view',
+            loadComponent: () =>
+              import('./components/leilao/leilao-view/leilao-view.component').then(
+                (m) => m.LeilaoViewComponent),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./components/leilao/leilao-details/leilao-details.component').then(

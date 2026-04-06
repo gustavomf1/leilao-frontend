@@ -28,7 +28,10 @@
             <td>{{ leilao.cidade }}/{{ leilao.uf }}</td>
             <td>{{ leilao.data }}</td>
             <td class="text-center">
-              <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', leilao.id]" cButton color="info" size="sm" variant="ghost">
+              <a [routerLink]="['/leiloes', leilao.id, 'view']" cButton color="primary" size="sm" variant="ghost" title="Ver detalhes">
+                <fa-icon [icon]="faEye"></fa-icon>
+              </a>
+              <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', leilao.id]" cButton color="info" size="sm" variant="ghost" title="Editar">
                 <fa-icon [icon]="faPencil"></fa-icon>
               </a>
               <button *ngIf="auth.hasPermission('LEILOES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(leilao.id!)">
