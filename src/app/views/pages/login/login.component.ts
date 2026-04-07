@@ -10,7 +10,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { AlertService } from '../../../shared/services/alert.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +22,8 @@ import { Router } from '@angular/router';
     CardBodyComponent,
     ButtonDirective,
     ReactiveFormsModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    RouterLink
   ]
 })
 export class LoginComponent {

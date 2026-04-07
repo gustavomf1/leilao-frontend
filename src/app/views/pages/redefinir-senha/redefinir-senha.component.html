@@ -1,0 +1,63 @@
+<div class="login-wrapper">
+  <c-card class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <svg cIcon name="cilLockLocked" size="xl"></svg>
+      </div>
+      <h1>Redefinir senha</h1>
+      <p>Digite sua nova senha</p>
+    </div>
+
+    <c-card-body class="login-body">
+      @if (validando()) {
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary mb-3" role="status"></div>
+          <p style="color: #8a93a2; font-size: 0.9rem;">Verificando token...</p>
+        </div>
+      } @else if (tokenInvalido()) {
+        <div class="text-center py-3">
+          <p class="mb-1" style="color: #c00; font-weight: 600;">{{ tokenErro() }}</p>
+          <p style="color: #8a93a2; font-size: 0.9rem;">Solicite um novo link de recuperação.</p>
+          <a routerLink="/esqueci-senha" class="text-decoration-none" style="color: #321fdb; font-weight: 500;">Solicitar novamente</a>
+        </div>
+      } @else if (concluido()) {
+        <div class="text-center py-3">
+          <p class="mb-1" style="color: #1b2e4b; font-weight: 600;">Senha redefinida com sucesso!</p>
+          <p style="color: #8a93a2; font-size: 0.9rem;">Você já pode fazer login com sua nova senha.</p>
+          <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-weight: 500;">Ir para o login</a>
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label-modern">Nova senha</label>
+            <div class="input-icon-wrapper">
+              <svg cIcon name="cilLockLocked" class="input-icon"></svg>
+              <input
+                formControlName="novaSenha"
+                placeholder="•••"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="w-100"
+              />
+              <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+                <fa-icon [icon]="showPassword() ? faEye : faEyeSlash" class="input-icon"></fa-icon>
+              </button>
+            </div>
+            @if (form.get('novaSenha')?.invalid && form.get('novaSenha')?.touched) {
+              <small class="text-danger">A senha deve ter no mínimo 3 caracteres</small>
+            }
+          </div>
+
+          <button cButton color="primary" class="btn-login w-100 mb-3" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Aguarde...' : 'Redefinir senha' }}
+          </button>
+
+          <div class="text-center">
+            <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-size: 0.85rem; font-weight: 500;">
+              Voltar ao login
+            </a>
+          </div>
+        </form>
+      }
+    </c-card-body>
+  </c-card>
+</div>
