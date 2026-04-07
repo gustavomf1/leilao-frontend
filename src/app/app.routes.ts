@@ -334,4 +334,18 @@ export const routes: Routes = [
         (m) => m.RegisterComponent),
     data: { title: 'Register Page' },
   },
+  {
+    path: 'esqueci-senha',
+    loadComponent: () =>
+      import('./views/pages/esqueci-senha/esqueci-senha.component').then(
+        (m) => m.EsqueciSenhaComponent),
+    data: { title: 'Esqueci minha senha' },
+  },
+  {
+    path: 'redefinir-senha',
+    loadComponent: () =>
+      import('./views/pages/redefinir-senha/redefinir-senha.component').then(
+        (m) => m.RedefinirSenhaComponent),
+    data: { title: 'Redefinir senha' },
+  },
 ];
