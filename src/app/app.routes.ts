@@ -314,6 +314,7 @@ export const routes: Routes = [
   },
   {
     path: 'publico/evento/:leilaoId',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./components/leilao/evento-publico/evento-publico.component')
         .then(m => m.EventoPublicoComponent),
