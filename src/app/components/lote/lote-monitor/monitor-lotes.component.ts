@@ -27,17 +27,18 @@ export class MonitorLotesComponent implements OnInit {
   // null = carregando, [] ou [...] = carregado
   lotes$ = new BehaviorSubject<any[] | null>(null);
 
-  filtroStatus: StatusLote | 'TODOS' = 'TODOS';
+  filtroStatus: StatusLote | 'TODOS' | 'NAO_VENDIDO' = 'TODOS';
   precoInput: Record<number, number | null> = {};
 
   readonly STATUS_LABELS = STATUS_LOTE_LABELS;
   readonly STATUS_COLOR  = STATUS_LOTE_COLOR;
 
-  readonly statusOpcoes: Array<{ value: StatusLote | 'TODOS'; label: string }> = [
+  readonly statusOpcoes: Array<{ value: StatusLote | 'TODOS' | 'NAO_VENDIDO'; label: string }> = [
     { value: 'TODOS',                  label: 'Todos'                  },
     { value: 'AGUARDANDO_ESCRITORIO',  label: 'Aguardando Escritório'  },
     { value: 'AGUARDANDO_LANCE',       label: 'Aguardando Lance'       },
     { value: 'FINALIZADO',             label: 'Finalizado'             },
+    { value: 'NAO_VENDIDO',            label: 'Não Vendido'            },
   ];
 
   readonly faCircle     = faCircle;
@@ -67,6 +68,7 @@ export class MonitorLotesComponent implements OnInit {
   get lotesFiltrados(): any[] {
     const lotes = this.lotes$.value ?? [];
     if (this.filtroStatus === 'TODOS') return lotes;
+    if (this.filtroStatus === 'NAO_VENDIDO') return lotes.filter(l => l.naoVendidoNoLeilao === 'S');
     return lotes.filter(l => l.status === this.filtroStatus);
   }
 
@@ -89,7 +91,7 @@ export class MonitorLotesComponent implements OnInit {
     });
   }
 
-  setFiltro(status: StatusLote | 'TODOS') {
+  setFiltro(status: StatusLote | 'TODOS' | 'NAO_VENDIDO') {
     this.filtroStatus = status;
   }
 

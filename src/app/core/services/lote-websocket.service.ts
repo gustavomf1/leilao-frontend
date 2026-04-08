@@ -11,21 +11,15 @@ export class LoteWebsocketService {
   public novoLoteSubject = new Subject<any>();
 
   conectar() {
-  console.log('>>> conectar() chamado');
-  const token = localStorage.getItem('auth_token');
-  console.log('>>> token:', token);
-
   if (this.stompClient?.active) {
-    console.log('>>> já conectado');
     return;
   }
-  if (!token) {
-    console.log('>>> sem token');
-    return;
-  }
+
+  const token = localStorage.getItem('token');
 
   this.stompClient = new Client({
-    webSocketFactory: () => new SockJS(`http://localhost:8080/ws-leilao?token=${token}`),
+    webSocketFactory: () => new SockJS(`http://localhost:8080/ws-leilao`),
+    connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
     reconnectDelay: 5000,
     onConnect: (frame) => {
       console.log('Conectado ao WebSocket do AgroLance: ' + frame);

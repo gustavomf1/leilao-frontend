@@ -15,7 +15,7 @@ import { AlertService } from '../services/alert.service';
         <p>{{ message }}</p>
         <div class="d-flex justify-content-end gap-2 mt-4">
           <button cButton color="secondary" size="sm" (click)="cancelar()">Cancelar</button>
-          <button cButton color="danger" size="sm" (click)="confirmar()">Excluir</button>
+          <button cButton [color]="confirmColor" size="sm" (click)="confirmar()">{{ confirmLabel }}</button>
         </div>
       </div>
     </div>
@@ -51,12 +51,16 @@ export class ConfirmModalComponent implements OnInit {
 
   visible = false;
   message = '';
+  confirmLabel = 'Excluir';
+  confirmColor = 'danger';
   private callback?: () => void;
 
   ngOnInit() {
-    this.alertService.confirm$.subscribe(({ message, callback }) => {
+    this.alertService.confirm$.subscribe(({ message, callback, confirmLabel, confirmColor }) => {
       this.message = message;
       this.callback = callback;
+      this.confirmLabel = confirmLabel || 'Excluir';
+      this.confirmColor = confirmColor || 'danger';
       this.visible = true;
     });
   }

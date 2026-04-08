@@ -158,6 +158,12 @@ export const routes: Routes = [
                 (m) => m.LeilaoViewComponent),
           },
           {
+            path: ':id/evento',
+            loadComponent: () =>
+              import('./components/leilao/evento-leilao/evento-leilao.component').then(
+                (m) => m.EventoLeilaoComponent),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./components/leilao/leilao-details/leilao-details.component').then(
@@ -305,6 +311,14 @@ export const routes: Routes = [
           ),
       },
     ],
+  },
+  {
+    path: 'publico/evento/:leilaoId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./components/leilao/evento-publico/evento-publico.component')
+        .then(m => m.EventoPublicoComponent),
+    data: { title: 'Evento Público' },
   },
   {
     path: '404',

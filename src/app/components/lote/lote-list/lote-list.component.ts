@@ -31,7 +31,7 @@ export class LotesListComponent implements OnInit {
 
   lotes: any[]    = [];
   lotes$          = new Subject<any[]>();
-  filtroStatus: StatusLote | 'TODOS' = 'TODOS';
+  filtroStatus: StatusLote | 'TODOS' | 'NAO_VENDIDO' = 'TODOS';
 
   readonly STATUS_LABELS = STATUS_LOTE_LABELS;
   readonly STATUS_COLOR  = STATUS_LOTE_COLOR;
@@ -48,12 +48,13 @@ export class LotesListComponent implements OnInit {
   readonly faLayerGroup  = faLayerGroup;
   readonly faArrowRight  = faArrowRight;
 
-  readonly statusDisponiveis: Array<StatusLote | 'TODOS'> = [
-    'TODOS', 'AGUARDANDO_ESCRITORIO', 'AGUARDANDO_LANCE', 'FINALIZADO'
+  readonly statusDisponiveis: Array<StatusLote | 'TODOS' | 'NAO_VENDIDO'> = [
+    'TODOS', 'AGUARDANDO_ESCRITORIO', 'AGUARDANDO_LANCE', 'FINALIZADO', 'NAO_VENDIDO'
   ];
 
   get lotesFiltrados(): any[] {
     if (this.filtroStatus === 'TODOS') return this.lotes;
+    if (this.filtroStatus === 'NAO_VENDIDO') return this.lotes.filter(l => l.naoVendidoNoLeilao === 'S');
     return this.lotes.filter(l => l.status === this.filtroStatus);
   }
 
@@ -86,7 +87,7 @@ export class LotesListComponent implements OnInit {
     }
   }
 
-  setFiltro(status: StatusLote | 'TODOS') {
+  setFiltro(status: StatusLote | 'TODOS' | 'NAO_VENDIDO') {
     this.filtroStatus = status;
   }
 

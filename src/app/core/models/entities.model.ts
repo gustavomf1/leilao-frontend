@@ -39,6 +39,20 @@ export interface Leilao {
   taxas_id?: number;
 }
 
+export type StatusLeilao = 'ABERTO' | 'EM_ANDAMENTO' | 'FINALIZADO';
+
+export const STATUS_LEILAO_LABELS: Record<StatusLeilao, string> = {
+  ABERTO: 'Aberto',
+  EM_ANDAMENTO: 'Em Andamento',
+  FINALIZADO: 'Finalizado',
+};
+
+export const STATUS_LEILAO_COLOR: Record<StatusLeilao, string> = {
+  ABERTO: 'info',
+  EM_ANDAMENTO: 'success',
+  FINALIZADO: 'dark',
+};
+
 export interface LeilaoDetalhes {
   id: number;
   local: string;
@@ -47,6 +61,7 @@ export interface LeilaoDetalhes {
   descricao: string;
   data: string;
   inativo: string;
+  status: StatusLeilao;
   condicao: Condicoes;
   taxa: {
     id: number;
@@ -137,6 +152,7 @@ export interface Lote {
   vendedorNome?: string;
   vendedorNomeRascunho?: string;
   status?: StatusLote;
+  naoVendidoNoLeilao?: string;
 }
 
 export interface Permissao {

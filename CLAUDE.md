@@ -40,6 +40,14 @@ There are **two component directories** in active use during an ongoing migratio
 
 When adding or modifying features, prefer `src/app/features/`. The `features/shared-components/subform/` contains a reusable subform component.
 
+### Evento de Leilão
+
+Componente `evento-leilao` (`src/app/components/leilao/evento-leilao/`) — Tela de execução do leilão em tempo real. Rota: `/leiloes/:id/evento`. Acessível via botão de martelo na lista de leilões e botão "Evento" na visualização do leilão. Ciclo: Aberto → Em Andamento → Finalizado.
+
+### Confirmação Customizável
+
+O `AlertService.confirm()` aceita parâmetros opcionais `confirmLabel` e `confirmColor` para customizar o botão do modal (padrão: "Excluir" vermelho). Exemplo: `this.alert.confirm('Mensagem', callback, 'Confirmar', 'success')`.
+
 ### Input Masks
 
 `ngx-mask` is configured globally via `provideNgxMask()`. Masks are applied for CPF, CNPJ, RG, and phone numbers using the `mask` directive.
