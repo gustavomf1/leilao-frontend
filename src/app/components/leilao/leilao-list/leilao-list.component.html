@@ -31,6 +31,9 @@
               <a [routerLink]="['/leiloes', leilao.id, 'view']" cButton color="primary" size="sm" variant="ghost" title="Ver detalhes">
                 <fa-icon [icon]="faEye"></fa-icon>
               </a>
+              <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', leilao.id, 'evento']" cButton color="success" size="sm" variant="ghost" title="Evento de Leilão">
+                <fa-icon [icon]="faGavel"></fa-icon>
+              </a>
               <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', leilao.id]" cButton color="info" size="sm" variant="ghost" title="Editar">
                 <fa-icon [icon]="faPencil"></fa-icon>
               </a>

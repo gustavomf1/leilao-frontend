@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
 import { ButtonDirective } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faPlus, faPencil, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPencil, faTrash, faEye, faGavel } from '@fortawesome/free-solid-svg-icons';
 import { Leilao } from '../../../core/models/entities.model';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -27,6 +27,7 @@ export class LeiloesListComponent implements OnInit {
   faPencil = faPencil;
   faTrash = faTrash;
   faEye = faEye;
+  faGavel = faGavel;
 
   leiloes: Leilao[] = [];
   public leiloes$ = new Subject<Leilao[]>();

@@ -21,6 +21,9 @@
       </span>
     </div>
     <div class="d-flex gap-2">
+      <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', resumo.id, 'evento']" cButton color="success" size="sm">
+        <fa-icon [icon]="faGavel" class="me-1"></fa-icon> Evento
+      </a>
       <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', resumo.id]" cButton color="info" size="sm" variant="ghost">
         <fa-icon [icon]="faPencil" class="me-1"></fa-icon> Editar
       </a>

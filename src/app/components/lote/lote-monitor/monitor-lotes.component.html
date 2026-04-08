@@ -73,9 +73,14 @@
                   <fa-icon [icon]="faTag" class="me-1 opacity-75"></fa-icon>
                   {{ lote.raca }}
                 </span>
-                <c-badge [color]="statusColor(lote.status)" shape="rounded-pill" style="flex-shrink:0">
-                  {{ statusLabel(lote.status) }}
-                </c-badge>
+                <div class="d-flex gap-1 align-items-center" style="flex-shrink:0">
+                  <c-badge *ngIf="lote.naoVendidoNoLeilao === 'S'" color="danger" shape="rounded-pill">
+                    Não vendido
+                  </c-badge>
+                  <c-badge [color]="statusColor(lote.status)" shape="rounded-pill">
+                    {{ statusLabel(lote.status) }}
+                  </c-badge>
+                </div>
               </div>
             </c-card-header>
 
@@ -148,10 +153,12 @@
                 <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
                   <fa-icon [icon]="faPencil"></fa-icon>
                 </a>
-                <button *ngIf="auth.hasPermission('LOTES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id)">
-                  <fa-icon [icon]="faTrash"></fa-icon>
-                </button>
               </div>
+
+              <!-- Deletar: admin pode excluir em qualquer status -->
+              <button *ngIf="auth.isAdmin()" cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
             </c-card-footer>
 
           </c-card>
@@ -213,9 +220,14 @@
       </c-col>
       <c-col [md]="4">
         <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Status</div>
-        <c-badge [color]="statusColor(loteDetalhes.status)" shape="rounded-pill">
-          {{ statusLabel(loteDetalhes.status) }}
-        </c-badge>
+        <div class="d-flex gap-1 align-items-center">
+          <c-badge [color]="statusColor(loteDetalhes.status)" shape="rounded-pill">
+            {{ statusLabel(loteDetalhes.status) }}
+          </c-badge>
+          <c-badge *ngIf="loteDetalhes.naoVendidoNoLeilao === 'S'" color="danger" shape="rounded-pill">
+            Não vendido no leilão
+          </c-badge>
+        </div>
       </c-col>
       <c-col [md]="6">
         <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Vendedor (informado)</div>
