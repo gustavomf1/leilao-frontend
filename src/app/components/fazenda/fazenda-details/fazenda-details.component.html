@@ -37,7 +37,7 @@
           <c-col xs="12" md="6">
             <div class="mb-3">
               <label cLabel for="cnpj">CNPJ *</label>
-              <input cFormControl id="cnpj" formControlName="cnpj" placeholder="00.000.000/0000-00" />
+              <input cFormControl id="cnpj" formControlName="cnpj" placeholder="00.000.000/0000-00" mask="00.000.000/0000-00"/>
               <c-form-feedback *ngIf="form.get('cnpj')?.invalid && form.get('cnpj')?.touched" [valid]="false">
                 CNPJ é obrigatório
               </c-form-feedback>

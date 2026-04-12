@@ -7,12 +7,13 @@ import { Subject } from 'rxjs';
 import {
   faPlus, faPencil, faTrash,
   faHashtag, faTag, faPaw, faDollarSign,
-  faUser, faHorse, faLayerGroup
+  faUser, faHorse, faLayerGroup, faArrowRight
 } from '@fortawesome/free-solid-svg-icons';
-import { Lote } from '../../../core/models/entities.model';
 import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-lotes-list',
@@ -22,27 +23,42 @@ import { AlertService } from '../../../shared/services/alert.service';
   styleUrl: './lote-list.component.css'
 })
 export class LotesListComponent implements OnInit {
-  private service = inject(LoteService);
+  private service   = inject(LoteService);
   private wsService = inject(LoteWebsocketService);
-  private alert = inject(AlertService);
-  private zone = inject(NgZone);
+  private alert     = inject(AlertService);
+  private zone      = inject(NgZone);
+  auth              = inject(AuthService);
 
-  lotes: any[] = [];
-  lotes$ = new Subject<any[]>();
+  lotes: any[]    = [];
+  lotes$          = new Subject<any[]>();
+  filtroStatus: StatusLote | 'TODOS' | 'NAO_VENDIDO' = 'TODOS';
 
-  readonly faPlus       = faPlus;
-  readonly faPencil     = faPencil;
-  readonly faTrash      = faTrash;
-  readonly faHashtag    = faHashtag;
-  readonly faTag        = faTag;
-  readonly faPaw        = faPaw;
-  readonly faDollarSign = faDollarSign;
-  readonly faUser       = faUser;
-  readonly faHorse      = faHorse;
-  readonly faLayerGroup = faLayerGroup;
+  readonly STATUS_LABELS = STATUS_LOTE_LABELS;
+  readonly STATUS_COLOR  = STATUS_LOTE_COLOR;
+
+  readonly faPlus        = faPlus;
+  readonly faPencil      = faPencil;
+  readonly faTrash       = faTrash;
+  readonly faHashtag     = faHashtag;
+  readonly faTag         = faTag;
+  readonly faPaw         = faPaw;
+  readonly faDollarSign  = faDollarSign;
+  readonly faUser        = faUser;
+  readonly faHorse       = faHorse;
+  readonly faLayerGroup  = faLayerGroup;
+  readonly faArrowRight  = faArrowRight;
+
+  readonly statusDisponiveis: Array<StatusLote | 'TODOS' | 'NAO_VENDIDO'> = [
+    'TODOS', 'AGUARDANDO_ESCRITORIO', 'AGUARDANDO_LANCE', 'FINALIZADO', 'NAO_VENDIDO'
+  ];
+
+  get lotesFiltrados(): any[] {
+    if (this.filtroStatus === 'TODOS') return this.lotes;
+    if (this.filtroStatus === 'NAO_VENDIDO') return this.lotes.filter(l => l.naoVendidoNoLeilao === 'S');
+    return this.lotes.filter(l => l.status === this.filtroStatus);
+  }
 
   ngOnInit() {
-    // 1. Carrega todos do banco
     this.service.listar().subscribe({
       next: (dados) => {
         this.lotes = dados;
@@ -50,15 +66,42 @@ export class LotesListComponent implements OnInit {
       }
     });
 
-    // 2. Ouve novos em tempo real
     this.wsService.novoLoteSubject.subscribe({
       next: (novoLote) => {
         this.zone.run(() => {
-          console.log('>>> WebSocket recebeu:', novoLote);
-          this.lotes = [novoLote, ...this.lotes];
+          // Atualiza se já existe, senão adiciona no topo
+          const idx = this.lotes.findIndex(l => l.id === novoLote.id);
+          if (idx >= 0) {
+            this.lotes[idx] = novoLote;
+          } else {
+            this.lotes = [novoLote, ...this.lotes];
+          }
           this.lotes$.next([...this.lotes]);
         });
       }
+    });
+
+    // Filtro padrão por perfil
+    if (this.auth.hasPermission('LOTES', 'EDITAR') && !this.auth.isAdmin()) {
+      this.filtroStatus = 'AGUARDANDO_ESCRITORIO';
+    }
+  }
+
+  setFiltro(status: StatusLote | 'TODOS' | 'NAO_VENDIDO') {
+    this.filtroStatus = status;
+  }
+
+  avancarStatus(id: number) {
+    this.service.avancarStatus(id).subscribe({
+      next: (loteAtualizado) => {
+        this.zone.run(() => {
+          const idx = this.lotes.findIndex(l => l.id === id);
+          if (idx >= 0) this.lotes[idx] = loteAtualizado;
+          this.lotes$.next([...this.lotes]);
+          this.alert.success(`Status avançado para: ${this.STATUS_LABELS[loteAtualizado.status]}`);
+        });
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao avançar status')
     });
   }
 
@@ -70,7 +113,7 @@ export class LotesListComponent implements OnInit {
           this.lotes = this.lotes.filter(l => l.id !== id);
           this.lotes$.next([...this.lotes]);
         },
-        error: () => this.alert.error('Erro ao excluir lote')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir lote')
       });
     });
   }

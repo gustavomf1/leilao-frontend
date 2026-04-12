@@ -152,6 +152,18 @@ export const routes: Routes = [
                 (m) => m.LeiloesDetailsComponent),
           },
           {
+            path: ':id/view',
+            loadComponent: () =>
+              import('./components/leilao/leilao-view/leilao-view.component').then(
+                (m) => m.LeilaoViewComponent),
+          },
+          {
+            path: ':id/evento',
+            loadComponent: () =>
+              import('./components/leilao/evento-leilao/evento-leilao.component').then(
+                (m) => m.EventoLeilaoComponent),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./components/leilao/leilao-details/leilao-details.component').then(
@@ -181,6 +193,31 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./components/condicoes/condicoes-details/condicoes-details.component').then(
                 (m) => m.CondicoesDetailsComponent),
+          },
+        ],
+      },
+      {
+        path: 'especies',
+        children: [
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
+          {
+            path: 'lista',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/especie/especie-list/especie-list.component').then(
+                (m) => m.EspecieListComponent),
+          },
+          {
+            path: 'cadastrar',
+            loadComponent: () =>
+              import('./components/especie/especie-details/especie-details.component').then(
+                (m) => m.EspecieDetailsComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./components/especie/especie-details/especie-details.component').then(
+                (m) => m.EspecieDetailsComponent),
           },
         ],
       },
@@ -217,20 +254,14 @@ export const routes: Routes = [
             path: 'lista',
             runGuardsAndResolvers: 'always',
             loadComponent: () =>
-              import('./components/lote/lote-list/lote-list.component').then(
-                (m) => m.LotesListComponent),
+              import('./components/lote/lote-monitor/monitor-lotes.component').then(
+                (m) => m.MonitorLotesComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
               import('./components/lote/lote-details/lote-details.component').then(
                 (m) => m.LotesDetailsComponent),
-          },
-          {
-            path: 'monitor',
-            loadComponent: () =>
-              import('./features/lotes/monitor-lotes/monitor-lotes.component').then(
-                (m) => m.MonitorLotesComponent),
           },
           {
             path: ':id',
@@ -282,6 +313,14 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'publico/evento/:leilaoId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./components/leilao/evento-publico/evento-publico.component')
+        .then(m => m.EventoPublicoComponent),
+    data: { title: 'Evento Público' },
+  },
+  {
     path: '404',
     loadComponent: () =>
       import('./views/pages/page404/page404.component').then(
@@ -308,5 +347,19 @@ export const routes: Routes = [
       import('./views/pages/register/register.component').then(
         (m) => m.RegisterComponent),
     data: { title: 'Register Page' },
+  },
+  {
+    path: 'esqueci-senha',
+    loadComponent: () =>
+      import('./views/pages/esqueci-senha/esqueci-senha.component').then(
+        (m) => m.EsqueciSenhaComponent),
+    data: { title: 'Esqueci minha senha' },
+  },
+  {
+    path: 'redefinir-senha',
+    loadComponent: () =>
+      import('./views/pages/redefinir-senha/redefinir-senha.component').then(
+        (m) => m.RedefinirSenhaComponent),
+    data: { title: 'Redefinir senha' },
   },
 ];

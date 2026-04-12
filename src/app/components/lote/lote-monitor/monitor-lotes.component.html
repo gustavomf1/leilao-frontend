@@ -1,0 +1,252 @@
+<div class="container-lg px-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Lotes</h2>
+    <a *ngIf="auth.hasPermission('LOTES', 'CRIAR')" routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
+      <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+      Novo Lote
+    </a>
+  </div>
+
+  <!-- Filtros de status -->
+  <div class="filtros-status">
+    <button
+      *ngFor="let op of statusOpcoes"
+      cButton
+      [color]="filtroStatus === op.value ? 'primary' : 'secondary'"
+      [variant]="filtroStatus === op.value ? undefined : 'ghost'"
+      size="sm"
+      (click)="setFiltro(op.value)"
+    >
+      {{ op.label }}
+    </button>
+  </div>
+
+  <c-card class="monitor-container">
+
+    <c-card-header class="monitor-header">
+      <div class="header-left">
+        <c-badge color="success" shape="rounded-pill" class="live-badge">
+          <fa-icon [icon]="faCircle" class="live-dot me-1"></fa-icon>
+          AO VIVO
+        </c-badge>
+        <h5 class="monitor-title mb-0">Monitor de Lotes em Tempo Real</h5>
+      </div>
+      <span class="lotes-count">
+        <fa-icon [icon]="faLayerGroup" class="me-1"></fa-icon>
+        {{ lotesFiltrados.length }} lote{{ lotesFiltrados.length !== 1 ? 's' : '' }}
+      </span>
+    </c-card-header>
+
+    <c-card-body class="p-3">
+
+      <!-- Loading State: lotes$ === null -->
+      <ng-container *ngIf="(lotes$ | async) !== null; else carregando">
+
+        <!-- Empty State -->
+        <div *ngIf="lotesFiltrados.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <fa-icon [icon]="faHorse" size="3x"></fa-icon>
+          </div>
+          <p class="empty-text">Nenhum lote neste status.</p>
+        </div>
+
+      <!-- Grid de Lotes -->
+      <c-row [gutter]="3">
+        <c-col
+          *ngFor="let lote of lotesFiltrados; let i = index"
+          xs="12" sm="6" xl="4"
+          class="animate-in"
+          [style.animation-delay]="i * 60 + 'ms'"
+        >
+          <c-card class="lote-card h-100">
+
+            <c-card-header class="lote-card-header">
+              <!-- Linha 1: código truncado -->
+              <div class="lote-id">
+                <fa-icon [icon]="faHashtag" class="me-1 opacity-75"></fa-icon>
+                {{ lote.codigo }}
+              </div>
+              <!-- Linha 2: raça + badge de status -->
+              <div class="lote-card-meta">
+                <span class="lote-raca">
+                  <fa-icon [icon]="faTag" class="me-1 opacity-75"></fa-icon>
+                  {{ lote.raca }}
+                </span>
+                <div class="d-flex gap-1 align-items-center" style="flex-shrink:0">
+                  <c-badge *ngIf="lote.naoVendidoNoLeilao === 'S'" color="danger" shape="rounded-pill">
+                    Não vendido
+                  </c-badge>
+                  <c-badge [color]="statusColor(lote.status)" shape="rounded-pill">
+                    {{ statusLabel(lote.status) }}
+                  </c-badge>
+                </div>
+              </div>
+            </c-card-header>
+
+            <c-card-body class="lote-card-body">
+              <div class="info-row">
+                <div class="info-label">
+                  <fa-icon [icon]="faPaw" class="me-1"></fa-icon>
+                  Quantidade
+                </div>
+                <div class="info-value">
+                  {{ lote.qntdAnimais }} <span class="unit">cab.</span>
+                </div>
+              </div>
+
+              <div class="price-block">
+                <div class="info-label">
+                  <fa-icon [icon]="faDollarSign" class="me-1"></fa-icon>
+                  Preço Atual
+                </div>
+                <div class="price-value" *ngIf="lote.precoCompra != null; else semPreco">
+                  {{ lote.precoCompra | currency:'BRL':'symbol':'1.2-2' }}
+                </div>
+                <ng-template #semPreco>
+                  <div class="price-value text-secondary" style="font-size:.85rem">Pendente</div>
+                </ng-template>
+              </div>
+            </c-card-body>
+
+            <c-card-footer class="lote-card-footer d-flex justify-content-between align-items-center">
+              <span>
+                <fa-icon [icon]="faUser" class="me-1 opacity-75"></fa-icon>
+                <span *ngIf="lote.vendedorNome; else nomeRascunho">{{ lote.vendedorNome }}</span>
+                <ng-template #nomeRascunho>
+                  <span class="text-warning">{{ lote.vendedorNomeRascunho || '—' }}</span>
+                </ng-template>
+              </span>
+
+                <!-- Botão visualizar — sempre visível em qualquer status -->
+              <button cButton color="secondary" size="sm" variant="ghost"
+                      title="Visualizar detalhes"
+                      (click)="abrirDetalhes(lote)">
+                <fa-icon [icon]="faEye"></fa-icon>
+              </button>
+
+              <!-- Input inline de preço (só em AGUARDANDO_LANCE) -->
+              <div *ngIf="lote.status === 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')"
+                   class="d-flex gap-1 align-items-center">
+                <input cFormControl type="number" min="0" step="0.01"
+                       placeholder="R$ preço"
+                       style="width: 110px; font-size: .82rem; padding: .25rem .5rem;"
+                       [(ngModel)]="precoInput[lote.id]" />
+                <button cButton color="success" size="sm"
+                        title="Confirmar preço"
+                        (click)="confirmarPreco(lote.id)">
+                  <fa-icon [icon]="faCheck"></fa-icon>
+                </button>
+              </div>
+
+              <!-- Ações normais: apenas escritório/admin em outros status -->
+              <div class="d-flex gap-1"
+                   *ngIf="lote.status !== 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')">
+                <button
+                  *ngIf="lote.status !== 'FINALIZADO'"
+                  cButton color="success" size="sm" variant="ghost"
+                  title="Avançar status"
+                  (click)="avancarStatus(lote.id)"
+                >
+                  <fa-icon [icon]="faArrowRight"></fa-icon>
+                </button>
+                <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
+                  <fa-icon [icon]="faPencil"></fa-icon>
+                </a>
+              </div>
+
+              <!-- Deletar: admin pode excluir em qualquer status -->
+              <button *ngIf="auth.isAdmin()" cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </c-card-footer>
+
+          </c-card>
+        </c-col>
+      </c-row>
+
+      </ng-container>
+
+      <ng-template #carregando>
+        <div class="empty-state">
+          <c-spinner color="success"></c-spinner>
+        </div>
+      </ng-template>
+
+    </c-card-body>
+  </c-card>
+
+</div>
+
+<!-- Modal de detalhes do lote -->
+<c-modal [visible]="modalDetalhesVisivel" (visibleChange)="modalDetalhesVisivel = $event" alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>Detalhes do Lote — {{ loteDetalhes?.codigo }}</h5>
+  </c-modal-header>
+
+  <c-modal-body *ngIf="loteDetalhes">
+    <c-row [gutter]="3">
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Código</div>
+        <div class="fw-bold">{{ loteDetalhes.codigo }}</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Qtd. Animais</div>
+        <div class="fw-bold">{{ loteDetalhes.qntdAnimais }} cab.</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Sexo</div>
+        <div class="fw-bold">{{ loteDetalhes.sexo }}</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Espécie</div>
+        <div class="fw-bold">{{ loteDetalhes.especie }}</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Raça</div>
+        <div class="fw-bold">{{ loteDetalhes.raca }}</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Categoria</div>
+        <div class="fw-bold">{{ loteDetalhes.categoriaAnimal }}</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Idade</div>
+        <div class="fw-bold">{{ loteDetalhes.idadeEmMeses }} meses</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Peso</div>
+        <div class="fw-bold">{{ loteDetalhes.peso }} kg</div>
+      </c-col>
+      <c-col [md]="4">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Status</div>
+        <div class="d-flex gap-1 align-items-center">
+          <c-badge [color]="statusColor(loteDetalhes.status)" shape="rounded-pill">
+            {{ statusLabel(loteDetalhes.status) }}
+          </c-badge>
+          <c-badge *ngIf="loteDetalhes.naoVendidoNoLeilao === 'S'" color="danger" shape="rounded-pill">
+            Não vendido no leilão
+          </c-badge>
+        </div>
+      </c-col>
+      <c-col [md]="6">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Vendedor (informado)</div>
+        <div class="fw-bold">{{ loteDetalhes.vendedorNomeRascunho || '—' }}</div>
+      </c-col>
+      <c-col [md]="6" *ngIf="loteDetalhes.vendedorNome">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Vendedor (confirmado)</div>
+        <div class="fw-bold">{{ loteDetalhes.vendedorNome }}</div>
+      </c-col>
+      <c-col [md]="12" *ngIf="loteDetalhes.obs">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Observações</div>
+        <div>{{ loteDetalhes.obs }}</div>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="fecharDetalhes()">
+      <fa-icon [icon]="faTimes" class="me-1"></fa-icon> Fechar
+    </button>
+  </c-modal-footer>
+</c-modal>

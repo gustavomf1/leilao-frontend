@@ -1,0 +1,55 @@
+<div class="login-wrapper">
+  <c-card class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <svg cIcon name="cilLockLocked" size="xl"></svg>
+      </div>
+      <h1>Esqueci minha senha</h1>
+      <p>Informe seu e-mail para receber o código de recuperação</p>
+    </div>
+
+    <c-card-body class="login-body">
+      @if (enviado()) {
+        <div class="text-center py-3">
+          <p class="mb-1" style="color: #1b2e4b; font-weight: 600;">Email enviado!</p>
+          <p style="color: #8a93a2; font-size: 0.9rem;">
+            Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.<br>
+            O link é válido por <strong>30 minutos</strong>.
+          </p>
+          <p style="color: #8a93a2; font-size: 0.8rem; margin-top: 8px;">
+            Não encontrou? Verifique a pasta de spam.
+          </p>
+          <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-weight: 500;">Voltar ao login</a>
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label-modern">E-mail</label>
+            <div class="input-icon-wrapper">
+              <svg cIcon name="cilEnvelopeClosed" class="input-icon"></svg>
+              <input
+                formControlName="email"
+                placeholder="seu@email.com"
+                type="email"
+                class="w-100"
+              />
+            </div>
+            @if (form.get('email')?.invalid && form.get('email')?.touched) {
+              <small class="text-danger">Informe um e-mail válido</small>
+            }
+          </div>
+
+          <button cButton color="primary" class="btn-login w-100 mb-3" type="submit" [disabled]="loading()">
+            {{ loading() ? 'Aguarde...' : 'Enviar' }}
+          </button>
+
+          <div class="text-center">
+            <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-size: 0.85rem; font-weight: 500;">
+              Voltar ao login
+            </a>
+          </div>
+        </form>
+      }
+    </c-card-body>
+  </c-card>
+</div>

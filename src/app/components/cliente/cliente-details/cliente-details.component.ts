@@ -11,12 +11,13 @@ import { AlertService } from '../../../shared/services/alert.service';
 import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
 import { FazendaService } from '../../../core/services/fazenda.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-clientes-details',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
-    SubformComponent],
+    SubformComponent, NgxMaskDirective],
   templateUrl: './cliente-details.component.html',
 })
 export class ClientesDetailsComponent implements OnInit, OnDestroy {
@@ -74,6 +75,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
       if (id) {
         this.isEdicao = true;
         this.entityId = +id;
+        this.form.get('cpf')?.disable();
         this.service.buscarPorId(this.entityId).subscribe({
           next: (data) => {
             this.form.patchValue(data);
@@ -86,7 +88,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
               });
             }
           },
-          error: () => this.alert.error('Erro ao carregar cliente')
+          error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar cliente')
         });
       }
     }
@@ -97,8 +99,11 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   }
 
   salvar() {
-    if (this.form.valid) {
-      const dados = this.form.getRawValue();
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const dados = this.form.getRawValue();
       const op = this.isEdicao
         ? this.service.atualizar(this.entityId!, dados)
         : this.service.salvar(dados);
@@ -126,8 +131,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
             }
           }
         },
-        error: () => this.alert.error('Erro ao salvar cliente')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar cliente')
       });
-    }
   }
 }

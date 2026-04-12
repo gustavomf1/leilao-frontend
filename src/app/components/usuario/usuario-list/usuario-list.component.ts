@@ -12,6 +12,7 @@ import { Usuario } from '../../../core/models/entities.model';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { Subject } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-usuarios-list',
@@ -24,6 +25,7 @@ export class UsuariosListComponent implements OnInit {
   private service = inject(UsuarioService);
   private alert = inject(AlertService);
   private cdr = inject(ChangeDetectorRef);
+  auth = inject(AuthService);
 
   faPlus = faPlus;
   faPencil = faPencil;
@@ -43,7 +45,7 @@ export class UsuariosListComponent implements OnInit {
         this.usuarios = data;
         this.usuarios$.next(this.usuarios);
       },
-      error: (err) => this.alert.error('Erro ao carregar usuários')
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar usuários')
     });
   }
 
@@ -51,7 +53,7 @@ export class UsuariosListComponent implements OnInit {
     if (confirm('Deseja realmente excluir este usuário?')) {
       this.service.deletar(id).subscribe({
         next: () => { this.alert.success('Usuário excluído!'); this.carregar(); },
-        error: (err) => this.alert.error('Erro ao excluir usuário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir usuário')
       });
     }
   }

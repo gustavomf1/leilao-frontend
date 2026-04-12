@@ -7,11 +7,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-funcionarios-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule, NgxMaskDirective],
   templateUrl: './funcionario-details.component.html',
 })
 export class FuncionariosDetailsComponent implements OnInit {
@@ -33,10 +34,11 @@ export class FuncionariosDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      nome:  ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      cpf:   ['', Validators.required],
-      senha: ['', this.isEdicao ? [] : [Validators.required, Validators.minLength(6)]]
+      nome:     ['', Validators.required],
+      email:    ['', [Validators.required, Validators.email]],
+      cpf:      ['', Validators.required],
+      senha:    ['', this.isEdicao ? [] : [Validators.required, Validators.minLength(6)]],
+      isManejo: [false]
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -48,7 +50,7 @@ export class FuncionariosDetailsComponent implements OnInit {
       this.form.get('senha')?.updateValueAndValidity();
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
-        error: () => this.alert.error('Erro ao carregar funcionário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar funcionário')
       });
     }
   }
@@ -69,7 +71,7 @@ export class FuncionariosDetailsComponent implements OnInit {
           this.alert.success(this.isEdicao ? 'Funcionário atualizado!' : 'Funcionário cadastrado!');
           this.router.navigate(['/funcionarios/lista']);
         },
-        error: () => this.alert.error('Erro ao salvar funcionário')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar funcionário')
       });
     }
   }

@@ -12,11 +12,11 @@ export interface Alert {
 export class AlertService {
   private alertSubject = new Subject<Alert>();
   alert$ = this.alertSubject.asObservable();
-  private confirmSubject = new Subject<{ message: string; callback: () => void }>();
+  private confirmSubject = new Subject<{ message: string; callback: () => void; confirmLabel?: string; confirmColor?: string }>();
   confirm$ = this.confirmSubject.asObservable();
 
-  confirm(message: string, callback: () => void) {
-  this.confirmSubject.next({ message, callback });
+  confirm(message: string, callback: () => void, confirmLabel?: string, confirmColor?: string) {
+    this.confirmSubject.next({ message, callback, confirmLabel, confirmColor });
   }
 
   success(message: string) {

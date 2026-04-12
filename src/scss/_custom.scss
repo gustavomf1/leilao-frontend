@@ -1,17 +1,312 @@
-// Here you can add other styles
-
-// custom .chartjs-tooltip-body-item padding
+// ─── Imports obrigatórios ─────────────────────────────────────
 @use "charts";
-
-// custom tweaks for scrollbar styling (wip)
 @use "scrollbar";
+@use "@coreui/coreui/scss/mixins/color-mode" as *;
 
- // custom calendar today cell color
-.calendar-cell.today {
-  --cui-calendar-cell-today-color: var(--cui-info) !important;
+.calendar-cell.today { --cui-calendar-cell-today-color: var(--cui-info) !important; }
+.select-week .calendar-row.current { cursor: pointer; }
+
+// ═══════════════════════════════════════════════════════════════
+// JA-LEILÕES — Design System  (preto dominante / verde nos detalhes)
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Tokens ───────────────────────────────────────────────────
+:root {
+  // Negros
+  --ja-black-950: #080808;
+  --ja-black-900: #111111;
+  --ja-black-800: #1a1a1a;
+  --ja-black-700: #222222;
+  --ja-black-600: #2c2c2c;
+  --ja-black-500: #3a3a3a;
+
+  // Verde (somente detalhes)
+  --ja-green:     #22c55e;
+  --ja-green-dim: #16a34a;
+  --ja-green-glow: rgba(34, 197, 94, .18);
+  --ja-green-subtle: rgba(34, 197, 94, .07);
+
+  // Neutros de superfície
+  --ja-surface:   #f9f9f9;
+  --ja-surface-2: #f2f2f2;
+  --ja-border:    rgba(0, 0, 0, .09);
+
+  // Outros
+  --ja-amber:     #f59e0b;
+  --ja-radius:    10px;
+  --ja-radius-sm: 7px;
 }
 
-// custom select week cursor pointer
-.select-week .calendar-row.current {
-  cursor: pointer;
+// ─── Tipografia ───────────────────────────────────────────────
+body {
+  font-family: 'Nunito', sans-serif !important;
+  font-size: 15px;
+}
+
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 700;
+  color: var(--cui-body-color);
+}
+
+// ─── Modo CLARO ───────────────────────────────────────────────
+@include color-mode(light) {
+  body {
+    background-color: var(--ja-surface) !important;
+    --cui-body-bg: var(--ja-surface);
+    --cui-tertiary-bg: var(--ja-surface-2);
+  }
+
+  h1, h2, h3 { color: var(--ja-black-900); }
+
+  .card {
+    background: #ffffff !important;
+    border-color: var(--ja-border) !important;
+  }
+
+  .table thead tr th {
+    background: var(--ja-surface-2) !important;
+    color: #555 !important;
+  }
+
+  .table tbody tr:hover td {
+    background: var(--ja-green-subtle) !important;
+  }
+}
+
+// ─── Modo ESCURO ──────────────────────────────────────────────
+@include color-mode(dark) {
+  body {
+    background-color: var(--ja-black-950) !important;
+    --cui-body-bg: var(--ja-black-950);
+  }
+
+  h1, h2, h3 { color: #e8e8e8; }
+
+  .card, .card-body {
+    --cui-card-bg: var(--ja-black-800);
+    --cui-card-cap-bg: var(--ja-black-800);
+    background: var(--ja-black-800) !important;
+  }
+
+  .table thead tr th {
+    background: var(--ja-black-900) !important;
+    color: rgba(255,255,255,.45) !important;
+    border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  }
+
+  .table tbody tr:hover td {
+    background: var(--ja-green-subtle) !important;
+  }
+
+  .ja-mobile-card {
+    background: var(--ja-black-800) !important;
+    border-color: rgba(255,255,255,.06) !important;
+  }
+}
+
+// ─── Sidebar ─────────────────────────────────────────────────
+// Sempre escura (preto), verde só no item ativo
+.sidebar {
+  --cui-sidebar-bg:                        var(--ja-black-900);
+  --cui-sidebar-brand-bg:                  var(--ja-black-950);
+  --cui-sidebar-border-width:              0;
+  --cui-sidebar-color:                     rgba(255,255,255,.75);
+  --cui-sidebar-nav-link-color:            rgba(255,255,255,.6);
+  --cui-sidebar-nav-link-icon-color:       rgba(255,255,255,.35);
+  --cui-sidebar-nav-link-hover-bg:         rgba(255,255,255,.06);
+  --cui-sidebar-nav-link-hover-color:      #fff;
+  --cui-sidebar-nav-link-hover-icon-color: rgba(255,255,255,.7);
+  --cui-sidebar-nav-link-active-bg:        var(--ja-green-subtle);
+  --cui-sidebar-nav-link-active-color:     #fff;
+  --cui-sidebar-nav-link-active-icon-color: var(--ja-green);
+  --cui-sidebar-nav-title-color:           rgba(255,255,255,.22);
+  --cui-sidebar-toggler-bg:                var(--ja-black-950);
+  --cui-sidebar-toggler-hover-bg:          #000;
+  box-shadow: 2px 0 24px rgba(0,0,0,.5) !important;
+}
+
+// Item ativo — linha verde à esquerda
+.sidebar-nav .nav-link.active {
+  border-left: 3px solid var(--ja-green) !important;
+  padding-left: calc(var(--cui-sidebar-nav-link-padding-x, 1rem) - 3px) !important;
+}
+
+.sidebar-nav .nav-title {
+  font-size: .62rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .13em !important;
+  text-transform: uppercase !important;
+}
+
+.sidebar-brand {
+  font-family: 'Playfair Display', serif !important;
+  font-weight: 700 !important;
+  letter-spacing: .02em !important;
+  color: #fff !important;
+}
+
+// ─── Cards ────────────────────────────────────────────────────
+.card {
+  border-radius: var(--ja-radius) !important;
+  border-color: var(--ja-border) !important;
+  box-shadow: 0 1px 8px rgba(0,0,0,.07) !important;
+  overflow: hidden;
+}
+
+.card-header {
+  font-size: .72rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+  color: var(--cui-secondary-color) !important;
+  border-bottom-color: var(--ja-border) !important;
+}
+
+// ─── Tabelas ──────────────────────────────────────────────────
+.table thead tr th {
+  font-size: .71rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+  border-bottom: 2px solid var(--ja-border) !important;
+  white-space: nowrap;
+  padding: .85rem 1rem !important;
+}
+
+.table tbody tr td {
+  padding: .8rem 1rem !important;
+  vertical-align: middle !important;
+}
+
+// ─── Botões ───────────────────────────────────────────────────
+.btn, [cButton] {
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 700 !important;
+  border-radius: var(--ja-radius-sm) !important;
+}
+
+// Primary → preto com acento verde
+.btn-primary {
+  background-color: var(--ja-black-800) !important;
+  border-color: var(--ja-black-600) !important;
+  color: #fff !important;
+
+  &:hover {
+    background-color: var(--ja-black-700) !important;
+    border-color: var(--ja-green) !important;
+    color: var(--ja-green) !important;
+    box-shadow: 0 0 0 3px var(--ja-green-glow) !important;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px var(--ja-green-glow) !important;
+  }
+}
+
+// Success / confirm → verde
+.btn-success {
+  background-color: var(--ja-green-dim) !important;
+  border-color: var(--ja-green-dim) !important;
+  color: #fff !important;
+  &:hover {
+    background-color: var(--ja-green) !important;
+    border-color: var(--ja-green) !important;
+  }
+}
+
+// ─── Formulários ──────────────────────────────────────────────
+.form-control, .form-select {
+  border-radius: var(--ja-radius-sm) !important;
+
+  &:focus {
+    border-color: var(--ja-green) !important;
+    box-shadow: 0 0 0 3px var(--ja-green-glow) !important;
+  }
+}
+
+// ─── Badge de preço / status (detalhes em verde) ───────────────
+.badge.bg-success, .badge.text-bg-success {
+  background-color: var(--ja-green-dim) !important;
+}
+
+// Linha divisória com micro-acento verde
+.ja-divider-accent {
+  height: 2px;
+  background: linear-gradient(90deg, var(--ja-green) 0%, transparent 60%);
+  border: none;
+  margin: 1.5rem 0;
+}
+
+// ─── Mobile helpers ───────────────────────────────────────────
+@media (max-width: 767px) {
+  .d-mobile-none  { display: none !important; }
+  .d-mobile-block { display: block !important; }
+
+  .container-lg.px-4 { padding-inline: .875rem !important; }
+
+  .container-lg .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: .75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .d-desktop-none { display: none !important; }
+}
+
+// ─── Mobile cards ─────────────────────────────────────────────
+.ja-mobile-card {
+  background: var(--cui-card-bg);
+  border-radius: var(--ja-radius);
+  border: 1px solid var(--ja-border);
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  padding: 1rem 1.25rem;
+  margin-bottom: .65rem;
+
+  .ja-mc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cui-body-color);
+    margin-bottom: .2rem;
+  }
+
+  .ja-mc-subtitle {
+    font-size: .8rem;
+    color: var(--cui-secondary-color);
+    margin-bottom: .6rem;
+  }
+
+  .ja-mc-meta {
+    font-size: .82rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem .85rem;
+    margin-bottom: .75rem;
+    color: var(--cui-body-color);
+
+    .label {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--cui-secondary-color);
+    }
+
+    // Valor em destaque usa verde
+    .value-highlight {
+      color: var(--ja-green);
+      font-weight: 800;
+    }
+  }
+
+  .ja-mc-actions {
+    display: flex;
+    gap: .4rem;
+    padding-top: .65rem;
+    border-top: 1px solid var(--ja-border);
+    flex-wrap: wrap;
+  }
 }

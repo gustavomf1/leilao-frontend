@@ -1,10 +1,24 @@
 <div class="container-lg px-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Lotes</h2>
-    <a routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
+    <a *ngIf="auth.hasPermission('LOTES', 'CRIAR')" routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Lote
     </a>
+  </div>
+
+  <!-- Filtro de status -->
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button
+      *ngFor="let s of statusDisponiveis"
+      cButton
+      [color]="filtroStatus === s ? 'primary' : 'secondary'"
+      [variant]="filtroStatus === s ? undefined : 'ghost'"
+      size="sm"
+      (click)="setFiltro(s)"
+    >
+      {{ s === 'TODOS' ? 'Todos' : s === 'NAO_VENDIDO' ? 'Não Vendido' : STATUS_LABELS[s] }}
+    </button>
   </div>
 
   <c-card class="monitor-container">
@@ -12,25 +26,25 @@
       <div class="header-left">
         <h5 class="monitor-title mb-0">Lotes Cadastrados</h5>
       </div>
-      <span class="lotes-count" *ngIf="(lotes$ | async)?.length as total">
+      <span class="lotes-count">
         <fa-icon [icon]="faLayerGroup" class="me-1"></fa-icon>
-        {{ total }} lote{{ total !== 1 ? 's' : '' }}
+        {{ lotesFiltrados.length }} lote{{ lotesFiltrados.length !== 1 ? 's' : '' }}
       </span>
     </c-card-header>
 
     <c-card-body class="p-3">
       <!-- Empty State -->
-      <div *ngIf="(lotes$ | async)?.length === 0" class="empty-state">
+      <div *ngIf="lotesFiltrados.length === 0" class="empty-state">
         <div class="empty-icon">
           <fa-icon [icon]="faHorse" size="3x"></fa-icon>
         </div>
-        <p class="empty-text">Nenhum lote cadastrado.</p>
+        <p class="empty-text">Nenhum lote neste status.</p>
       </div>
 
       <!-- Grid de Lotes -->
       <c-row [gutter]="3">
         <c-col
-          *ngFor="let lote of lotes$ | async; let i = index"
+          *ngFor="let lote of lotesFiltrados; let i = index"
           xs="12" sm="6" xl="4"
           class="animate-in"
           [style.animation-delay]="i * 60 + 'ms'"
@@ -41,10 +55,16 @@
                 <fa-icon [icon]="faHashtag" class="me-1 opacity-75"></fa-icon>
                 {{ lote.codigo }}
               </div>
-              <span class="lote-raca">
-                <fa-icon [icon]="faTag" class="me-1 opacity-75"></fa-icon>
-                {{ lote.raca }}
-              </span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="lote-raca">
+                  <fa-icon [icon]="faTag" class="me-1 opacity-75"></fa-icon>
+                  {{ lote.raca }}
+                </span>
+                <!-- Badge de status -->
+                <c-badge [color]="STATUS_COLOR[lote.status] || 'secondary'" shape="rounded-pill">
+                  {{ STATUS_LABELS[lote.status] || lote.status }}
+                </c-badge>
+              </div>
             </c-card-header>
 
             <c-card-body class="lote-card-body">
@@ -57,7 +77,9 @@
                   {{ lote.qntdAnimais }} <span class="unit">cab.</span>
                 </div>
               </div>
-              <div class="price-block">
+
+              <!-- Preço: só exibe se existe e se o usuário pode ver -->
+              <div class="price-block" *ngIf="lote.precoCompra != null && auth.hasPermission('LOTES', 'EDITAR')">
                 <div class="info-label">
                   <fa-icon [icon]="faDollarSign" class="me-1"></fa-icon>
                   Preço
@@ -66,18 +88,40 @@
                   {{ lote.precoCompra | currency:'BRL':'symbol':'1.2-2' }}
                 </div>
               </div>
+              <div class="price-block" *ngIf="lote.precoCompra == null">
+                <div class="info-label">
+                  <fa-icon [icon]="faDollarSign" class="me-1"></fa-icon>
+                  Preço
+                </div>
+                <div class="price-value text-secondary" style="font-size:.85rem">Pendente</div>
+              </div>
             </c-card-body>
 
             <c-card-footer class="lote-card-footer d-flex justify-content-between align-items-center">
               <span>
                 <fa-icon [icon]="faUser" class="me-1 opacity-75"></fa-icon>
-                {{ lote.vendedorNome }}
+                <!-- Mostra nome confirmado ou rascunho -->
+                <span *ngIf="lote.vendedorNome; else nomeRascunho">{{ lote.vendedorNome }}</span>
+                <ng-template #nomeRascunho>
+                  <span class="text-warning">{{ lote.vendedorNomeRascunho || 'Vendedor não informado' }}</span>
+                </ng-template>
               </span>
+
               <div class="d-flex gap-1">
-                <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
+                <!-- Avançar status: escritório e admin -->
+                <button
+                  *ngIf="auth.hasPermission('LOTES', 'EDITAR') && lote.status !== 'FINALIZADO'"
+                  cButton color="success" size="sm" variant="ghost"
+                  title="Avançar status"
+                  (click)="avancarStatus(lote.id)"
+                >
+                  <fa-icon [icon]="faArrowRight"></fa-icon>
+                </button>
+
+                <a *ngIf="auth.hasPermission('LOTES', 'EDITAR')" [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
                   <fa-icon [icon]="faPencil"></fa-icon>
                 </a>
-                <button cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
+                <button *ngIf="auth.hasPermission('LOTES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
                   <fa-icon [icon]="faTrash"></fa-icon>
                 </button>
               </div>

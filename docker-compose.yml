@@ -7,3 +7,9 @@ services:
     ports:
       - "4200:80"
     restart: always
+    networks:
+      - erpleilao_default
+
+networks:
+  erpleilao_default:
+    external: true

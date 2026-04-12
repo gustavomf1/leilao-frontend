@@ -1,0 +1,111 @@
+<div class="evento-publico">
+
+  <!-- Header -->
+  <div class="ep-header">
+    <div class="ep-header-inner">
+      <div class="ep-title">
+        <fa-icon [icon]="faGavel" class="me-2"></fa-icon>
+        Evento de Leilão
+      </div>
+      <div class="ep-subtitle">Registre os lances abaixo em tempo real</div>
+    </div>
+    <div class="ep-badge">
+      <span class="badge-ao-vivo">● AO VIVO</span>
+      <span class="ep-count">
+        <fa-icon [icon]="faLayerGroup" class="me-1"></fa-icon>
+        {{ lotes$.value.length }} lotes
+      </span>
+    </div>
+  </div>
+
+  <!-- Alerta de erro -->
+  <div *ngIf="erro" class="ep-alert ep-alert-erro">{{ erro }}</div>
+  <div *ngIf="sucesso" class="ep-alert ep-alert-sucesso">{{ sucesso }}</div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="ep-loading">Carregando lotes...</div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Filtros -->
+    <div class="ep-filtros">
+      <button
+        *ngFor="let f of filtros"
+        class="ep-filtro-btn"
+        [class.ativo]="filtro === f.value"
+        (click)="filtro = f.value">
+        {{ f.label }}
+      </button>
+    </div>
+
+    <!-- Sem lotes -->
+    <div *ngIf="lotesFiltrados.length === 0" class="ep-vazio">
+      Nenhum lote disponível neste filtro.
+    </div>
+
+    <!-- Grid de lotes -->
+    <div class="ep-grid">
+      <div *ngFor="let lote of lotesFiltrados" class="ep-card"
+           [class.ep-card-finalizado]="lote.status === 'FINALIZADO'"
+           [class.ep-card-aguardando]="lote.status === 'AGUARDANDO_LANCE'">
+
+        <!-- Topo do card -->
+        <div class="ep-card-header">
+          <span class="ep-cod">
+            <fa-icon [icon]="faHashtag"></fa-icon> {{ lote.codigo }}
+          </span>
+          <span class="ep-status" [class.status-aguardando]="lote.status === 'AGUARDANDO_LANCE'"
+                                  [class.status-finalizado]="lote.status === 'FINALIZADO'">
+            {{ lote.status === 'AGUARDANDO_LANCE' ? 'Aguardando Lance' : 'Finalizado' }}
+          </span>
+        </div>
+
+        <!-- Dados do lote -->
+        <div class="ep-card-body">
+          <div class="ep-info-row">
+            <fa-icon [icon]="faPaw" class="ep-icon"></fa-icon>
+            <span>{{ lote.especie }} — {{ lote.raca }}</span>
+          </div>
+          <div class="ep-info-row">
+            <fa-icon [icon]="faUser" class="ep-icon"></fa-icon>
+            <span>{{ lote.vendedorNome || lote.vendedorNomeRascunho || '—' }}</span>
+          </div>
+          <div class="ep-info-row">
+            <span class="ep-label">Animais:</span>
+            <span>{{ lote.qntdAnimais }} cab.</span>
+          </div>
+          <div class="ep-info-row">
+            <span class="ep-label">Peso:</span>
+            <span>{{ lote.peso }} kg</span>
+          </div>
+        </div>
+
+        <!-- Preço atual -->
+        <div class="ep-preco-atual">
+          <fa-icon [icon]="faDollarSign" class="ep-icon-preco"></fa-icon>
+          <span *ngIf="lote.precoCompra; else pendente" class="ep-preco-valor">
+            {{ lote.precoCompra | currency:'BRL' }}
+          </span>
+          <ng-template #pendente>
+            <span class="ep-preco-pendente">Pendente</span>
+          </ng-template>
+        </div>
+
+        <!-- Input de lance (só AGUARDANDO_LANCE) -->
+        <div *ngIf="lote.status === 'AGUARDANDO_LANCE'" class="ep-lance-form">
+          <input
+            type="number"
+            class="ep-input"
+            placeholder="R$ valor do lance"
+            [(ngModel)]="precoInput[lote.id!]"
+            min="0"
+            step="0.01" />
+          <button class="ep-btn-confirmar" (click)="confirmarLance(lote)">
+            <fa-icon [icon]="faCheck"></fa-icon>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </ng-container>
+
+</div>

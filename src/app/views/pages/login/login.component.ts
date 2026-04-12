@@ -10,7 +10,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { AlertService } from '../../../shared/services/alert.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +22,8 @@ import { Router } from '@angular/router';
     CardBodyComponent,
     ButtonDirective,
     ReactiveFormsModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    RouterLink
   ]
 })
 export class LoginComponent {
@@ -50,13 +51,19 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       const dados = this.loginForm.getRawValue() as any;
       this.authService.login(dados).subscribe({
-        next: (res) => {
+        next: () => {
           this.alert.success("Login efetuado com sucesso!");
-          const redirectUri = localStorage.getItem('redirectUri')
-          if(redirectUri){
-            this.router.navigateByUrl(redirectUri)
+          if (this.authService.isManejo()) {
+            this.router.navigate(['/lotes/cadastrar']);
+            return;
           }
-          this.router.navigate(["dashboard"])
+          const redirectUri = localStorage.getItem('redirectUri');
+          if (redirectUri) {
+            localStorage.removeItem('redirectUri');
+            this.router.navigateByUrl(redirectUri);
+            return;
+          }
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.alert.error(err.error.mensagem);

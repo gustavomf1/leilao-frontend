@@ -12,12 +12,13 @@ import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
 import { ClientePickerComponent } from '../../../shared/components/cliente-picker/cliente-picker.component';
 import { ClienteService } from '../../../core/services/cliente.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-fazendas-details',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, CardModule, ButtonDirective, FormModule, GridModule, FontAwesomeModule,
-    SubformComponent, ClientePickerComponent],
+    SubformComponent, ClientePickerComponent, NgxMaskDirective],
   templateUrl: './fazenda-details.component.html',
 })
 export class FazendasDetailsComponent implements OnInit, OnDestroy {
@@ -80,7 +81,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
             });
           }
         },
-        error: () => this.alert.error('Erro ao carregar fazenda')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar fazenda')
       });
     }
   }
@@ -108,7 +109,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
             }
           }
         },
-        error: () => this.alert.error('Erro ao salvar fazenda')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar fazenda')
       });
     }
   }
