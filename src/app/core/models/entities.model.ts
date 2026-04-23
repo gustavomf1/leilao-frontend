@@ -144,6 +144,7 @@ export interface Lote {
   raca: string;
   especie: string;
   categoriaAnimal: string;
+  obsVacaParida?: string;
   obs: string;
   leilaoId?: number;
   vendedorId?: number;
