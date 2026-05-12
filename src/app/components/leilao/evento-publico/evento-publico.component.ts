@@ -60,10 +60,8 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('leilaoId');
-    console.log('[EventoPublico] ngOnInit id:', id);
-    if (!id) { console.warn('[EventoPublico] sem id na rota'); return; }
+    if (!id) { return; }
     this.leilaoId = +id;
-    console.log('[EventoPublico] leilaoId:', this.leilaoId, 'service:', this.loteService);
 
     this.loteService.listarPorLeilaoPublico(this.leilaoId).subscribe({
       next: (dados) => {
