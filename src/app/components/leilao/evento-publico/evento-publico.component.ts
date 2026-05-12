@@ -33,6 +33,7 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   loading = true;
   filtro: FiltroEvento = 'TODOS';
   precoInput: Record<number, number | null> = {};
+  compradorNomeInput: Record<number, string> = {};
   erro: string | null = null;
   sucesso: string | null = null;
 
@@ -117,9 +118,12 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loteService.registrarPrecoPublico(lote.id, preco).subscribe({
+    const compradorNome = this.compradorNomeInput[lote.id] || '';
+
+    this.loteService.registrarPrecoPublico(lote.id, preco, compradorNome).subscribe({
       next: (loteAtualizado) => {
         delete this.precoInput[lote.id!];
+        delete this.compradorNomeInput[lote.id!];
         this.mostrarSucesso(`Lance de R$ ${preco.toFixed(2)} registrado para o lote ${lote.codigo}!`);
       },
       error: (err) => {

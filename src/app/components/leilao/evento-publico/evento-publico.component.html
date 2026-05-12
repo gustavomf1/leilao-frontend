@@ -93,6 +93,11 @@
         <!-- Input de lance (só AGUARDANDO_LANCE) -->
         <div *ngIf="lote.status === 'AGUARDANDO_LANCE'" class="ep-lance-form">
           <input
+            type="text"
+            class="ep-input"
+            placeholder="Nome do comprador"
+            [(ngModel)]="compradorNomeInput[lote.id!]" />
+          <input
             type="number"
             class="ep-input"
             placeholder="R$ valor do lance"
