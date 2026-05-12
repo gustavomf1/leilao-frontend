@@ -46,16 +46,21 @@
     <div class="ep-grid">
       <div *ngFor="let lote of lotesFiltrados" class="ep-card"
            [class.ep-card-finalizado]="lote.status === 'FINALIZADO'"
-           [class.ep-card-aguardando]="lote.status === 'AGUARDANDO_LANCE'">
+           [class.ep-card-aguardando]="lote.status === 'AGUARDANDO_LANCE'"
+           [class.ep-card-validacao]="lote.status === 'AGUARDANDO_ULTIMA_VALIDACAO'">
 
         <!-- Topo do card -->
         <div class="ep-card-header">
           <span class="ep-cod">
             <fa-icon [icon]="faHashtag"></fa-icon> {{ lote.codigo }}
           </span>
-          <span class="ep-status" [class.status-aguardando]="lote.status === 'AGUARDANDO_LANCE'"
-                                  [class.status-finalizado]="lote.status === 'FINALIZADO'">
-            {{ lote.status === 'AGUARDANDO_LANCE' ? 'Aguardando Lance' : 'Finalizado' }}
+          <span class="ep-status"
+                [class.status-aguardando]="lote.status === 'AGUARDANDO_LANCE'"
+                [class.status-validacao]="lote.status === 'AGUARDANDO_ULTIMA_VALIDACAO'"
+                [class.status-finalizado]="lote.status === 'FINALIZADO'">
+            {{ lote.status === 'AGUARDANDO_LANCE' ? 'Aguardando Lance'
+             : lote.status === 'AGUARDANDO_ULTIMA_VALIDACAO' ? 'Aguardando Validação'
+             : 'Finalizado' }}
           </span>
         </div>
 
@@ -107,6 +112,14 @@
           <button class="ep-btn-confirmar" (click)="confirmarLance(lote)">
             <fa-icon [icon]="faCheck"></fa-icon>
           </button>
+        </div>
+
+        <!-- Mensagem de validação pendente (só AGUARDANDO_ULTIMA_VALIDACAO) -->
+        <div *ngIf="lote.status === 'AGUARDANDO_ULTIMA_VALIDACAO'" class="ep-validacao-pendente">
+          <span class="ep-validacao-msg">⏳ Aguardando validação do escritório</span>
+          <span *ngIf="lote.compradorNomeRascunho" class="ep-validacao-comprador">
+            Comprador: {{ lote.compradorNomeRascunho }}
+          </span>
         </div>
 
       </div>

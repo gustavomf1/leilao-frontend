@@ -12,7 +12,7 @@ import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { Lote } from '../../../core/models/entities.model';
 
-type FiltroEvento = 'TODOS' | 'AGUARDANDO_LANCE' | 'FINALIZADO';
+type FiltroEvento = 'TODOS' | 'AGUARDANDO_LANCE' | 'AGUARDANDO_ULTIMA_VALIDACAO' | 'FINALIZADO';
 
 @Component({
   selector: 'app-evento-publico',
@@ -38,9 +38,10 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   sucesso: string | null = null;
 
   readonly filtros: Array<{ value: FiltroEvento; label: string }> = [
-    { value: 'TODOS',            label: 'Todos'            },
-    { value: 'AGUARDANDO_LANCE', label: 'Aguardando Lance' },
-    { value: 'FINALIZADO',       label: 'Finalizado'       },
+    { value: 'TODOS',                       label: 'Todos'                },
+    { value: 'AGUARDANDO_LANCE',            label: 'Aguardando Lance'     },
+    { value: 'AGUARDANDO_ULTIMA_VALIDACAO', label: 'Aguardando Validação' },
+    { value: 'FINALIZADO',                  label: 'Finalizado'           },
   ];
 
   readonly faGavel      = faGavel;
@@ -88,7 +89,9 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
 
         const atual = this.lotes$.value;
         const idx   = atual.findIndex(l => l.id === novoLote.id);
-        const visivel = novoLote.status === 'AGUARDANDO_LANCE' || novoLote.status === 'FINALIZADO';
+        const visivel = novoLote.status === 'AGUARDANDO_LANCE'
+                     || novoLote.status === 'AGUARDANDO_ULTIMA_VALIDACAO'
+                     || novoLote.status === 'FINALIZADO';
 
         if (idx >= 0) {
           if (visivel) {
