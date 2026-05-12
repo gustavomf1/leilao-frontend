@@ -316,6 +316,96 @@
     </div>
 
   </form>
+
+  <!-- ══ PAINEL: Validação Final (só em AGUARDANDO_ULTIMA_VALIDACAO) ══ -->
+  <ng-container *ngIf="isEdicao && isAguardandoUltimaValidacao">
+
+    <!-- Lote VENDIDO — validar comprador -->
+    <div *ngIf="!loteNaoVendido" class="form-section validacao-panel">
+      <div class="section-label">
+        <span class="section-label__icon">✔</span>
+        Validação Final — Lote Vendido
+      </div>
+      <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
+        Comprador anotado pelo Marquinho: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
+      </p>
+
+      <div class="fields-grid">
+        <div class="field-wrap field-wrap--lg" style="position:relative;">
+          <label class="field-label">Comprador <span class="req">*</span></label>
+          <input
+            class="field-input"
+            type="text"
+            placeholder="Buscar comprador..."
+            [(ngModel)]="validacaoCompradorBusca"
+            [ngModelOptions]="{standalone: true}"
+            (input)="filtrarValidacaoComprador()"
+            (focus)="filtrarValidacaoComprador()"
+            (blur)="fecharDropdownValidacaoComprador()" />
+          <ul *ngIf="mostrarDropdownValidacaoComprador" class="autocomplete-dropdown">
+            <li *ngFor="let c of validacaoCompradorFiltrados"
+                (mousedown)="selecionarValidacaoComprador(c)">{{ c.nome }}</li>
+          </ul>
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Vendedor (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0"
+                 placeholder="padrão do leilão"
+                 [(ngModel)]="validacaoComissaoVendedor"
+                 [ngModelOptions]="{standalone: true}" />
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Comprador (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0"
+                 placeholder="padrão do leilão"
+                 [(ngModel)]="validacaoComissaoComprador"
+                 [ngModelOptions]="{standalone: true}" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-save" (click)="confirmarValidacaoFinal()">
+          Validar Final
+        </button>
+      </div>
+    </div>
+
+    <!-- Lote NÃO VENDIDO — recolocar em lance -->
+    <div *ngIf="loteNaoVendido" class="form-section validacao-panel validacao-panel--nao-vendido">
+      <div class="section-label">
+        <span class="section-label__icon">↩</span>
+        Recolocar em Lance — Lote Não Vendido
+      </div>
+
+      <div class="fields-grid">
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Vendedor (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0"
+                 placeholder="padrão do leilão"
+                 [(ngModel)]="recolocacaoComissaoVendedor"
+                 [ngModelOptions]="{standalone: true}" />
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Comprador (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0"
+                 placeholder="padrão do leilão"
+                 [(ngModel)]="recolocacaoComissaoComprador"
+                 [ngModelOptions]="{standalone: true}" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-save" (click)="confirmarRecolocacao()">
+          Recolocar em Lance
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+
 </div>
 
 <!-- ── Modal de confirmação (Manejo) ─────────────────────── -->

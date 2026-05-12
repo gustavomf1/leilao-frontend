@@ -60,6 +60,17 @@ export class LotesDetailsComponent implements OnInit {
   compradorSelecionado: Cliente | null = null;
   compradorFiltrados: Cliente[] = [];
 
+  loteCarregado: any = null;
+  validacaoCompradorId: number | null = null;
+  validacaoCompradorBusca = '';
+  validacaoCompradorSelecionado: Cliente | null = null;
+  validacaoCompradorFiltrados: Cliente[] = [];
+  mostrarDropdownValidacaoComprador = false;
+  validacaoComissaoVendedor: number | null = null;
+  validacaoComissaoComprador: number | null = null;
+  recolocacaoComissaoVendedor: number | null = null;
+  recolocacaoComissaoComprador: number | null = null;
+
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     if (!this.el.nativeElement.contains(event.target as Node)) {
@@ -138,6 +149,7 @@ export class LotesDetailsComponent implements OnInit {
         this.clientes = clientes;
         this.clientesFiltrados = clientes;
         this.compradorFiltrados = clientes;
+        this.validacaoCompradorFiltrados = clientes;
         this.cdr.detectChanges();
       }
     });
@@ -147,7 +159,18 @@ export class LotesDetailsComponent implements OnInit {
       this.isEdicao  = true;
       this.entityId  = +id;
       this.service.buscarPorId(this.entityId).subscribe({
-        next:  (data) => this.form.patchValue(data),
+        next: (data) => {
+          this.loteCarregado = data;
+          this.form.patchValue(data);
+          if (data.compradorId) {
+            const c = this.clientes.find((cl: any) => cl.id === data.compradorId);
+            if (c) {
+              this.validacaoCompradorSelecionado = c;
+              this.validacaoCompradorBusca = c.nome;
+              this.validacaoCompradorId = c.id!;
+            }
+          }
+        },
         error: (err)  => this.alert.error(err.error?.mensagem || 'Erro ao carregar lote')
       });
     }
@@ -249,6 +272,68 @@ export class LotesDetailsComponent implements OnInit {
         this.router.navigate(['/lotes/lista']);
       },
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar lote')
+    });
+  }
+
+  get isAguardandoUltimaValidacao(): boolean {
+    return this.loteCarregado?.status === 'AGUARDANDO_ULTIMA_VALIDACAO';
+  }
+
+  get loteNaoVendido(): boolean {
+    return this.loteCarregado?.naoVendidoNoLeilao === 'S';
+  }
+
+  filtrarValidacaoComprador() {
+    const termo = this.validacaoCompradorBusca.toLowerCase().trim();
+    this.validacaoCompradorFiltrados = termo
+      ? this.clientes.filter(c => c.nome.toLowerCase().includes(termo))
+      : this.clientes;
+    this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
+    this.validacaoCompradorSelecionado = null;
+    this.validacaoCompradorId = null;
+    this.cdr.markForCheck();
+  }
+
+  selecionarValidacaoComprador(cliente: Cliente) {
+    this.validacaoCompradorSelecionado = cliente;
+    this.validacaoCompradorBusca = cliente.nome;
+    this.validacaoCompradorId = cliente.id!;
+    this.mostrarDropdownValidacaoComprador = false;
+    this.cdr.markForCheck();
+  }
+
+  fecharDropdownValidacaoComprador() {
+    setTimeout(() => { this.mostrarDropdownValidacaoComprador = false; this.cdr.markForCheck(); }, 180);
+  }
+
+  confirmarValidacaoFinal() {
+    if (!this.validacaoCompradorId) {
+      this.alert.error('Selecione o comprador para validar o lote.');
+      return;
+    }
+    this.service.validarFinal(this.entityId!, {
+      compradorId: this.validacaoCompradorId,
+      comissaoVendedor: this.validacaoComissaoVendedor,
+      comissaoComprador: this.validacaoComissaoComprador,
+    }).subscribe({
+      next: () => {
+        this.alert.success('Lote finalizado com sucesso!');
+        this.router.navigate(['/lotes/lista']);
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao validar lote')
+    });
+  }
+
+  confirmarRecolocacao() {
+    this.service.recolocarLance(this.entityId!, {
+      comissaoVendedor: this.recolocacaoComissaoVendedor,
+      comissaoComprador: this.recolocacaoComissaoComprador,
+    }).subscribe({
+      next: () => {
+        this.alert.success('Lote recolocado em lance!');
+        this.router.navigate(['/lotes/lista']);
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao recolocar lote')
     });
   }
 }
