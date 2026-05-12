@@ -76,6 +76,7 @@ export class LotesDetailsComponent implements OnInit {
     if (!this.el.nativeElement.contains(event.target as Node)) {
       this.mostrarDropdownVendedor  = false;
       this.mostrarDropdownComprador = false;
+      this.mostrarDropdownValidacaoComprador = false;
     }
   }
 
@@ -170,6 +171,8 @@ export class LotesDetailsComponent implements OnInit {
               this.validacaoCompradorId = c.id!;
             }
           }
+          if (data.comissaoVendedor != null) this.validacaoComissaoVendedor = data.comissaoVendedor;
+          if (data.comissaoComprador != null) this.validacaoComissaoComprador = data.comissaoComprador;
         },
         error: (err)  => this.alert.error(err.error?.mensagem || 'Erro ao carregar lote')
       });
