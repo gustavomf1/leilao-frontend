@@ -343,6 +343,24 @@ export const navItemsLeilao: INavData[] = [
     ]
   },
 
+  // ─── Relatórios ───────────────────────────────────────────────
+  {
+    title: true,
+    name: 'Relatórios',
+  },
+  {
+    name: 'Relatórios',
+    url: '/relatorios',
+    iconComponent: { name: 'cil-description' },
+    children: [
+      {
+        name: 'Fatura de Venda',
+        url: '/relatorios/fatura-venda',
+        icon: 'nav-icon-bullet',
+      },
+    ],
+  },
+
   // ─── Comunicação ──────────────────────────────────────────────
   {
     title: true,
