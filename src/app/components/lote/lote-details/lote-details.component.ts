@@ -151,6 +151,7 @@ export class LotesDetailsComponent implements OnInit {
         this.clientesFiltrados = clientes;
         this.compradorFiltrados = clientes;
         this.validacaoCompradorFiltrados = clientes;
+        this.restaurarSelecoes();
         this.cdr.detectChanges();
       }
     });
@@ -163,18 +164,9 @@ export class LotesDetailsComponent implements OnInit {
         next: (data) => {
           this.loteCarregado = data;
           this.form.patchValue(data);
-          if (data.compradorId) {
-            const c = this.clientes.find((cl: any) => cl.id === data.compradorId);
-            if (c) {
-              this.validacaoCompradorSelecionado = c;
-              this.validacaoCompradorBusca = c.nome;
-              this.validacaoCompradorId = c.id!;
-            }
-          }
-          if (data.comissaoVendedor != null) this.validacaoComissaoVendedor = data.comissaoVendedor;
-          if (data.comissaoComprador != null) this.validacaoComissaoComprador = data.comissaoComprador;
+          this.restaurarSelecoes();
         },
-        error: (err)  => this.alert.error(err.error?.mensagem || 'Erro ao carregar lote')
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar lote')
       });
     }
   }
@@ -338,5 +330,45 @@ export class LotesDetailsComponent implements OnInit {
       },
       error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao recolocar lote')
     });
+  }
+
+  private restaurarSelecoes() {
+    if (!this.loteCarregado || !this.clientes.length) return;
+
+    if (this.loteCarregado.vendedorId) {
+      const v = this.clientes.find(c => c.id === this.loteCarregado.vendedorId);
+      if (v) {
+        this.vendedorSelecionado = v;
+        this.vendedorBusca = v.nome;
+        this.form.get('vendedorId')?.setValue(v.id);
+      }
+    }
+
+    if (this.loteCarregado.compradorId) {
+      const c = this.clientes.find(c => c.id === this.loteCarregado.compradorId);
+      if (c) {
+        this.compradorSelecionado = c;
+        this.compradorBusca = c.nome;
+        this.form.get('compradorId')?.setValue(c.id);
+        this.validacaoCompradorSelecionado = c;
+        this.validacaoCompradorBusca = c.nome;
+        this.validacaoCompradorId = c.id!;
+      }
+    }
+
+    if (this.loteCarregado.comissaoVendedor != null)
+      this.validacaoComissaoVendedor = this.loteCarregado.comissaoVendedor;
+    if (this.loteCarregado.comissaoComprador != null)
+      this.validacaoComissaoComprador = this.loteCarregado.comissaoComprador;
+
+    this.cdr.markForCheck();
+  }
+
+  abrirDropdownValidacaoComprador() {
+    this.validacaoCompradorFiltrados = this.validacaoCompradorBusca.trim()
+      ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.validacaoCompradorBusca.toLowerCase()))
+      : this.clientes;
+    this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
+    this.cdr.markForCheck();
   }
 }
