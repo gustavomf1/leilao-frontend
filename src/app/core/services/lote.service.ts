@@ -19,15 +19,19 @@ export class LoteService extends ApiService<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/status/avancar`, {});
   }
 
-  registrarPreco(id: number, precoCompra: number): Observable<Lote> {
-    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/preco`, { precoCompra });
+  registrarPreco(
+    id: number,
+    precoCompra: number,
+    dadosExtras: { compradorId?: number | null; comissaoVendedor?: number | null; comissaoComprador?: number | null } = {}
+  ): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/preco`, { precoCompra, ...dadosExtras });
   }
 
   validarFinal(id: number, dados: { compradorId: number; comissaoVendedor?: number | null; comissaoComprador?: number | null }): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/validar-final`, dados);
   }
 
-  recolocarLance(id: number, dados: { comissaoVendedor?: number | null; comissaoComprador?: number | null }): Observable<Lote> {
+  recolocarLance(id: number, dados: { comissaoVendedor?: number | null; comissaoComprador?: number | null; naoVendidoNoLeilao?: string }): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/recolocar-lance`, dados);
   }
 }

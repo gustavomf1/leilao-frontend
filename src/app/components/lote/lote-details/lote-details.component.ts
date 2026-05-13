@@ -44,6 +44,9 @@ export class LotesDetailsComponent implements OnInit {
 
   form!: FormGroup;
   isEdicao      = false;
+  isValidacaoEscritorio = false;
+  isValidacaoLance = false;
+  isValidacaoFinal = false;
   modalVisible  = false;
   private entityId?: number;
 
@@ -68,6 +71,9 @@ export class LotesDetailsComponent implements OnInit {
   mostrarDropdownValidacaoComprador = false;
   validacaoComissaoVendedor: number | null = null;
   validacaoComissaoComprador: number | null = null;
+  lancePrecoCompra: number | null = null;
+  lanceComissaoVendedor: number | null = null;
+  lanceComissaoComprador: number | null = null;
   recolocacaoComissaoVendedor: number | null = null;
   recolocacaoComissaoComprador: number | null = null;
 
@@ -88,6 +94,26 @@ export class LotesDetailsComponent implements OnInit {
     return !this.auth.isManejo() && !this.auth.isAdmin();
   }
 
+  get exibirFinanceiro(): boolean {
+    return !this.isManejoMode && !this.isValidacaoEscritorio && !this.isValidacaoLance;
+  }
+
+  get tituloPagina(): string {
+    if (this.isValidacaoEscritorio) return 'Validar Lote';
+    if (this.isValidacaoLance) return 'Validar Lance';
+    if (this.isValidacaoFinal) return 'Validar Final';
+    return this.isEdicao ? 'Editar Lote' : 'Novo Lote';
+  }
+
+  get acaoPrincipalLabel(): string {
+    if (this.isValidacaoEscritorio) return 'Validar Lote';
+    return this.isEdicao ? 'Salvar Alterações' : 'Cadastrar Lote';
+  }
+
+  get podeEnviarParaValidacaoFinal(): boolean {
+    return !!this.lancePrecoCompra && this.lancePrecoCompra > 0 && !!this.validacaoCompradorId;
+  }
+
   // Dados formatados para exibir no modal de confirmação
   get resumoParaConfirmacao(): { label: string; valor: any }[] {
     const f = this.form.getRawValue();
@@ -101,6 +127,7 @@ export class LotesDetailsComponent implements OnInit {
       { label: 'Idade (meses)',    valor: f.idadeEmMeses },
       { label: 'Peso (kg)',        valor: f.peso },
       { label: 'Vendedor',         valor: f.vendedorNomeRascunho || '—' },
+      { label: 'Leilão',            valor: this.leiloes.find(l => l.id === f.leilaoId)?.descricao ?? f.leilaoId ?? '—' },
       { label: 'Observações',      valor: f.obs || '—' },
     ].filter(i => i.valor !== null && i.valor !== undefined);
   }
@@ -112,6 +139,11 @@ export class LotesDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    const modoValidacao = this.route.snapshot.queryParamMap.get('validar');
+    this.isValidacaoEscritorio = modoValidacao === 'escritorio';
+    this.isValidacaoLance = modoValidacao === 'lance';
+    this.isValidacaoFinal = modoValidacao === 'final';
+
     this.form = this.fb.group({
       codigo:               ['', Validators.required],
       qntdAnimais:          [1,  [Validators.required, Validators.min(1)]],
@@ -134,6 +166,11 @@ export class LotesDetailsComponent implements OnInit {
       this.form.get('vendedorId')?.clearValidators();
       this.form.get('compradorId')?.clearValidators();
       this.form.get('precoCompra')?.updateValueAndValidity();
+    }
+
+    if (this.isValidacaoEscritorio) {
+      this.form.get('vendedorId')?.setValidators([Validators.required]);
+      this.form.get('vendedorId')?.updateValueAndValidity();
     }
 
     this.especieService.listar().subscribe({
@@ -258,11 +295,30 @@ export class LotesDetailsComponent implements OnInit {
 
   private executarSalvar() {
     const dados = this.form.getRawValue();
+    if (this.isValidacaoEscritorio && !dados.vendedorId) {
+      this.alert.error('Vincule o vendedor para validar o lote.');
+      this.form.get('vendedorId')?.markAsTouched();
+      return;
+    }
+    if (this.isManejoMode || this.isValidacaoEscritorio || this.isValidacaoLance) {
+      delete dados.compradorId;
+      delete dados.precoCompra;
+    }
     const op = this.isEdicao
       ? this.service.atualizar(this.entityId!, dados)
       : this.service.salvar(dados);
     op.subscribe({
       next: () => {
+        if (this.isValidacaoEscritorio && this.isEdicao) {
+          this.service.avancarStatus(this.entityId!).subscribe({
+            next: () => {
+              this.alert.success('Lote validado e enviado para lance!');
+              this.router.navigate(['/lotes/lista']);
+            },
+            error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao validar lote')
+          });
+          return;
+        }
         this.alert.success(this.isEdicao ? 'Lote atualizado!' : 'Lote cadastrado e enviado para preenchimento de preço!');
         this.router.navigate(['/lotes/lista']);
       },
@@ -332,6 +388,58 @@ export class LotesDetailsComponent implements OnInit {
     });
   }
 
+  confirmarEnvioValidacaoFinal() {
+    if (!this.podeEnviarParaValidacaoFinal) {
+      this.alert.error('Informe o preço do lote e vincule o comprador oficial.');
+      return;
+    }
+
+    const dadosAtualizacao = {
+      ...this.form.getRawValue(),
+      precoCompra: this.lancePrecoCompra,
+      compradorId: this.validacaoCompradorId,
+      comissaoVendedor: this.lanceComissaoVendedor,
+      comissaoComprador: this.lanceComissaoComprador,
+    };
+
+    this.service.atualizar(this.entityId!, dadosAtualizacao).subscribe({
+      next: () => {
+        this.service.registrarPreco(this.entityId!, this.lancePrecoCompra!, {
+          compradorId: this.validacaoCompradorId,
+          comissaoVendedor: this.lanceComissaoVendedor,
+          comissaoComprador: this.lanceComissaoComprador,
+        }).subscribe({
+          next: () => {
+            this.alert.success('Lote enviado para validação final!');
+            this.router.navigate(['/lotes/lista']);
+          },
+          error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao enviar para validação final')
+        });
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao salvar dados do lance')
+    });
+  }
+
+  confirmarLoteNaoVendido() {
+    const dadosAtualizacao = {
+      ...this.form.getRawValue(),
+      precoCompra: null,
+      compradorId: null,
+      status: 'AGUARDANDO_LANCE',
+      comissaoVendedor: this.lanceComissaoVendedor,
+      comissaoComprador: this.lanceComissaoComprador,
+      naoVendidoNoLeilao: 'S',
+    };
+
+    this.service.atualizar(this.entityId!, dadosAtualizacao).subscribe({
+      next: () => {
+        this.alert.success('Lote marcado como não vendido e mantido em lance!');
+        this.router.navigate(['/lotes/lista']);
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao marcar lote como não vendido')
+    });
+  }
+
   private restaurarSelecoes() {
     if (!this.loteCarregado || !this.clientes.length) return;
 
@@ -360,6 +468,13 @@ export class LotesDetailsComponent implements OnInit {
       this.validacaoComissaoVendedor = this.loteCarregado.comissaoVendedor;
     if (this.loteCarregado.comissaoComprador != null)
       this.validacaoComissaoComprador = this.loteCarregado.comissaoComprador;
+
+    if (this.loteCarregado.precoCompra != null)
+      this.lancePrecoCompra = this.loteCarregado.precoCompra;
+    if (this.loteCarregado.comissaoVendedor != null)
+      this.lanceComissaoVendedor = this.loteCarregado.comissaoVendedor;
+    if (this.loteCarregado.comissaoComprador != null)
+      this.lanceComissaoComprador = this.loteCarregado.comissaoComprador;
 
     this.cdr.markForCheck();
   }

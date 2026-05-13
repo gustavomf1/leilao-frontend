@@ -247,6 +247,15 @@
   }
 }
 
+.btn-validar-lote {
+  display: inline-flex !important;
+  align-items: center;
+  white-space: nowrap;
+  font-size: .72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .02em;
+}
+
 /* ---------- Responsivo mobile ---------- */
 @media (max-width: 767px) {
 
