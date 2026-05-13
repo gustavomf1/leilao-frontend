@@ -272,6 +272,20 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'relatorios',
+        children: [
+          {
+            path: 'fatura-venda',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/fatura-venda/fatura-venda.component').then(
+                (m) => m.FaturaVendaComponent
+              ),
+          },
+          { path: '', redirectTo: 'fatura-venda', pathMatch: 'full' },
+        ],
+      },
+      {
         path: 'funcionarios',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },

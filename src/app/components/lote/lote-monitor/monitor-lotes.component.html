@@ -125,23 +125,48 @@
                 <fa-icon [icon]="faEye"></fa-icon>
               </button>
 
-              <!-- Input inline de preço (só em AGUARDANDO_LANCE) -->
-              <div *ngIf="lote.status === 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')"
-                   class="d-flex gap-1 align-items-center">
-                <input cFormControl type="number" min="0" step="0.01"
-                       placeholder="R$ preço"
-                       style="width: 110px; font-size: .82rem; padding: .25rem .5rem;"
-                       [(ngModel)]="precoInput[lote.id]" />
-                <button cButton color="success" size="sm"
-                        title="Confirmar preço"
-                        (click)="confirmarPreco(lote.id)">
-                  <fa-icon [icon]="faCheck"></fa-icon>
-                </button>
-              </div>
+              <a
+                *ngIf="lote.status === 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')"
+                [routerLink]="['/lotes', lote.id]"
+                [queryParams]="{ validar: 'lance' }"
+                cButton
+                color="success"
+                size="sm"
+                class="btn-validar-lote"
+              >
+                <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                Validar
+              </a>
+
+              <a
+                *ngIf="lote.status === 'AGUARDANDO_ESCRITORIO' && auth.hasPermission('LOTES', 'EDITAR')"
+                [routerLink]="['/lotes', lote.id]"
+                [queryParams]="{ validar: 'escritorio' }"
+                cButton
+                color="success"
+                size="sm"
+                class="btn-validar-lote"
+              >
+                <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                Validar
+              </a>
+
+              <a
+                *ngIf="lote.status === 'AGUARDANDO_ULTIMA_VALIDACAO' && auth.hasPermission('LOTES', 'EDITAR')"
+                [routerLink]="['/lotes', lote.id]"
+                [queryParams]="{ validar: 'final' }"
+                cButton
+                color="success"
+                size="sm"
+                class="btn-validar-lote"
+              >
+                <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                Validar
+              </a>
 
               <!-- Ações normais: apenas escritório/admin em outros status -->
               <div class="d-flex gap-1"
-                   *ngIf="lote.status !== 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')">
+                   *ngIf="lote.status !== 'AGUARDANDO_LANCE' && lote.status !== 'AGUARDANDO_ESCRITORIO' && lote.status !== 'AGUARDANDO_ULTIMA_VALIDACAO' && auth.hasPermission('LOTES', 'EDITAR')">
                 <button
                   *ngIf="lote.status !== 'FINALIZADO'"
                   cButton color="success" size="sm" variant="ghost"

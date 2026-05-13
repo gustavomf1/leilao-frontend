@@ -49,7 +49,8 @@ export class LotesListComponent implements OnInit {
   readonly faArrowRight  = faArrowRight;
 
   readonly statusDisponiveis: Array<StatusLote | 'TODOS' | 'NAO_VENDIDO'> = [
-    'TODOS', 'AGUARDANDO_ESCRITORIO', 'AGUARDANDO_LANCE', 'FINALIZADO', 'NAO_VENDIDO'
+    'TODOS', 'AGUARDANDO_ESCRITORIO', 'AGUARDANDO_LANCE',
+    'AGUARDANDO_ULTIMA_VALIDACAO', 'FINALIZADO', 'NAO_VENDIDO'
   ];
 
   get lotesFiltrados(): any[] {

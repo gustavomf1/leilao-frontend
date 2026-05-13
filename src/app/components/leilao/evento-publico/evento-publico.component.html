@@ -1,4 +1,4 @@
-<div class="evento-publico">
+<main class="evento-publico">
 
   <!-- Header -->
   <div class="ep-header">
@@ -13,7 +13,7 @@
       <span class="badge-ao-vivo">● AO VIVO</span>
       <span class="ep-count">
         <fa-icon [icon]="faLayerGroup" class="me-1"></fa-icon>
-        {{ lotes$.value.length }} lotes
+        {{ lotesFiltrados.length }} lotes aguardando lance
       </span>
     </div>
   </div>
@@ -26,26 +26,14 @@
   <div *ngIf="loading" class="ep-loading">Carregando lotes...</div>
 
   <ng-container *ngIf="!loading">
-    <!-- Filtros -->
-    <div class="ep-filtros">
-      <button
-        *ngFor="let f of filtros"
-        class="ep-filtro-btn"
-        [class.ativo]="filtro === f.value"
-        (click)="filtro = f.value">
-        {{ f.label }}
-      </button>
-    </div>
-
     <!-- Sem lotes -->
     <div *ngIf="lotesFiltrados.length === 0" class="ep-vazio">
-      Nenhum lote disponível neste filtro.
+      Nenhum lote aguardando lance no momento.
     </div>
 
     <!-- Grid de lotes -->
     <div class="ep-grid">
       <div *ngFor="let lote of lotesFiltrados" class="ep-card"
-           [class.ep-card-finalizado]="lote.status === 'FINALIZADO'"
            [class.ep-card-aguardando]="lote.status === 'AGUARDANDO_LANCE'">
 
         <!-- Topo do card -->
@@ -53,9 +41,9 @@
           <span class="ep-cod">
             <fa-icon [icon]="faHashtag"></fa-icon> {{ lote.codigo }}
           </span>
-          <span class="ep-status" [class.status-aguardando]="lote.status === 'AGUARDANDO_LANCE'"
-                                  [class.status-finalizado]="lote.status === 'FINALIZADO'">
-            {{ lote.status === 'AGUARDANDO_LANCE' ? 'Aguardando Lance' : 'Finalizado' }}
+          <span class="ep-status"
+                [class.status-aguardando]="lote.status === 'AGUARDANDO_LANCE'">
+            Aguardando Lance
           </span>
         </div>
 
@@ -90,16 +78,33 @@
           </ng-template>
         </div>
 
-        <!-- Input de lance (só AGUARDANDO_LANCE) -->
-        <div *ngIf="lote.status === 'AGUARDANDO_LANCE'" class="ep-lance-form">
-          <input
-            type="number"
-            class="ep-input"
-            placeholder="R$ valor do lance"
-            [(ngModel)]="precoInput[lote.id!]"
-            min="0"
-            step="0.01" />
-          <button class="ep-btn-confirmar" (click)="confirmarLance(lote)">
+        <!-- Input de lance -->
+        <div class="ep-lance-form">
+          <label class="ep-field ep-field-comprador">
+            <span class="ep-field-label">Comprador</span>
+            <input
+              type="text"
+              class="ep-input"
+              placeholder="Nome do comprador"
+              autocomplete="name"
+              [(ngModel)]="compradorNomeInput[lote.id!]" />
+          </label>
+
+          <label class="ep-field ep-field-valor">
+            <span class="ep-field-label">Lance</span>
+            <span class="ep-money-input">
+              <span class="ep-money-prefix">R$</span>
+              <input
+                type="text"
+                class="ep-input ep-input-money"
+                placeholder="0,00"
+                [(ngModel)]="precoInput[lote.id!]"
+                inputmode="decimal"
+                autocomplete="off" />
+            </span>
+          </label>
+
+          <button class="ep-btn-confirmar" (click)="abrirConfirmacaoLance(lote)" title="Confirmar lance">
             <fa-icon [icon]="faCheck"></fa-icon>
           </button>
         </div>
@@ -108,4 +113,61 @@
     </div>
   </ng-container>
 
-</div>
+  <div
+    *ngIf="confirmacaoAberta && lancePendente"
+    class="ep-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="confirmar-lance-titulo"
+    (click)="cancelarConfirmacao()">
+    <section class="ep-modal ep-modal-confirmacao" (click)="$event.stopPropagation()">
+      <div class="ep-modal-icon ep-modal-icon-alerta">
+        <fa-icon [icon]="faGavel"></fa-icon>
+      </div>
+
+      <h2 id="confirmar-lance-titulo" class="ep-modal-title">Confirmar envio?</h2>
+      <p class="ep-modal-text">Olha, você está enviando estes dados. Confirma?</p>
+
+      <div class="ep-modal-resumo">
+        <div>
+          <span>Lote</span>
+          <strong>{{ lancePendente.lote.codigo }}</strong>
+        </div>
+        <div>
+          <span>Comprador</span>
+          <strong>{{ lancePendente.compradorNome || 'Não informado' }}</strong>
+        </div>
+        <div>
+          <span>Valor do lance</span>
+          <strong>{{ formatarMoeda(lancePendente.preco) }}</strong>
+        </div>
+      </div>
+
+      <div class="ep-modal-actions">
+        <button class="ep-modal-btn ep-modal-btn-secundario" type="button" (click)="cancelarConfirmacao()" [disabled]="enviandoLance">
+          Cancelar
+        </button>
+        <button class="ep-modal-btn ep-modal-btn-principal" type="button" (click)="confirmarEnvioLance()" [disabled]="enviandoLance">
+          {{ enviandoLance ? 'Enviando...' : 'Confirmar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div
+    *ngIf="sucessoModalAberto && lancePendente"
+    class="ep-modal-backdrop ep-modal-backdrop-sucesso"
+    role="status"
+    aria-live="polite">
+    <section class="ep-modal ep-modal-sucesso">
+      <div class="ep-success-ring">
+        <fa-icon [icon]="faCheck"></fa-icon>
+      </div>
+      <h2 class="ep-modal-title">Lance enviado</h2>
+      <p class="ep-modal-text">
+        {{ formatarMoeda(lancePendente.preco) }} registrado para o lote {{ lancePendente.lote.codigo }}.
+      </p>
+    </section>
+  </div>
+
+</main>

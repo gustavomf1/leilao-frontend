@@ -34,11 +34,12 @@ export class MonitorLotesComponent implements OnInit {
   readonly STATUS_COLOR  = STATUS_LOTE_COLOR;
 
   readonly statusOpcoes: Array<{ value: StatusLote | 'TODOS' | 'NAO_VENDIDO'; label: string }> = [
-    { value: 'TODOS',                  label: 'Todos'                  },
-    { value: 'AGUARDANDO_ESCRITORIO',  label: 'Aguardando Escritório'  },
-    { value: 'AGUARDANDO_LANCE',       label: 'Aguardando Lance'       },
-    { value: 'FINALIZADO',             label: 'Finalizado'             },
-    { value: 'NAO_VENDIDO',            label: 'Não Vendido'            },
+    { value: 'TODOS',                    label: 'Todos'                       },
+    { value: 'AGUARDANDO_ESCRITORIO',    label: 'Aguardando Escritório'       },
+    { value: 'AGUARDANDO_LANCE',         label: 'Aguardando Lance'            },
+    { value: 'AGUARDANDO_ULTIMA_VALIDACAO', label: 'Aguardando Ult. Validação' },
+    { value: 'FINALIZADO',               label: 'Finalizado'                  },
+    { value: 'NAO_VENDIDO',              label: 'Não Vendido'                 },
   ];
 
   readonly faCircle     = faCircle;
