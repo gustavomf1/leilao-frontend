@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -22,6 +22,7 @@ export class FaturaVendaComponent implements OnInit {
   private relatorioService = inject(RelatorioService);
   private leilaoService = inject(LeilaoService);
   private alert = inject(AlertService);
+  private cdr = inject(ChangeDetectorRef);
 
   leiloes: Leilao[] = [];
   vendedores: VendedorResumo[] = [];
@@ -31,7 +32,10 @@ export class FaturaVendaComponent implements OnInit {
 
   ngOnInit(): void {
     this.leilaoService.listar().subscribe({
-      next: (data) => (this.leiloes = data),
+      next: (data) => {
+        this.leiloes = data;
+        this.cdr.detectChanges();
+      },
       error: () => this.alert.error('Erro ao carregar leilões'),
     });
   }
@@ -41,7 +45,10 @@ export class FaturaVendaComponent implements OnInit {
     this.vendedores = [];
     if (this.selectedLeilaoId) {
       this.relatorioService.getVendedoresDoLeilao(this.selectedLeilaoId).subscribe({
-        next: (data) => (this.vendedores = data),
+        next: (data) => {
+          this.vendedores = data;
+          this.cdr.detectChanges();
+        },
         error: () => this.alert.error('Erro ao carregar vendedores do leilão'),
       });
     }
@@ -58,10 +65,12 @@ export class FaturaVendaComponent implements OnInit {
           window.open(url, '_blank');
           setTimeout(() => URL.revokeObjectURL(url), 1000);
           this.loading = false;
+          this.cdr.detectChanges();
         },
         error: () => {
           this.alert.error('Erro ao gerar fatura. Verifique se o vendedor possui lotes neste leilão.');
           this.loading = false;
+          this.cdr.detectChanges();
         },
       });
   }
