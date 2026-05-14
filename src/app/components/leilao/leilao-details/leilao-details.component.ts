@@ -22,7 +22,7 @@ import { Taxas, Condicoes, Especie, TipoLeilao, TIPO_LEILAO_LABELS } from '../..
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
-    ModalModule, TableModule, TableDirective, BadgeComponent,
+    ModalModule, TableModule, TableDirective,
     FontAwesomeModule
   ],
   templateUrl: './leilao-details.component.html',
