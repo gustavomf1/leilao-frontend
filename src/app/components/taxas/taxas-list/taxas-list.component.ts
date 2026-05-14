@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 import { TableModule, TableDirective, CardBodyComponent, CardComponent } from '@coreui/angular';
 import { ButtonDirective } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faPlus, faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
-import { Taxas, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
+import { Taxas } from '../../../core/models/entities.model';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -24,11 +24,8 @@ export class TaxasListComponent implements OnInit {
   auth = inject(AuthService);
 
   faPlus = faPlus;
-  faPencil = faPencil;
-  faTrash = faTrash;
 
   taxas$ = new BehaviorSubject<Taxas[]>([]);
-  tipoLabels = TIPO_LEILAO_LABELS;
 
   ngOnInit() {
     this.carregar();
@@ -38,15 +35,6 @@ export class TaxasListComponent implements OnInit {
     this.service.listar().subscribe({
       next: (data) => this.zone.run(() => this.taxas$.next(data)),
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxas')
-    });
-  }
-
-  deletar(id: number) {
-    this.alert.confirm('Deseja realmente excluir esta taxa?', () => {
-      this.service.deletar(id).subscribe({
-        next: () => { this.alert.success('Taxa excluída!'); this.carregar(); },
-        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir taxa')
-      });
     });
   }
 }

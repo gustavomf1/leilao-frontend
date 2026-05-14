@@ -16,7 +16,10 @@
         </span>
         <span class="ms-3" *ngIf="resumo.tipoLeilao">
           {{ tipoLeilaoLabel(resumo.tipoLeilao) }}
-          <span *ngIf="resumo.especieNome"> — {{ resumo.especieNome }}</span>
+          <span *ngIf="especieNome !== '—'"> — {{ especieNome }}</span>
+        </span>
+        <span class="ms-3" *ngIf="resumo.taxaPor">
+          Taxa por {{ taxaPorLabel }}
         </span>
       </span>
     </div>
@@ -30,6 +33,41 @@
       <a routerLink="/leiloes/lista" cButton color="secondary" size="sm" variant="ghost">
         <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
       </a>
+    </div>
+  </div>
+
+  <div class="auction-facts mb-4">
+    <div class="auction-fact">
+      <span>Espécie</span>
+      <strong>{{ especieNome }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Tipo</span>
+      <strong>{{ tipoLeilaoLabel(resumo.tipoLeilao) }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Taxa por</span>
+      <strong>{{ taxaPorLabel }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Taxa</span>
+      <strong>{{ resumo.taxa != null ? (resumo.taxa | currency:'BRL':'symbol':'1.2-2') : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Comissão Venda</span>
+      <strong>{{ resumo.comissaoVenda != null ? (resumo.comissaoVenda | number:'1.2-2') + '%' : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Comissão Compra</span>
+      <strong>{{ resumo.comissaoCompra != null ? (resumo.comissaoCompra | number:'1.2-2') + '%' : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>GTA</span>
+      <strong>{{ resumo.gta != null ? (resumo.gta | currency:'BRL':'symbol':'1.2-2') : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Condição</span>
+      <strong>{{ condicaoDescricao }}</strong>
     </div>
   </div>
 
@@ -67,7 +105,7 @@
         <c-card-body class="d-flex flex-column">
           <div class="text-uppercase small fw-semibold opacity-75">Movimentação Bruta</div>
           <div class="fs-2 fw-bold mt-auto">{{ resumo.movimentacaoBruta | currency:'BRL':'symbol':'1.2-2' }}</div>
-          <div class="small opacity-75">Receita comissão: {{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</div>
+          <div class="small opacity-75">Receita taxas: {{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</div>
         </c-card-body>
       </c-card>
     </c-col>
@@ -90,38 +128,46 @@
     </c-card-body>
   </c-card>
 
-  <!-- Comissão e Resumo -->
+  <!-- Taxas e Resumo -->
   <c-row class="mb-4">
     <c-col [md]="6" class="mb-3 mb-md-0">
       <c-card class="h-100">
         <c-card-header>
           <fa-icon [icon]="faPercent" class="me-2 text-success"></fa-icon>
-          <strong>Comissão</strong>
+          <strong>Taxas</strong>
         </c-card-header>
         <c-card-body>
           <table class="table table-borderless table-sm mb-0">
             <tbody>
-              <tr *ngIf="resumo.especieNome">
+              <tr>
                 <td class="text-body-secondary" style="width: 45%">Espécie</td>
-                <td class="fw-semibold"><fa-icon [icon]="faPaw" class="me-1 text-body-secondary"></fa-icon>{{ resumo.especieNome }}</td>
+                <td class="fw-semibold"><fa-icon [icon]="faPaw" class="me-1 text-body-secondary"></fa-icon>{{ especieNome }}</td>
               </tr>
-              <tr *ngIf="resumo.tipoLeilao">
+              <tr>
                 <td class="text-body-secondary">Tipo de Leilão</td>
                 <td>{{ tipoLeilaoLabel(resumo.tipoLeilao) }}</td>
               </tr>
-              <tr *ngIf="resumo.comissaoVendedor != null">
-                <td class="text-body-secondary">Comissão Vendedor</td>
-                <td class="fw-semibold text-danger">{{ resumo.comissaoVendedor }}%</td>
+              <tr *ngIf="resumo.taxa != null">
+                <td class="text-body-secondary">Taxa</td>
+                <td class="fw-semibold text-danger">{{ resumo.taxa | currency:'BRL':'symbol':'1.2-2' }}</td>
               </tr>
-              <tr *ngIf="resumo.comissaoComprador != null">
-                <td class="text-body-secondary">Comissão Comprador</td>
-                <td class="fw-semibold text-danger">{{ resumo.comissaoComprador }}%</td>
+              <tr *ngIf="resumo.comissaoVenda != null">
+                <td class="text-body-secondary">Comissão Venda</td>
+                <td class="fw-semibold text-danger">{{ resumo.comissaoVenda | number:'1.2-2' }}%</td>
               </tr>
-              <tr *ngIf="resumo.taxaPor">
+              <tr *ngIf="resumo.comissaoCompra != null">
+                <td class="text-body-secondary">Comissão Compra</td>
+                <td class="fw-semibold text-danger">{{ resumo.comissaoCompra | number:'1.2-2' }}%</td>
+              </tr>
+              <tr *ngIf="resumo.gta != null">
+                <td class="text-body-secondary">GTA</td>
+                <td class="fw-semibold text-danger">{{ resumo.gta | currency:'BRL':'symbol':'1.2-2' }}</td>
+              </tr>
+              <tr>
                 <td class="text-body-secondary">Cobrado por</td>
                 <td>
                   <c-badge [color]="resumo.taxaPor === 'ANIMAL' ? 'info' : 'warning'">
-                    {{ resumo.taxaPor === 'ANIMAL' ? 'Animal' : 'Lote' }}
+                    {{ taxaPorLabel }}
                   </c-badge>
                 </td>
               </tr>
@@ -141,7 +187,7 @@
             <tbody>
               <tr>
                 <td class="text-body-secondary" style="width: 45%">Condição</td>
-                <td class="fw-semibold">{{ resumo.condicaoDescricao ?? '—' }}</td>
+                <td class="fw-semibold">{{ condicaoDescricao }}</td>
               </tr>
               <tr>
                 <td class="text-body-secondary">Total de Animais</td>
@@ -156,7 +202,7 @@
                 <td>{{ resumo.ticketMedio | currency:'BRL':'symbol':'1.2-2' }}</td>
               </tr>
               <tr>
-                <td class="text-body-secondary">Receita Comissão</td>
+                <td class="text-body-secondary">Receita Taxas</td>
                 <td class="fw-semibold text-success">{{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</td>
               </tr>
               <tr>

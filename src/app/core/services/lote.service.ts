@@ -22,16 +22,16 @@ export class LoteService extends ApiService<Lote> {
   registrarPreco(
     id: number,
     precoCompra: number,
-    dadosExtras: { compradorId?: number | null; comissaoVendedor?: number | null; comissaoComprador?: number | null } = {}
+    dadosExtras: { compradorId?: number | null; comissaoVenda?: number | null; comissaoCompra?: number | null } = {}
   ): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/preco`, { precoCompra, ...dadosExtras });
   }
 
-  validarFinal(id: number, dados: { compradorId: number; comissaoVendedor?: number | null; comissaoComprador?: number | null }): Observable<Lote> {
+  validarFinal(id: number, dados: { compradorId: number; comissaoVenda?: number | null; comissaoCompra?: number | null }): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/validar-final`, dados);
   }
 
-  recolocarLance(id: number, dados: { comissaoVendedor?: number | null; comissaoComprador?: number | null; naoVendidoNoLeilao?: string }): Observable<Lote> {
+  recolocarLance(id: number, dados: { comissaoVenda?: number | null; comissaoCompra?: number | null; naoVendidoNoLeilao?: string }): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/recolocar-lance`, dados);
   }
 }

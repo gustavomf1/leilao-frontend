@@ -202,6 +202,7 @@ export class LotesDetailsComponent implements OnInit {
           this.loteCarregado = data;
           this.form.patchValue(data);
           this.restaurarSelecoes();
+          this.carregarTaxaDoLeilao(data.leilaoId);
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar lote')
       });
@@ -364,8 +365,8 @@ export class LotesDetailsComponent implements OnInit {
     }
     this.service.validarFinal(this.entityId!, {
       compradorId: this.validacaoCompradorId,
-      comissaoVendedor: this.validacaoComissaoVendedor,
-      comissaoComprador: this.validacaoComissaoComprador,
+      comissaoVenda: this.validacaoComissaoVendedor,
+      comissaoCompra: this.validacaoComissaoComprador,
     }).subscribe({
       next: () => {
         this.alert.success('Lote finalizado com sucesso!');
@@ -377,8 +378,8 @@ export class LotesDetailsComponent implements OnInit {
 
   confirmarRecolocacao() {
     this.service.recolocarLance(this.entityId!, {
-      comissaoVendedor: this.recolocacaoComissaoVendedor,
-      comissaoComprador: this.recolocacaoComissaoComprador,
+      comissaoVenda: this.recolocacaoComissaoVendedor,
+      comissaoCompra: this.recolocacaoComissaoComprador,
     }).subscribe({
       next: () => {
         this.alert.success('Lote recolocado em lance!');
@@ -398,16 +399,16 @@ export class LotesDetailsComponent implements OnInit {
       ...this.form.getRawValue(),
       precoCompra: this.lancePrecoCompra,
       compradorId: this.validacaoCompradorId,
-      comissaoVendedor: this.lanceComissaoVendedor,
-      comissaoComprador: this.lanceComissaoComprador,
+      comissaoVenda: this.lanceComissaoVendedor,
+      comissaoCompra: this.lanceComissaoComprador,
     };
 
     this.service.atualizar(this.entityId!, dadosAtualizacao).subscribe({
       next: () => {
         this.service.registrarPreco(this.entityId!, this.lancePrecoCompra!, {
           compradorId: this.validacaoCompradorId,
-          comissaoVendedor: this.lanceComissaoVendedor,
-          comissaoComprador: this.lanceComissaoComprador,
+          comissaoVenda: this.lanceComissaoVendedor,
+          comissaoCompra: this.lanceComissaoComprador,
         }).subscribe({
           next: () => {
             this.alert.success('Lote enviado para validação final!');
@@ -426,8 +427,8 @@ export class LotesDetailsComponent implements OnInit {
       precoCompra: null,
       compradorId: null,
       status: 'AGUARDANDO_LANCE',
-      comissaoVendedor: this.lanceComissaoVendedor,
-      comissaoComprador: this.lanceComissaoComprador,
+      comissaoVenda: this.lanceComissaoVendedor,
+      comissaoCompra: this.lanceComissaoComprador,
       naoVendidoNoLeilao: 'S',
     };
 
@@ -464,19 +465,47 @@ export class LotesDetailsComponent implements OnInit {
       }
     }
 
-    if (this.loteCarregado.comissaoVendedor != null)
-      this.validacaoComissaoVendedor = this.loteCarregado.comissaoVendedor;
-    if (this.loteCarregado.comissaoComprador != null)
-      this.validacaoComissaoComprador = this.loteCarregado.comissaoComprador;
+    if (this.loteCarregado.comissaoVenda != null)
+      this.validacaoComissaoVendedor = this.loteCarregado.comissaoVenda;
+    if (this.loteCarregado.comissaoCompra != null)
+      this.validacaoComissaoComprador = this.loteCarregado.comissaoCompra;
 
     if (this.loteCarregado.precoCompra != null)
       this.lancePrecoCompra = this.loteCarregado.precoCompra;
-    if (this.loteCarregado.comissaoVendedor != null)
-      this.lanceComissaoVendedor = this.loteCarregado.comissaoVendedor;
-    if (this.loteCarregado.comissaoComprador != null)
-      this.lanceComissaoComprador = this.loteCarregado.comissaoComprador;
+    if (this.loteCarregado.comissaoVenda != null)
+      this.lanceComissaoVendedor = this.loteCarregado.comissaoVenda;
+    if (this.loteCarregado.comissaoCompra != null)
+      this.lanceComissaoComprador = this.loteCarregado.comissaoCompra;
+
+    if (this.loteCarregado.comissaoVenda != null)
+      this.recolocacaoComissaoVendedor = this.loteCarregado.comissaoVenda;
+    if (this.loteCarregado.comissaoCompra != null)
+      this.recolocacaoComissaoComprador = this.loteCarregado.comissaoCompra;
 
     this.cdr.markForCheck();
+  }
+
+  private carregarTaxaDoLeilao(leilaoId?: number | null) {
+    if (!leilaoId) return;
+    this.leilaoService.buscarResumo(leilaoId).subscribe({
+      next: (resumo: any) => {
+        const comissaoVendaPadrao = resumo?.comissaoVenda ?? resumo?.taxaPadrao?.comissaoVenda;
+        const comissaoCompraPadrao = resumo?.comissaoCompra ?? resumo?.taxaPadrao?.comissaoCompra;
+        if (this.validacaoComissaoVendedor == null && comissaoVendaPadrao != null)
+          this.validacaoComissaoVendedor = comissaoVendaPadrao;
+        if (this.validacaoComissaoComprador == null && comissaoCompraPadrao != null)
+          this.validacaoComissaoComprador = comissaoCompraPadrao;
+        if (this.lanceComissaoVendedor == null && comissaoVendaPadrao != null)
+          this.lanceComissaoVendedor = comissaoVendaPadrao;
+        if (this.lanceComissaoComprador == null && comissaoCompraPadrao != null)
+          this.lanceComissaoComprador = comissaoCompraPadrao;
+        if (this.recolocacaoComissaoVendedor == null && comissaoVendaPadrao != null)
+          this.recolocacaoComissaoVendedor = comissaoVendaPadrao;
+        if (this.recolocacaoComissaoComprador == null && comissaoCompraPadrao != null)
+          this.recolocacaoComissaoComprador = comissaoCompraPadrao;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   abrirDropdownValidacaoComprador() {

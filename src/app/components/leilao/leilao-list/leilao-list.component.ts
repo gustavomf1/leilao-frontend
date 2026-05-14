@@ -10,6 +10,7 @@ import { LeilaoService } from '../../../core/services/leilao.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Subject } from 'rxjs';
+import { TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-leiloes-list',
@@ -31,6 +32,7 @@ export class LeiloesListComponent implements OnInit {
 
   leiloes: Leilao[] = [];
   public leiloes$ = new Subject<Leilao[]>();
+  tipoLabels = TIPO_LEILAO_LABELS;
 
   ngOnInit() {
     this.carregar();

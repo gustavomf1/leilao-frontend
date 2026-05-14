@@ -9,7 +9,7 @@ import {
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArrowLeft, faMapMarkerAlt, faCalendarAlt, faGavel,
-  faHandshake, faPercent, faPaw, faInfoCircle,
+  faHandshake, faDollarSign, faPaw, faInfoCircle,
   faCheckCircle, faClock, faPencil
 } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
@@ -24,9 +24,14 @@ interface LeilaoResumo {
   cidade: string;
   uf: string;
   data: string;
+  condicao?: { descricao?: string };
+  especie?: { nome?: string };
+  taxaPadrao?: { taxa?: number; comissaoVenda?: number; comissaoCompra?: number; gta?: number };
   condicaoDescricao?: string;
-  comissaoVendedor?: number;
-  comissaoComprador?: number;
+  taxa?: number;
+  comissaoVenda?: number;
+  comissaoCompra?: number;
+  gta?: number;
   especieNome?: string;
   tipoLeilao?: string;
   taxaPor?: string;
@@ -64,7 +69,7 @@ export class LeilaoViewComponent implements OnInit {
   faCalendarAlt = faCalendarAlt;
   faGavel = faGavel;
   faHandshake = faHandshake;
-  faPercent = faPercent;
+  faPercent = faDollarSign;
   faPaw = faPaw;
   faInfoCircle = faInfoCircle;
   faCheckCircle = faCheckCircle;
@@ -91,6 +96,19 @@ export class LeilaoViewComponent implements OnInit {
     return this.resumo?.lotes.reduce((sum, l) => sum + (l.peso || 0), 0) ?? 0;
   }
 
+  get especieNome(): string {
+    return this.resumo?.especieNome || this.resumo?.especie?.nome || '—';
+  }
+
+  get condicaoDescricao(): string {
+    return this.resumo?.condicaoDescricao || this.resumo?.condicao?.descricao || '—';
+  }
+
+  get taxaPorLabel(): string {
+    if (!this.resumo?.taxaPor) return '—';
+    return this.resumo.taxaPor === 'ANIMAL' ? 'Animal' : 'Lote';
+  }
+
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
@@ -99,7 +117,7 @@ export class LeilaoViewComponent implements OnInit {
     }
     this.service.buscarResumo(+id).subscribe({
       next: (data: LeilaoResumo) => {
-        this.resumo = data;
+        this.resumo = this.normalizarResumo(data);
         this.loading$.next(false);
       },
       error: (err: any) => {
@@ -111,9 +129,23 @@ export class LeilaoViewComponent implements OnInit {
 
   tipoLeilaoLabel(tipo?: string): string {
     const labels: Record<string, string> = {
+      PRESENCIAL: 'Presencial', ONLINE: 'Online', HIBRIDO: 'Híbrido',
       ELITE: 'Elite', CORTE: 'Corte', LEITE: 'Leite',
       PRENHEZ: 'Prenhez', OUTROS: 'Outros', DOACAO: 'Doação'
     };
     return tipo ? labels[tipo] ?? tipo : '—';
+  }
+
+  private normalizarResumo(data: LeilaoResumo): LeilaoResumo {
+    return {
+      ...data,
+      especieNome: data.especieNome || data.especie?.nome,
+      condicaoDescricao: data.condicaoDescricao || data.condicao?.descricao,
+      taxa: data.taxa ?? data.taxaPadrao?.taxa,
+      comissaoVenda: data.comissaoVenda ?? data.taxaPadrao?.comissaoVenda,
+      comissaoCompra: data.comissaoCompra ?? data.taxaPadrao?.comissaoCompra,
+      gta: data.gta ?? data.taxaPadrao?.gta,
+      lotes: data.lotes || [],
+    };
   }
 }

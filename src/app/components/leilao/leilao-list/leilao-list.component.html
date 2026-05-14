@@ -16,6 +16,9 @@
             <th>Descrição</th>
             <th>Local</th>
             <th>Cidade/UF</th>
+            <th>Espécie</th>
+            <th>Tipo</th>
+            <th class="text-center">Taxa por</th>
             <th>Data</th>
             <th class="text-center">Ações</th>
           </tr>
@@ -26,6 +29,9 @@
             <td>{{ leilao.descricao }}</td>
             <td>{{ leilao.local }}</td>
             <td>{{ leilao.cidade }}/{{ leilao.uf }}</td>
+            <td>{{ leilao.especieNome || '—' }}</td>
+            <td>{{ leilao.tipoLeilao ? tipoLabels[leilao.tipoLeilao] : '—' }}</td>
+            <td class="text-center">{{ leilao.taxaPor === 'ANIMAL' ? 'Animal' : leilao.taxaPor === 'LOTE' ? 'Lote' : '—' }}</td>
             <td>{{ leilao.data }}</td>
             <td class="text-center">
               <a [routerLink]="['/leiloes', leilao.id, 'view']" cButton color="primary" size="sm" variant="ghost" title="Ver detalhes">

@@ -35,8 +35,14 @@ export interface Leilao {
   cidade: string;
   descricao: string;
   data: string;
+  condicoesId?: number;
   condicoes_id?: number;
-  taxas_id?: number;
+  taxaPadraoId?: number;
+  especieId?: number;
+  especieNome?: string;
+  tipoLeilao?: TipoLeilao;
+  taxaPor?: TaxaPor;
+  status?: StatusLeilao;
 }
 
 export type StatusLeilao = 'ABERTO' | 'EM_ANDAMENTO' | 'FINALIZADO';
@@ -62,16 +68,19 @@ export interface LeilaoDetalhes {
   data: string;
   inativo: string;
   status: StatusLeilao;
-  condicao: Condicoes;
-  taxa: {
-    id: number;
-    comissaoVendedor: number;
-    comissaoComprador: number;
-    especie: Especie;
-    tipoLeilao: string;
-    taxaPor: string;
-    inativo: string;
-  };
+  condicao?: Condicoes;
+  condicoesId?: number;
+  taxaPadraoId?: number;
+  taxaPadrao?: Taxas;
+  especie?: Especie;
+  especieId?: number;
+  especieNome?: string;
+  tipoLeilao?: TipoLeilao;
+  taxaPor?: TaxaPor;
+  taxa?: number;
+  comissaoVenda?: number;
+  comissaoCompra?: number;
+  gta?: number;
 }
 
 export interface Condicoes {
@@ -87,11 +96,23 @@ export interface Condicoes {
   aceiteIntegrado?: string;
 }
 
-export type TipoLeilao = 'ELITE' | 'CORTE' | 'LEITE' | 'PRENHEZ' | 'OUTROS' | 'DOACAO';
+export type TipoLeilao =
+  | 'PRESENCIAL'
+  | 'ONLINE'
+  | 'HIBRIDO'
+  | 'ELITE'
+  | 'CORTE'
+  | 'LEITE'
+  | 'PRENHEZ'
+  | 'OUTROS'
+  | 'DOACAO';
 
 export type TaxaPor = 'ANIMAL' | 'LOTE';
 
 export const TIPO_LEILAO_LABELS: Record<TipoLeilao, string> = {
+  PRESENCIAL: 'Presencial',
+  ONLINE: 'Online',
+  HIBRIDO: 'Híbrido',
   ELITE:   'Elite',
   CORTE:   'Corte',
   LEITE:   'Leite',
@@ -108,13 +129,11 @@ export interface Especie {
 
 export interface Taxas {
   id?: number;
-  comissaoVendedor: number;
-  comissaoComprador: number;
-  especieId: number;
-  especieNome?: string;
-  tipoLeilao: TipoLeilao;
-  taxaPor: TaxaPor;
-  inativo?: string;
+  taxa: number;
+  comissaoVenda: number;
+  comissaoCompra: number;
+  gta: number;
+  atualizadoEm?: string;
 }
 
 export type StatusLote =
@@ -156,8 +175,8 @@ export interface Lote {
   vendedorNomeRascunho?: string;
   compradorNomeRascunho?: string;
   compradorNome?: string;
-  comissaoVendedor?: number;
-  comissaoComprador?: number;
+  comissaoVenda?: number;
+  comissaoCompra?: number;
   status?: StatusLote;
   naoVendidoNoLeilao?: string;
 }
