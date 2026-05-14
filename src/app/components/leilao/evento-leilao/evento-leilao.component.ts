@@ -19,7 +19,7 @@ import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { LeilaoDetalhes, Lote, STATUS_LEILAO_LABELS, STATUS_LEILAO_COLOR } from '../../../core/models/entities.model';
+import { LeilaoDetalhes, Lote, STATUS_LEILAO_LABELS, STATUS_LEILAO_COLOR, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-evento-leilao',
@@ -66,6 +66,7 @@ export class EventoLeilaoComponent implements OnInit, OnDestroy {
 
   statusLabels = STATUS_LEILAO_LABELS;
   statusColors = STATUS_LEILAO_COLOR;
+  tipoLabels = TIPO_LEILAO_LABELS;
 
   get emAndamento(): boolean {
     return this.leilao?.status === 'EM_ANDAMENTO';

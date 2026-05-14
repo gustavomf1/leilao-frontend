@@ -14,4 +14,6 @@ export interface Lote {
   compradorId?: number;   
   precoCompra: number;    
   vendedorNome?: string;  
+  comissaoVenda?: number;
+  comissaoCompra?: number;
 }

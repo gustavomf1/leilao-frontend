@@ -275,19 +275,19 @@ export const navItemsLeilao: INavData[] = [
     ]
   },
   {
-    name: 'Taxas',
+    name: 'Taxa Padrão',
     url: '/taxas',
     iconComponent: { name: 'cil-dollar' },
     attributes: { ambiente: 'TAXAS' },
     children: [
       {
-        name: 'Listar Taxas',
+        name: 'Ver Taxa Atual',
         url: '/taxas/lista',
         icon: 'nav-icon-bullet',
         attributes: { ambiente: 'TAXAS', acao: 'VISUALIZAR' }
       },
       {
-        name: 'Cadastrar Taxa',
+        name: 'Cadastrar Taxa Padrão',
         url: '/taxas/cadastrar',
         icon: 'nav-icon-bullet',
         attributes: { ambiente: 'TAXAS', acao: 'CRIAR' }

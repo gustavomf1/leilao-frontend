@@ -6,5 +6,8 @@ export interface Leilao {
   descricao: string;
   data: string;
   condicoesId?: number;
-  taxasId?: number;
+  taxaPadraoId?: number;
+  especieId?: number;
+  tipoLeilao?: 'PRESENCIAL' | 'ONLINE' | 'HIBRIDO' | 'ELITE' | 'CORTE' | 'LEITE' | 'PRENHEZ' | 'OUTROS' | 'DOACAO';
+  taxaPor?: 'ANIMAL' | 'LOTE';
 }

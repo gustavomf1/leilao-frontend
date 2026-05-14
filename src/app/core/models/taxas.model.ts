@@ -1,8 +1,8 @@
 export interface Taxas {
   id?: number;
-  comissaoVendedor: number;
-  comissaoComprador: number;
-  especie: string;
-  tipoLeilao: string;
-  inativo?: string;
+  taxa: number;
+  comissaoVenda: number;
+  comissaoCompra: number;
+  gta: number;
+  atualizadoEm?: string;
 }

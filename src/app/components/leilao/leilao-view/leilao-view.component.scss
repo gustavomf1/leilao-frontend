@@ -1,3 +1,47 @@
 :host {
   display: block;
 }
+
+.auction-facts {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.auction-fact {
+  background: var(--cui-card-bg, var(--cui-body-bg));
+  border: 1px solid var(--cui-border-color);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  min-width: 0;
+}
+
+.auction-fact span {
+  display: block;
+  color: var(--cui-secondary-color);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.auction-fact strong {
+  display: block;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1199.98px) {
+  .auction-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575.98px) {
+  .auction-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

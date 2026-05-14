@@ -14,6 +14,17 @@
           <fa-icon [icon]="faCalendarAlt" class="me-1"></fa-icon>
           {{ leilao.data | date:'dd/MM/yyyy' }}
         </span>
+        <span class="ms-3" *ngIf="leilao.tipoLeilao">
+          {{ tipoLabels[leilao.tipoLeilao] }}
+          <span *ngIf="leilao.especieNome || leilao.especie?.nome"> — {{ leilao.especieNome || leilao.especie?.nome }}</span>
+        </span>
+        <span class="ms-3" *ngIf="leilao.taxa != null || leilao.taxaPadrao?.taxa != null || leilao.comissaoVenda != null || leilao.taxaPadrao?.comissaoVenda != null">
+          Taxa: {{ (leilao.taxa ?? leilao.taxaPadrao?.taxa) | currency:'BRL':'symbol':'1.2-2' }}
+          / venda: {{ (leilao.comissaoVenda ?? leilao.taxaPadrao?.comissaoVenda) | number:'1.2-2' }}%
+          / compra: {{ (leilao.comissaoCompra ?? leilao.taxaPadrao?.comissaoCompra) | number:'1.2-2' }}%
+          / GTA: {{ (leilao.gta ?? leilao.taxaPadrao?.gta) | currency:'BRL':'symbol':'1.2-2' }}
+          <span *ngIf="leilao.taxaPor">por {{ leilao.taxaPor === 'ANIMAL' ? 'animal' : 'lote' }}</span>
+        </span>
       </span>
     </div>
     <div class="d-flex gap-2 align-items-center">

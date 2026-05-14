@@ -14,8 +14,7 @@ export class RelatorioService {
   private baseUrl = environment.backendUrl;
 
   gerarFaturaVenda(leilaoId: number, vendedorId: number): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/api/relatorios/fatura-venda`, {
-      params: { leilaoId: leilaoId.toString(), vendedorId: vendedorId.toString() },
+    return this.http.get(`${this.baseUrl}/api/relatorios/fatura-venda/${leilaoId}/${vendedorId}`, {
       responseType: 'blob',
     });
   }

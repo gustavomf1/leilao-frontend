@@ -1,6 +1,6 @@
 <div class="container-lg px-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">{{ isEdicao ? 'Editar Taxa' : 'Nova Taxa' }}</h2>
+    <h2 class="mb-0">Nova Taxa Padrão</h2>
     <a routerLink="/taxas/lista" cButton color="secondary" size="sm" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
     </a>
@@ -8,80 +8,60 @@
 
   <c-card>
     <c-card-header>
-      <strong>Dados da Taxa de Comissão</strong>
+      <strong>Dados da Taxa Padrão</strong>
     </c-card-header>
     <c-card-body>
       <form [formGroup]="form" (ngSubmit)="salvar()">
         <c-row>
-
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="especieId">Espécie *</label>
-              <select cFormControl id="especieId" formControlName="especieId">
-                <option [ngValue]="null" disabled>Selecione a espécie</option>
-                <option *ngFor="let e of especies" [ngValue]="e.id">{{ e.nome }}</option>
-              </select>
-              <c-form-feedback *ngIf="form.get('especieId')?.invalid && form.get('especieId')?.touched" [valid]="false">
-                Espécie é obrigatória
+              <label cLabel for="taxa">Taxa (R$) *</label>
+              <input cFormControl id="taxa" type="number" formControlName="taxa" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('taxa')?.invalid && form.get('taxa')?.touched" [valid]="false">
+                Taxa é obrigatória
               </c-form-feedback>
             </div>
           </c-col>
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="tipoLeilao">Tipo de Leilão *</label>
-              <select cFormControl id="tipoLeilao" formControlName="tipoLeilao">
-                <option value="" disabled>Selecione o tipo</option>
-                <option *ngFor="let t of tiposLeilao" [value]="t.value">{{ t.label }}</option>
-              </select>
-              <c-form-feedback *ngIf="form.get('tipoLeilao')?.invalid && form.get('tipoLeilao')?.touched" [valid]="false">
-                Tipo de leilão é obrigatório
+              <label cLabel for="gta">GTA (R$) *</label>
+              <input cFormControl id="gta" type="number" formControlName="gta" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('gta')?.invalid && form.get('gta')?.touched" [valid]="false">
+                GTA é obrigatório
               </c-form-feedback>
             </div>
           </c-col>
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="comissaoVendedor">Comissão Vendedor (%) *</label>
-              <input cFormControl id="comissaoVendedor" type="number" formControlName="comissaoVendedor" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('comissaoVendedor')?.invalid && form.get('comissaoVendedor')?.touched" [valid]="false">
-                Comissão do vendedor é obrigatória
+              <label cLabel for="comissaoVenda">Comissão Venda (%) *</label>
+              <input cFormControl id="comissaoVenda" type="number" formControlName="comissaoVenda" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('comissaoVenda')?.invalid && form.get('comissaoVenda')?.touched" [valid]="false">
+                Comissão de venda é obrigatória
               </c-form-feedback>
             </div>
           </c-col>
 
           <c-col [md]="6">
             <div class="mb-3">
-              <label cLabel for="comissaoComprador">Comissão Comprador (%) *</label>
-              <input cFormControl id="comissaoComprador" type="number" formControlName="comissaoComprador" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('comissaoComprador')?.invalid && form.get('comissaoComprador')?.touched" [valid]="false">
-                Comissão do comprador é obrigatória
+              <label cLabel for="comissaoCompra">Comissão Compra (%) *</label>
+              <input cFormControl id="comissaoCompra" type="number" formControlName="comissaoCompra" placeholder="0.00" step="0.01" />
+              <c-form-feedback *ngIf="form.get('comissaoCompra')?.invalid && form.get('comissaoCompra')?.touched" [valid]="false">
+                Comissão de compra é obrigatória
               </c-form-feedback>
             </div>
           </c-col>
-
-          <c-col [md]="12">
-            <div class="mb-3">
-              <label class="form-label">Taxas por *</label>
-              <div class="d-flex gap-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" id="taxaPorAnimal" formControlName="taxaPor" value="ANIMAL" />
-                  <label class="form-check-label" for="taxaPorAnimal">Animal</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" id="taxaPorLote" formControlName="taxaPor" value="LOTE" />
-                  <label class="form-check-label" for="taxaPorLote">Lote</label>
-                </div>
-              </div>
-            </div>
-          </c-col>
-
         </c-row>
+
+        <p class="text-body-secondary small mb-0">
+          Ao cadastrar, uma nova taxa padrão será criada. Novos leilões podem usar essa taxa como vínculo ou como fallback automático.
+        </p>
 
         <div class="d-flex gap-2 mt-3">
           <button type="submit" cButton color="primary" [disabled]="form.invalid">
             <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
+            Cadastrar
           </button>
           <a routerLink="/taxas/lista" cButton color="secondary" variant="ghost">Cancelar</a>
         </div>
