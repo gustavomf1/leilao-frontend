@@ -1,11 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Params, RouterModule } from '@angular/router';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { LoteService } from '../../../core/services/lote.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AlertService } from '../../../shared/services/alert.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -14,7 +14,7 @@ import {
   faPaw, faDollarSign, faUser, faHorse,
   faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes
 } from '@fortawesome/free-solid-svg-icons';
-import { StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
+import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-monitor-lotes',
@@ -23,9 +23,26 @@ import { StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core
   templateUrl: './monitor-lotes.component.html',
   styleUrl: './monitor-lotes.component.css'
 })
-export class MonitorLotesComponent implements OnInit {
+export class MonitorLotesComponent implements OnInit, OnDestroy {
   // null = carregando, [] ou [...] = carregado
-  lotes$ = new BehaviorSubject<any[] | null>(null);
+  lotes$ = new BehaviorSubject<Lote[] | null>(null);
+
+  @Input() leilaoId?: number | null;
+  @Input() tituloPagina = 'Lotes';
+  @Input() tituloMonitor = 'Monitor de Lotes em Tempo Real';
+  @Input() exibirContainer = true;
+  @Input() exibirTituloPagina = true;
+  @Input() exibirBotaoNovo = true;
+  @Input() novoLoteQueryParams: Params | null = null;
+  @Output() lotesChange = new EventEmitter<Lote[]>();
+
+  @Input() set lotesIniciais(value: Lote[] | null | undefined) {
+    if (value === undefined) return;
+    this.carregadoPorInput = true;
+    const lotes = value ?? [];
+    const atuais = this.lotes$.value;
+    this.publicarLotes(atuais ? this.mesclarLotes(atuais, lotes) : lotes, false);
+  }
 
   filtroStatus: StatusLote | 'TODOS' | 'NAO_VENDIDO' = 'TODOS';
   precoInput: Record<number, number | null> = {};
@@ -65,31 +82,47 @@ export class MonitorLotesComponent implements OnInit {
   private loteService = inject(LoteService);
   private alert       = inject(AlertService);
   auth                = inject(AuthService);
+  private carregadoPorInput = false;
+  private wsSubscription?: Subscription;
 
-  get lotesFiltrados(): any[] {
-    const lotes = this.lotes$.value ?? [];
+  get lotesFiltrados(): Lote[] {
+    const lotes = this.lotesDoContexto;
     if (this.filtroStatus === 'TODOS') return lotes;
     if (this.filtroStatus === 'NAO_VENDIDO') return lotes.filter(l => l.naoVendidoNoLeilao === 'S');
     return lotes.filter(l => l.status === this.filtroStatus);
   }
 
-  ngOnInit(): void {
-    this.loteService.listar().subscribe({
-      next: (dados) => this.lotes$.next(dados),
-      error: ()      => this.lotes$.next([])
-    });
+  get novoLoteParams(): Params | null {
+    if (this.novoLoteQueryParams) return this.novoLoteQueryParams;
+    if (this.leilaoId == null) return null;
+    return { leilaoId: this.leilaoId, origemLeilaoId: this.leilaoId };
+  }
 
-    this.wsService.novoLoteSubject.subscribe((novoLote) => {
+  get contextoQueryParams(): Params | null {
+    if (this.leilaoId == null) return null;
+    return { origemLeilaoId: this.leilaoId };
+  }
+
+  ngOnInit(): void {
+    if (!this.carregadoPorInput || this.leilaoId != null) {
+      this.carregarLotesDaApi();
+    }
+
+    this.wsSubscription = this.wsService.novoLoteSubject.subscribe((novoLote: Lote) => {
       const atual = this.lotes$.value ?? [];
       const idx   = atual.findIndex(l => l.id === novoLote.id);
       if (idx >= 0) {
         const atualizado = [...atual];
-        atualizado[idx]  = novoLote;
-        this.lotes$.next(atualizado);
-      } else {
-        this.lotes$.next([novoLote, ...atual]);
+        atualizado[idx]  = { ...atualizado[idx], ...novoLote };
+        this.publicarLotes(atualizado);
+      } else if (this.pertenceAoLeilao(novoLote, false)) {
+        this.publicarLotes([novoLote, ...atual]);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.wsSubscription?.unsubscribe();
   }
 
   setFiltro(status: StatusLote | 'TODOS' | 'NAO_VENDIDO') {
@@ -104,7 +137,13 @@ export class MonitorLotesComponent implements OnInit {
     return this.STATUS_COLOR[status as StatusLote] ?? 'secondary';
   }
 
-  abrirDetalhes(lote: any) {
+  validacaoQueryParams(validar: 'lance' | 'escritorio' | 'final'): Params {
+    return this.leilaoId == null
+      ? { validar }
+      : { validar, origemLeilaoId: this.leilaoId };
+  }
+
+  abrirDetalhes(lote: Lote) {
     this.loteDetalhes = lote;
     this.modalDetalhesVisivel = true;
   }
@@ -114,7 +153,11 @@ export class MonitorLotesComponent implements OnInit {
     this.loteDetalhes = null;
   }
 
-  confirmarPreco(id: number) {
+  confirmarPreco(id?: number) {
+    if (id == null) {
+      this.alert.error('Lote inválido');
+      return;
+    }
     const preco = this.precoInput[id];
     if (!preco || preco <= 0) {
       this.alert.error('Informe um preço válido');
@@ -130,7 +173,11 @@ export class MonitorLotesComponent implements OnInit {
     });
   }
 
-  avancarStatus(id: number) {
+  avancarStatus(id?: number) {
+    if (id == null) {
+      this.alert.error('Lote inválido');
+      return;
+    }
     this.loteService.avancarStatus(id).subscribe({
       next: (loteAtualizado) => {
         this._substituir(loteAtualizado);
@@ -140,11 +187,15 @@ export class MonitorLotesComponent implements OnInit {
     });
   }
 
-  deletar(id: number) {
+  deletar(id?: number) {
+    if (id == null) {
+      this.alert.error('Lote inválido');
+      return;
+    }
     this.alert.confirm('Deseja realmente excluir este lote?', () => {
       this.loteService.deletar(id).subscribe({
         next: () => {
-          this.lotes$.next((this.lotes$.value ?? []).filter(l => l.id !== id));
+          this.publicarLotes((this.lotes$.value ?? []).filter(l => l.id !== id));
           this.alert.success('Lote excluído!');
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir lote')
@@ -157,8 +208,54 @@ export class MonitorLotesComponent implements OnInit {
     const idx   = atual.findIndex(l => l.id === lote.id);
     if (idx >= 0) {
       const novo  = [...atual];
-      novo[idx]   = lote;
-      this.lotes$.next(novo);
+      novo[idx]   = { ...novo[idx], ...lote };
+      this.publicarLotes(novo);
+    }
+  }
+
+  private get lotesDoContexto(): Lote[] {
+    return (this.lotes$.value ?? []).filter(lote => this.pertenceAoLeilao(lote, this.carregadoPorInput));
+  }
+
+  private pertenceAoLeilao(lote: Lote, aceitarLeilaoAusente = true): boolean {
+    if (this.leilaoId == null) return true;
+    if (lote.leilaoId == null) return aceitarLeilaoAusente;
+    return Number(lote.leilaoId) === Number(this.leilaoId);
+  }
+
+  private carregarLotesDaApi(): void {
+    this.loteService.listar().subscribe({
+      next: (dados) => this.publicarLotes(dados),
+      error: () => {
+        if (this.lotes$.value === null) {
+          this.publicarLotes([]);
+        }
+      }
+    });
+  }
+
+  private mesclarLotes(atuais: Lote[], recebidos: Lote[]): Lote[] {
+    const recebidosPorId = new Map(
+      recebidos
+        .filter(lote => lote.id != null)
+        .map(lote => [lote.id, lote] as const)
+    );
+
+    const idsAtuais = new Set(atuais.map(lote => lote.id).filter((id): id is number => id != null));
+    const atualizados = atuais.map(lote => {
+      if (lote.id == null) return lote;
+      const recebido = recebidosPorId.get(lote.id);
+      return recebido ? { ...lote, ...recebido } : lote;
+    });
+    const novos = recebidos.filter(lote => lote.id == null || !idsAtuais.has(lote.id));
+
+    return [...atualizados, ...novos];
+  }
+
+  private publicarLotes(lotes: Lote[], emitir = true): void {
+    this.lotes$.next(lotes);
+    if (emitir) {
+      this.lotesChange.emit(this.lotesDoContexto);
     }
   }
 }

@@ -159,9 +159,8 @@ export const routes: Routes = [
           },
           {
             path: ':id/evento',
-            loadComponent: () =>
-              import('./components/leilao/evento-leilao/evento-leilao.component').then(
-                (m) => m.EventoLeilaoComponent),
+            redirectTo: ':id/view',
+            pathMatch: 'full',
           },
           {
             path: ':id',

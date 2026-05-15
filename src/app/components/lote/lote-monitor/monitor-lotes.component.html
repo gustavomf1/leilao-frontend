@@ -1,8 +1,15 @@
-<div class="container-lg px-4">
+<div [class.container-lg]="exibirContainer" [class.px-4]="exibirContainer">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Lotes</h2>
-    <a *ngIf="auth.hasPermission('LOTES', 'CRIAR')" routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
+  <div *ngIf="exibirTituloPagina || exibirBotaoNovo" class="d-flex justify-content-between align-items-center mb-4">
+    <h2 *ngIf="exibirTituloPagina" class="mb-0">{{ tituloPagina }}</h2>
+    <a
+      *ngIf="exibirBotaoNovo && auth.hasPermission('LOTES', 'CRIAR')"
+      routerLink="/lotes/cadastrar"
+      [queryParams]="novoLoteParams"
+      cButton
+      color="primary"
+      size="sm"
+    >
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Lote
     </a>
@@ -30,7 +37,7 @@
           <fa-icon [icon]="faCircle" class="live-dot me-1"></fa-icon>
           AO VIVO
         </c-badge>
-        <h5 class="monitor-title mb-0">Monitor de Lotes em Tempo Real</h5>
+        <h5 class="monitor-title mb-0">{{ tituloMonitor }}</h5>
       </div>
       <span class="lotes-count">
         <fa-icon [icon]="faLayerGroup" class="me-1"></fa-icon>
@@ -128,7 +135,7 @@
               <a
                 *ngIf="lote.status === 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')"
                 [routerLink]="['/lotes', lote.id]"
-                [queryParams]="{ validar: 'lance' }"
+                [queryParams]="validacaoQueryParams('lance')"
                 cButton
                 color="success"
                 size="sm"
@@ -141,7 +148,7 @@
               <a
                 *ngIf="lote.status === 'AGUARDANDO_ESCRITORIO' && auth.hasPermission('LOTES', 'EDITAR')"
                 [routerLink]="['/lotes', lote.id]"
-                [queryParams]="{ validar: 'escritorio' }"
+                [queryParams]="validacaoQueryParams('escritorio')"
                 cButton
                 color="success"
                 size="sm"
@@ -154,7 +161,7 @@
               <a
                 *ngIf="lote.status === 'AGUARDANDO_ULTIMA_VALIDACAO' && auth.hasPermission('LOTES', 'EDITAR')"
                 [routerLink]="['/lotes', lote.id]"
-                [queryParams]="{ validar: 'final' }"
+                [queryParams]="validacaoQueryParams('final')"
                 cButton
                 color="success"
                 size="sm"
@@ -175,7 +182,7 @@
                 >
                   <fa-icon [icon]="faArrowRight"></fa-icon>
                 </button>
-                <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
+                <a [routerLink]="['/lotes', lote.id]" [queryParams]="contextoQueryParams" cButton color="info" size="sm" variant="ghost">
                   <fa-icon [icon]="faPencil"></fa-icon>
                 </a>
               </div>

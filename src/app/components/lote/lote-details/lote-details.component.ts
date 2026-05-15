@@ -49,6 +49,7 @@ export class LotesDetailsComponent implements OnInit {
   isValidacaoFinal = false;
   modalVisible  = false;
   private entityId?: number;
+  origemLeilaoId?: number;
 
   especies: Especie[]          = [];
   leiloes: LeilaoDetalhes[]    = [];
@@ -140,9 +141,12 @@ export class LotesDetailsComponent implements OnInit {
 
   ngOnInit() {
     const modoValidacao = this.route.snapshot.queryParamMap.get('validar');
+    const leilaoIdParam = this.route.snapshot.queryParamMap.get('leilaoId');
+    const origemLeilaoIdParam = this.route.snapshot.queryParamMap.get('origemLeilaoId');
     this.isValidacaoEscritorio = modoValidacao === 'escritorio';
     this.isValidacaoLance = modoValidacao === 'lance';
     this.isValidacaoFinal = modoValidacao === 'final';
+    this.origemLeilaoId = origemLeilaoIdParam ? +origemLeilaoIdParam : undefined;
 
     this.form = this.fb.group({
       codigo:               ['', Validators.required],
@@ -160,6 +164,10 @@ export class LotesDetailsComponent implements OnInit {
       compradorId:          [null],
       precoCompra:          [null]
     });
+
+    if (leilaoIdParam) {
+      this.form.get('leilaoId')?.setValue(+leilaoIdParam);
+    }
 
     if (this.isManejoMode) {
       this.form.get('precoCompra')?.clearValidators();
@@ -314,14 +322,14 @@ export class LotesDetailsComponent implements OnInit {
           this.service.avancarStatus(this.entityId!).subscribe({
             next: () => {
               this.alert.success('Lote validado e enviado para lance!');
-              this.router.navigate(['/lotes/lista']);
+              this.navegarRetorno();
             },
             error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao validar lote')
           });
           return;
         }
         this.alert.success(this.isEdicao ? 'Lote atualizado!' : 'Lote cadastrado e enviado para preenchimento de preço!');
-        this.router.navigate(['/lotes/lista']);
+        this.navegarRetorno();
       },
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar lote')
     });
@@ -370,7 +378,7 @@ export class LotesDetailsComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.alert.success('Lote finalizado com sucesso!');
-        this.router.navigate(['/lotes/lista']);
+        this.navegarRetorno();
       },
       error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao validar lote')
     });
@@ -383,7 +391,7 @@ export class LotesDetailsComponent implements OnInit {
     }).subscribe({
       next: () => {
         this.alert.success('Lote recolocado em lance!');
-        this.router.navigate(['/lotes/lista']);
+        this.navegarRetorno();
       },
       error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao recolocar lote')
     });
@@ -412,7 +420,7 @@ export class LotesDetailsComponent implements OnInit {
         }).subscribe({
           next: () => {
             this.alert.success('Lote enviado para validação final!');
-            this.router.navigate(['/lotes/lista']);
+            this.navegarRetorno();
           },
           error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao enviar para validação final')
         });
@@ -435,10 +443,18 @@ export class LotesDetailsComponent implements OnInit {
     this.service.atualizar(this.entityId!, dadosAtualizacao).subscribe({
       next: () => {
         this.alert.success('Lote marcado como não vendido e mantido em lance!');
-        this.router.navigate(['/lotes/lista']);
+        this.navegarRetorno();
       },
       error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao marcar lote como não vendido')
     });
+  }
+
+  get rotaRetorno(): Array<string | number> {
+    return this.origemLeilaoId ? ['/leiloes', this.origemLeilaoId, 'view'] : ['/lotes/lista'];
+  }
+
+  private navegarRetorno(): void {
+    this.router.navigate(this.rotaRetorno);
   }
 
   private restaurarSelecoes() {
