@@ -23,10 +23,19 @@
         </span>
       </span>
     </div>
-    <div class="d-flex gap-2">
-      <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', resumo.id, 'evento']" cButton color="success" size="sm">
-        <fa-icon [icon]="faGavel" class="me-1"></fa-icon> Evento
-      </a>
+    <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
+      <c-badge *ngIf="statusLeilao" [color]="statusColor(statusLeilao)" class="fs-6 px-3 py-2">
+        {{ statusLabel(statusLeilao) | uppercase }}
+      </c-badge>
+      <button *ngIf="podeGerenciarEvento && isAberto" cButton color="success" size="sm" (click)="iniciarLeilao()">
+        <fa-icon [icon]="faPlay" class="me-1"></fa-icon> Começar Leilão
+      </button>
+      <button *ngIf="podeGerenciarEvento && emAndamento" cButton color="secondary" size="sm" (click)="gerarLink()">
+        <fa-icon [icon]="faLink" class="me-1"></fa-icon> Gerar Link
+      </button>
+      <button *ngIf="podeGerenciarEvento && emAndamento" cButton color="danger" size="sm" (click)="encerrarLeilao()">
+        <fa-icon [icon]="faStop" class="me-1"></fa-icon> Encerrar Leilão
+      </button>
       <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', resumo.id]" cButton color="info" size="sm" variant="ghost">
         <fa-icon [icon]="faPencil" class="me-1"></fa-icon> Editar
       </a>
@@ -37,6 +46,14 @@
   </div>
 
   <div class="auction-facts mb-4">
+    <div class="auction-fact">
+      <span>Status</span>
+      <strong>
+        <c-badge [color]="statusColor(statusLeilao)">
+          {{ statusLabel(statusLeilao) }}
+        </c-badge>
+      </strong>
+    </div>
     <div class="auction-fact">
       <span>Espécie</span>
       <strong>{{ especieNome }}</strong>
@@ -115,16 +132,76 @@
   <c-card class="mb-4" *ngIf="resumo.totalLotes > 0">
     <c-card-body>
       <div class="d-flex justify-content-between mb-2">
-        <span class="fw-semibold">Progresso de Vendas</span>
-        <span class="text-body-secondary">{{ percentualVendido }}%</span>
+        <span class="fw-semibold">{{ emAndamento ? 'Progresso de Lances' : 'Progresso de Vendas' }}</span>
+        <span class="text-body-secondary">{{ emAndamento ? percentualLances : percentualVendido }}%</span>
       </div>
       <div class="progress mb-1">
-        <div class="progress-bar bg-success" role="progressbar" [style.width.%]="percentualVendido"></div>
+        <div class="progress-bar bg-success" role="progressbar" [style.width.%]="emAndamento ? percentualLances : percentualVendido"></div>
       </div>
       <div class="d-flex justify-content-between small text-body-secondary mt-1">
-        <span>{{ resumo.lotesVendidos }} vendidos</span>
-        <span>{{ resumo.lotesRestantes }} restantes</span>
+        <span>{{ emAndamento ? totalFinalizados : resumo.lotesVendidos }} {{ emAndamento ? 'finalizados' : 'vendidos' }}</span>
+        <span>{{ emAndamento ? totalAguardando : resumo.lotesRestantes }} restantes</span>
       </div>
+    </c-card-body>
+  </c-card>
+
+  <c-card class="mb-4 evento-lances-card" *ngIf="emAndamento && podeGerenciarEvento">
+    <c-card-header class="d-flex align-items-center">
+      <fa-icon [icon]="faListOl" class="me-2 text-info"></fa-icon>
+      <strong>Lances em Andamento</strong>
+      <c-badge color="info" class="ms-2">{{ totalAguardando }}</c-badge>
+    </c-card-header>
+    <c-card-body>
+      <div *ngIf="lotesAguardandoLance.length === 0" class="text-body-secondary text-center py-3">
+        Todos os lotes já receberam lance.
+      </div>
+      <table *ngIf="lotesAguardandoLance.length > 0" cTable hover responsive>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Espécie</th>
+            <th>Raça</th>
+            <th class="text-center">Animais</th>
+            <th>Sexo</th>
+            <th class="text-end">Peso (kg)</th>
+            <th>Vendedor</th>
+            <th class="text-end evento-lance-valor">Valor do Lance (R$)</th>
+            <th class="text-center evento-lance-acao">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let lote of lotesAguardandoLance">
+            <td><strong>{{ lote.codigo }}</strong></td>
+            <td>{{ lote.especie }}</td>
+            <td>{{ lote.raca }}</td>
+            <td class="text-center">{{ lote.qntdAnimais }}</td>
+            <td>{{ lote.sexo }}</td>
+            <td class="text-end">{{ lote.peso | number:'1.1-1' }}</td>
+            <td>{{ lote.vendedorNome || lote.vendedorNomeRascunho || '—' }}</td>
+            <td class="text-end">
+              <input
+                type="number"
+                class="form-control form-control-sm text-end evento-lance-input"
+                placeholder="0,00"
+                [min]="0"
+                step="0.01"
+                [(ngModel)]="lancesValues[lote.id!]"
+              />
+            </td>
+            <td class="text-center">
+              <button
+                cButton
+                color="success"
+                size="sm"
+                [disabled]="!lancesValues[lote.id!] || lancesValues[lote.id!]! <= 0"
+                (click)="confirmarLance(lote)"
+              >
+                <fa-icon [icon]="faCheck" class="me-1"></fa-icon> Confirmar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </c-card-body>
   </c-card>
 
@@ -216,93 +293,14 @@
     </c-col>
   </c-row>
 
-  <!-- Lotes Vendidos -->
-  <c-card class="mb-4">
-    <c-card-header>
-      <fa-icon [icon]="faCheckCircle" class="me-2 text-success"></fa-icon>
-      <strong>Lotes Vendidos</strong>
-      <c-badge color="success" class="ms-2">{{ lotesVendidos.length }}</c-badge>
-    </c-card-header>
-    <c-card-body>
-      <div *ngIf="lotesVendidos.length === 0" class="text-body-secondary text-center py-3">
-        Nenhum lote vendido ainda.
-      </div>
-      <table *ngIf="lotesVendidos.length > 0" cTable hover responsive>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Espécie</th>
-            <th>Raça</th>
-            <th class="text-center">Animais</th>
-            <th>Sexo</th>
-            <th class="text-end">Peso (kg)</th>
-            <th>Vendedor</th>
-            <th class="text-end">Preço</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let lote of lotesVendidos" [routerLink]="['/lotes', lote.id]" style="cursor: pointer">
-            <td><strong>{{ lote.codigo }}</strong></td>
-            <td>{{ lote.especie }}</td>
-            <td>{{ lote.raca }}</td>
-            <td class="text-center">{{ lote.qntdAnimais }}</td>
-            <td>{{ lote.sexo }}</td>
-            <td class="text-end">{{ lote.peso | number:'1.1-1' }}</td>
-            <td>{{ lote.vendedorNome }}</td>
-            <td class="text-end fw-semibold text-success">{{ lote.precoCompra | currency:'BRL':'symbol':'1.2-2' }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr class="fw-bold">
-            <td colspan="3">Total</td>
-            <td class="text-center">{{ resumo.animaisVendidos }}</td>
-            <td colspan="3"></td>
-            <td class="text-end text-success">{{ resumo.movimentacaoBruta | currency:'BRL':'symbol':'1.2-2' }}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </c-card-body>
-  </c-card>
-
-  <!-- Lotes Restantes -->
-  <c-card class="mb-4">
-    <c-card-header>
-      <fa-icon [icon]="faClock" class="me-2 text-warning"></fa-icon>
-      <strong>Lotes Disponíveis</strong>
-      <c-badge color="warning" class="ms-2">{{ lotesRestantes.length }}</c-badge>
-    </c-card-header>
-    <c-card-body>
-      <div *ngIf="lotesRestantes.length === 0" class="text-body-secondary text-center py-3">
-        Todos os lotes foram vendidos!
-      </div>
-      <table *ngIf="lotesRestantes.length > 0" cTable hover responsive>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Espécie</th>
-            <th>Raça</th>
-            <th class="text-center">Animais</th>
-            <th>Sexo</th>
-            <th class="text-end">Peso (kg)</th>
-            <th>Vendedor</th>
-            <th>Categoria</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let lote of lotesRestantes" [routerLink]="['/lotes', lote.id]" style="cursor: pointer">
-            <td><strong>{{ lote.codigo }}</strong></td>
-            <td>{{ lote.especie }}</td>
-            <td>{{ lote.raca }}</td>
-            <td class="text-center">{{ lote.qntdAnimais }}</td>
-            <td>{{ lote.sexo }}</td>
-            <td class="text-end">{{ lote.peso | number:'1.1-1' }}</td>
-            <td>{{ lote.vendedorNome }}</td>
-            <td>{{ lote.categoriaAnimal || '—' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </c-card-body>
-  </c-card>
+  <app-monitor-lotes
+    [leilaoId]="resumo.id"
+    [lotesIniciais]="resumo.lotes"
+    (lotesChange)="atualizarLotesDoMonitor($event)"
+    tituloPagina="Lotes do Leilão"
+    tituloMonitor="Monitor de Lotes do Leilão"
+    [exibirContainer]="false"
+  ></app-monitor-lotes>
 
 </div>
 
