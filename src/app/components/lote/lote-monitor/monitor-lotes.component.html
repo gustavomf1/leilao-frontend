@@ -20,12 +20,15 @@
     <button
       *ngFor="let op of statusOpcoes"
       cButton
+      class="status-filter-button"
+      [class.status-filter-active]="filtroStatus === op.value"
       [color]="filtroStatus === op.value ? 'primary' : 'secondary'"
       [variant]="filtroStatus === op.value ? undefined : 'ghost'"
       size="sm"
       (click)="setFiltro(op.value)"
     >
-      {{ op.label }}
+      <span class="status-filter-count">{{ contadorPorStatus(op.value) }}</span>
+      <span class="status-filter-label">{{ op.label }}</span>
     </button>
   </div>
 

@@ -129,6 +129,13 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
     this.filtroStatus = status;
   }
 
+  contadorPorStatus(status: StatusLote | 'TODOS' | 'NAO_VENDIDO'): number {
+    const lotes = this.lotesDoContexto;
+    if (status === 'TODOS') return lotes.length;
+    if (status === 'NAO_VENDIDO') return lotes.filter(l => l.naoVendidoNoLeilao === 'S').length;
+    return lotes.filter(l => l.status === status).length;
+  }
+
   statusLabel(status: any): string {
     return this.STATUS_LABELS[status as StatusLote] ?? status ?? '';
   }
