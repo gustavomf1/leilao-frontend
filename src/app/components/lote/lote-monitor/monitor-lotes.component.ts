@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, NgZone, OnDestroy, OnInit, Output, inject } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Params, RouterModule } from '@angular/router';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { LoteService } from '../../../core/services/lote.service';
+import { LeilaoService } from '../../../core/services/leilao.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -12,7 +13,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCircle, faLayerGroup, faHashtag, faTag,
   faPaw, faDollarSign, faUser, faHorse,
-  faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes
+  faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes, faShare
 } from '@fortawesome/free-solid-svg-icons';
 import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
 
@@ -74,14 +75,22 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   readonly faCheck      = faCheck;
   readonly faEye        = faEye;
   readonly faTimes      = faTimes;
+  readonly faShare      = faShare;
 
   loteDetalhes: any | null = null;
   modalDetalhesVisivel = false;
 
-  private wsService   = inject(LoteWebsocketService);
-  private loteService = inject(LoteService);
-  private alert       = inject(AlertService);
-  auth                = inject(AuthService);
+  modalTransferirVisivel = false;
+  loteParaTransferir: Lote | null = null;
+  leilaoSelecionadoId: number | null = null;
+  leiloesDisponiveis: any[] = [];
+
+  private wsService     = inject(LoteWebsocketService);
+  private loteService   = inject(LoteService);
+  private leilaoService = inject(LeilaoService);
+  private alert         = inject(AlertService);
+  private zone          = inject(NgZone);
+  auth                  = inject(AuthService);
   private carregadoPorInput = false;
   private wsSubscription?: Subscription;
 
@@ -109,15 +118,17 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
     }
 
     this.wsSubscription = this.wsService.novoLoteSubject.subscribe((novoLote: Lote) => {
-      const atual = this.lotes$.value ?? [];
-      const idx   = atual.findIndex(l => l.id === novoLote.id);
-      if (idx >= 0) {
-        const atualizado = [...atual];
-        atualizado[idx]  = { ...atualizado[idx], ...novoLote };
-        this.publicarLotes(atualizado);
-      } else if (this.pertenceAoLeilao(novoLote, false)) {
-        this.publicarLotes([novoLote, ...atual]);
-      }
+      this.zone.run(() => {
+        const atual = this.lotes$.value ?? [];
+        const idx   = atual.findIndex(l => l.id === novoLote.id);
+        if (idx >= 0) {
+          const atualizado = [...atual];
+          atualizado[idx]  = { ...atualizado[idx], ...novoLote };
+          this.publicarLotes(atualizado);
+        } else if (this.pertenceAoLeilao(novoLote, false)) {
+          this.publicarLotes([novoLote, ...atual]);
+        }
+      });
     });
   }
 
@@ -158,6 +169,39 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   fecharDetalhes() {
     this.modalDetalhesVisivel = false;
     this.loteDetalhes = null;
+  }
+
+  abrirModalTransferir(lote: Lote) {
+    this.loteParaTransferir = lote;
+    this.leilaoSelecionadoId = null;
+    this.leiloesDisponiveis = [];
+    this.modalTransferirVisivel = true;
+    this.leilaoService.listar().subscribe({
+      next: (leiloes: any[]) => {
+        this.leiloesDisponiveis = leiloes.filter(
+          l => l.status === 'ABERTO' || l.status === 'EM_ANDAMENTO'
+        );
+      },
+      error: () => this.alert.error('Erro ao carregar leilões disponíveis')
+    });
+  }
+
+  fecharModalTransferir() {
+    this.modalTransferirVisivel = false;
+    this.loteParaTransferir = null;
+    this.leilaoSelecionadoId = null;
+  }
+
+  confirmarTransferir() {
+    if (!this.loteParaTransferir?.id || !this.leilaoSelecionadoId) return;
+    this.loteService.transferirLote(this.loteParaTransferir.id, this.leilaoSelecionadoId).subscribe({
+      next: (loteAtualizado) => {
+        this._substituir(loteAtualizado);
+        this.alert.success('Lote enviado para o próximo leilão!');
+        this.fecharModalTransferir();
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao transferir lote')
+    });
   }
 
   confirmarPreco(id?: number) {

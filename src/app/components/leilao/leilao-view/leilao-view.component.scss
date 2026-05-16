@@ -38,19 +38,6 @@
   white-space: nowrap;
 }
 
-.evento-lance-valor {
-  min-width: 200px;
-}
-
-.evento-lance-acao {
-  min-width: 120px;
-}
-
-.evento-lance-input {
-  max-width: 160px;
-  margin-left: auto;
-}
-
 @media (max-width: 1199.98px) {
   .auction-facts {
     grid-template-columns: repeat(3, minmax(0, 1fr));

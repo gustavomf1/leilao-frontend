@@ -336,11 +336,18 @@ export class LotesDetailsComponent implements OnInit {
   }
 
   get isAguardandoUltimaValidacao(): boolean {
-    return this.loteCarregado?.status === 'AGUARDANDO_ULTIMA_VALIDACAO';
+    if (this.loteCarregado?.status === 'AGUARDANDO_ULTIMA_VALIDACAO') return true;
+    // Lotes não vendidos permanecem em AGUARDANDO_LANCE após encerramento do leilão
+    if (this.isValidacaoFinal && this.loteCarregado?.naoVendidoNoLeilao === 'S') return true;
+    return false;
   }
 
   get loteNaoVendido(): boolean {
     return this.loteCarregado?.naoVendidoNoLeilao === 'S';
+  }
+
+  get especieNome(): string {
+    return this.especies.find(e => e.id === this.loteCarregado?.especieId)?.nome ?? '—';
   }
 
   filtrarValidacaoComprador() {
@@ -385,16 +392,28 @@ export class LotesDetailsComponent implements OnInit {
   }
 
   confirmarRecolocacao() {
-    this.service.recolocarLance(this.entityId!, {
-      comissaoVenda: this.recolocacaoComissaoVendedor,
-      comissaoCompra: this.recolocacaoComissaoComprador,
-    }).subscribe({
-      next: () => {
-        this.alert.success('Lote recolocado em lance!');
-        this.navegarRetorno();
-      },
-      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao recolocar lote')
-    });
+    const recolocar = () => {
+      this.service.recolocarLance(this.entityId!, {
+        comissaoVenda: this.recolocacaoComissaoVendedor,
+        comissaoCompra: this.recolocacaoComissaoComprador,
+      }).subscribe({
+        next: () => {
+          this.alert.success('Lote recolocado em lance!');
+          this.navegarRetorno();
+        },
+        error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao recolocar lote')
+      });
+    };
+
+    if (this.validacaoCompradorId) {
+      const dados = { ...this.form.getRawValue(), compradorId: this.validacaoCompradorId };
+      this.service.atualizar(this.entityId!, dados).subscribe({
+        next: recolocar,
+        error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao salvar comprador')
+      });
+    } else {
+      recolocar();
+    }
   }
 
   confirmarEnvioValidacaoFinal() {

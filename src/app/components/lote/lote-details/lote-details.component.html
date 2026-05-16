@@ -407,6 +407,42 @@
         <span class="section-label__icon">✔</span>
         Validação Final — Lote Vendido
       </div>
+
+      <div class="lote-info-strip">
+        <div class="info-chip">
+          <span class="info-chip__label">Código</span>
+          <span class="info-chip__value">{{ loteCarregado?.codigo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Qtd. Animais</span>
+          <span class="info-chip__value">{{ loteCarregado?.qntdAnimais ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Sexo</span>
+          <span class="info-chip__value">{{ loteCarregado?.sexo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Espécie</span>
+          <span class="info-chip__value">{{ especieNome }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Categoria</span>
+          <span class="info-chip__value">{{ loteCarregado?.categoriaAnimal ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Idade</span>
+          <span class="info-chip__value">{{ loteCarregado?.idadeEmMeses ?? '—' }} meses</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Peso</span>
+          <span class="info-chip__value">{{ loteCarregado?.peso ?? '—' }} kg</span>
+        </div>
+        <div class="info-chip" *ngIf="loteCarregado?.vendedorNomeRascunho">
+          <span class="info-chip__label">Vendedor</span>
+          <span class="info-chip__value">{{ loteCarregado.vendedorNomeRascunho }}</span>
+        </div>
+      </div>
+
       <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
         Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
       </p>
@@ -496,7 +532,92 @@
         Recolocar em Lance — Lote Não Vendido
       </div>
 
+      <div class="lote-info-strip">
+        <div class="info-chip">
+          <span class="info-chip__label">Código</span>
+          <span class="info-chip__value">{{ loteCarregado?.codigo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Qtd. Animais</span>
+          <span class="info-chip__value">{{ loteCarregado?.qntdAnimais ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Sexo</span>
+          <span class="info-chip__value">{{ loteCarregado?.sexo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Espécie</span>
+          <span class="info-chip__value">{{ especieNome }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Categoria</span>
+          <span class="info-chip__value">{{ loteCarregado?.categoriaAnimal ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Idade</span>
+          <span class="info-chip__value">{{ loteCarregado?.idadeEmMeses ?? '—' }} meses</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Peso</span>
+          <span class="info-chip__value">{{ loteCarregado?.peso ?? '—' }} kg</span>
+        </div>
+        <div class="info-chip" *ngIf="loteCarregado?.vendedorNomeRascunho">
+          <span class="info-chip__label">Vendedor</span>
+          <span class="info-chip__value">{{ loteCarregado.vendedorNomeRascunho }}</span>
+        </div>
+      </div>
+
+      <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
+        Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
+      </p>
+
       <div class="fields-grid">
+
+        <div class="field-wrap field-wrap--lg">
+          <label class="field-label">
+            Comprador Oficial
+            <span class="badge-confirmed" *ngIf="validacaoCompradorSelecionado">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+              ID {{ validacaoCompradorId }}
+            </span>
+          </label>
+          <div class="autocomplete-wrap">
+            <div class="autocomplete-input-row" [class.autocomplete-input-row--confirmed]="validacaoCompradorSelecionado">
+              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input class="autocomplete-input"
+                     [(ngModel)]="validacaoCompradorBusca"
+                     [ngModelOptions]="{standalone: true}"
+                     (input)="filtrarValidacaoComprador()"
+                     (focus)="abrirDropdownValidacaoComprador()"
+                     (blur)="fecharDropdownValidacaoComprador()"
+                     [placeholder]="validacaoCompradorSelecionado ? validacaoCompradorSelecionado.nome : 'Pesquisar comprador por nome...'"
+                     autocomplete="off" />
+              <button type="button" class="autocomplete-clear"
+                      *ngIf="validacaoCompradorSelecionado"
+                      (click)="validacaoCompradorSelecionado=null; validacaoCompradorBusca=''; validacaoCompradorId=null">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="autocomplete-dropdown" *ngIf="mostrarDropdownValidacaoComprador">
+              <div class="autocomplete-empty" *ngIf="validacaoCompradorFiltrados.length === 0">
+                Nenhum cliente encontrado
+              </div>
+              <div class="autocomplete-item"
+                   *ngFor="let c of validacaoCompradorFiltrados | slice:0:8"
+                   (mousedown)="selecionarValidacaoComprador(c)">
+                <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
+                <span class="autocomplete-item__info">
+                  <strong>{{ c.nome }}</strong>
+                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpf }}</small>
+                </span>
+              </div>
+              <div class="autocomplete-count" *ngIf="validacaoCompradorFiltrados.length > 8">
+                +{{ validacaoCompradorFiltrados.length - 8 }} resultados — refine a busca
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="field-wrap field-wrap--sm">
           <label class="field-label">Comissão Venda (%)</label>
           <input class="field-input" type="number" step="0.01" min="0"
@@ -512,6 +633,7 @@
                  [(ngModel)]="recolocacaoComissaoComprador"
                  [ngModelOptions]="{standalone: true}" />
         </div>
+
       </div>
 
       <div class="form-actions">

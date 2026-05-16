@@ -1,17 +1,16 @@
 import { Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, Subscription, forkJoin } from 'rxjs';
 import {
   CardModule, BadgeComponent, ButtonDirective,
-  GridModule, TableModule, TableDirective
+  GridModule
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArrowLeft, faMapMarkerAlt, faCalendarAlt, faGavel,
   faHandshake, faDollarSign, faPaw, faInfoCircle,
-  faPencil, faPlay, faStop, faLink, faCheck, faListOl
+  faPencil, faPlay, faStop, faLink
 } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { LoteService } from '../../../core/services/lote.service';
@@ -61,9 +60,9 @@ interface LeilaoResumo {
   selector: 'app-leilao-view',
   standalone: true,
   imports: [
-    CommonModule, RouterModule, FormsModule,
+    CommonModule, RouterModule,
     CardModule, BadgeComponent, ButtonDirective,
-    GridModule, TableModule, TableDirective,
+    GridModule,
     FontAwesomeModule,
     MonitorLotesComponent
   ],
@@ -91,14 +90,11 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
   faPlay = faPlay;
   faStop = faStop;
   faLink = faLink;
-  faCheck = faCheck;
-  faListOl = faListOl;
 
   resumo?: LeilaoResumo;
   detalhes?: LeilaoDetalhes;
   loading$ = new BehaviorSubject<boolean>(true);
   leilaoId!: number;
-  lancesValues: Record<number, number | null> = {};
   readonly statusLabels = STATUS_LEILAO_LABELS;
   readonly statusColors = STATUS_LEILAO_COLOR;
 
@@ -237,7 +233,6 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
       movimentacaoBruta,
       ticketMedio: lotesVendidos.length > 0 ? movimentacaoBruta / lotesVendidos.length : 0,
     };
-    this.inicializarLances(lotes);
   }
 
   statusLabel(status?: StatusLeilao): string {
@@ -295,29 +290,6 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
       .catch(() => this.alert.error('Não foi possível copiar o link.'));
   }
 
-  confirmarLance(lote: Lote): void {
-    if (!lote.id) return;
-
-    const valor = this.lancesValues[lote.id];
-    if (!valor || valor <= 0) {
-      this.alert.warning('Informe um valor válido para o lance.');
-      return;
-    }
-
-    this.alert.confirm(`Confirmar lance de R$ ${valor.toFixed(2)} para o lote ${lote.codigo}?`, () => {
-      this.loteService.registrarPreco(lote.id!, valor).subscribe({
-        next: () => {
-          this.lancesValues[lote.id!] = null;
-          this.alert.success(`Lance registrado para o lote ${lote.codigo}!`);
-          this.carregarResumo(false);
-        },
-        error: (err: any) => {
-          this.alert.error(err.error?.mensagem || err.error?.message || 'Erro ao registrar lance');
-        },
-      });
-    }, 'Confirmar', 'success');
-  }
-
   private normalizarResumo(data: LeilaoResumo): LeilaoResumo {
     return {
       ...data,
@@ -362,14 +334,6 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
       : [lote, ...atual];
 
     this.atualizarLotesDoMonitor(lotes);
-  }
-
-  private inicializarLances(lotes: Lote[]): void {
-    for (const lote of lotes) {
-      if (lote.id && this.lancesValues[lote.id] === undefined) {
-        this.lancesValues[lote.id] = null;
-      }
-    }
   }
 
   private loteContaComoVendido(lote: Lote): boolean {
