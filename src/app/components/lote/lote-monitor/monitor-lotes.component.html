@@ -135,8 +135,29 @@
                 <fa-icon [icon]="faEye"></fa-icon>
               </button>
 
+              <!-- Não vendido: Validar Final + Próximo Leilão -->
+              <ng-container *ngIf="lote.status === 'AGUARDANDO_LANCE' && lote.naoVendidoNoLeilao === 'S' && auth.hasPermission('LOTES', 'EDITAR')">
+                <a
+                  [routerLink]="['/lotes', lote.id]"
+                  [queryParams]="validacaoQueryParams('final')"
+                  cButton color="warning" size="sm" class="btn-validar-lote"
+                  title="Validar final"
+                >
+                  <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                  Validar
+                </a>
+                <button
+                  cButton color="info" size="sm" variant="ghost"
+                  title="Enviar para próximo leilão"
+                  (click)="abrirModalTransferir(lote)"
+                >
+                  <fa-icon [icon]="faShare"></fa-icon>
+                </button>
+              </ng-container>
+
+              <!-- Normal: Validar lance -->
               <a
-                *ngIf="lote.status === 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')"
+                *ngIf="lote.status === 'AGUARDANDO_LANCE' && lote.naoVendidoNoLeilao !== 'S' && auth.hasPermission('LOTES', 'EDITAR')"
                 [routerLink]="['/lotes', lote.id]"
                 [queryParams]="validacaoQueryParams('lance')"
                 cButton
@@ -282,6 +303,48 @@
   <c-modal-footer>
     <button cButton color="secondary" variant="ghost" (click)="fecharDetalhes()">
       <fa-icon [icon]="faTimes" class="me-1"></fa-icon> Fechar
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- Modal: Enviar para próximo leilão -->
+<c-modal [visible]="modalTransferirVisivel" (visibleChange)="modalTransferirVisivel = $event" alignment="center">
+  <c-modal-header>
+    <h5 cModalTitle>Enviar para próximo leilão — {{ loteParaTransferir?.codigo }}</h5>
+  </c-modal-header>
+
+  <c-modal-body>
+    <p class="text-secondary mb-3">Selecione o leilão de destino:</p>
+
+    <div *ngIf="leiloesDisponiveis.length === 0" class="text-center text-secondary py-3">
+      Nenhum leilão disponível (ABERTO ou EM_ANDAMENTO)
+    </div>
+
+    <div class="list-group">
+      <button
+        *ngFor="let l of leiloesDisponiveis"
+        type="button"
+        class="list-group-item list-group-item-action"
+        [class.active]="leilaoSelecionadoId === l.id"
+        (click)="leilaoSelecionadoId = l.id"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>{{ l.descricao }}</strong>
+          <span class="badge" [class.bg-secondary]="l.status === 'ABERTO'" [class.bg-success]="l.status === 'EM_ANDAMENTO'">
+            {{ l.status === 'ABERTO' ? 'Aberto' : 'Em Andamento' }}
+          </span>
+        </div>
+        <small class="text-secondary">{{ l.data | date:'dd/MM/yyyy' }} — {{ l.cidade }}/{{ l.uf }}</small>
+      </button>
+    </div>
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="fecharModalTransferir()">
+      <fa-icon [icon]="faTimes" class="me-1"></fa-icon> Cancelar
+    </button>
+    <button cButton color="primary" [disabled]="!leilaoSelecionadoId" (click)="confirmarTransferir()">
+      <fa-icon [icon]="faShare" class="me-1"></fa-icon> Confirmar
     </button>
   </c-modal-footer>
 </c-modal>

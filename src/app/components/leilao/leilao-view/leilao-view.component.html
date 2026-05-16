@@ -145,66 +145,6 @@
     </c-card-body>
   </c-card>
 
-  <c-card class="mb-4 evento-lances-card" *ngIf="emAndamento && podeGerenciarEvento">
-    <c-card-header class="d-flex align-items-center">
-      <fa-icon [icon]="faListOl" class="me-2 text-info"></fa-icon>
-      <strong>Lances em Andamento</strong>
-      <c-badge color="info" class="ms-2">{{ totalAguardando }}</c-badge>
-    </c-card-header>
-    <c-card-body>
-      <div *ngIf="lotesAguardandoLance.length === 0" class="text-body-secondary text-center py-3">
-        Todos os lotes já receberam lance.
-      </div>
-      <table *ngIf="lotesAguardandoLance.length > 0" cTable hover responsive>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Espécie</th>
-            <th>Raça</th>
-            <th class="text-center">Animais</th>
-            <th>Sexo</th>
-            <th class="text-end">Peso (kg)</th>
-            <th>Vendedor</th>
-            <th class="text-end evento-lance-valor">Valor do Lance (R$)</th>
-            <th class="text-center evento-lance-acao">Ação</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let lote of lotesAguardandoLance">
-            <td><strong>{{ lote.codigo }}</strong></td>
-            <td>{{ lote.especie }}</td>
-            <td>{{ lote.raca }}</td>
-            <td class="text-center">{{ lote.qntdAnimais }}</td>
-            <td>{{ lote.sexo }}</td>
-            <td class="text-end">{{ lote.peso | number:'1.1-1' }}</td>
-            <td>{{ lote.vendedorNome || lote.vendedorNomeRascunho || '—' }}</td>
-            <td class="text-end">
-              <input
-                type="number"
-                class="form-control form-control-sm text-end evento-lance-input"
-                placeholder="0,00"
-                [min]="0"
-                step="0.01"
-                [(ngModel)]="lancesValues[lote.id!]"
-              />
-            </td>
-            <td class="text-center">
-              <button
-                cButton
-                color="success"
-                size="sm"
-                [disabled]="!lancesValues[lote.id!] || lancesValues[lote.id!]! <= 0"
-                (click)="confirmarLance(lote)"
-              >
-                <fa-icon [icon]="faCheck" class="me-1"></fa-icon> Confirmar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </c-card-body>
-  </c-card>
-
   <!-- Taxas e Resumo -->
   <c-row class="mb-4">
     <c-col [md]="6" class="mb-3 mb-md-0">

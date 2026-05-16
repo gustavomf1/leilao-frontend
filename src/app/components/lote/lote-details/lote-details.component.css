@@ -554,6 +554,49 @@
   box-shadow: none;
 }
 
+/* ── Lote info strip (validação final) ───────────────────── */
+.lote-info-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1.25rem;
+  padding: .85rem 1rem;
+  background: var(--surface-2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+
+.info-chip {
+  display: flex;
+  flex-direction: column;
+  gap: .06rem;
+}
+
+.info-chip__label {
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+}
+
+.info-chip__value {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.validacao-hint {
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.validacao-hint strong {
+  color: var(--text);
+}
+
 /* ── Mobile ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .page-header { padding: 1.25rem 0 1rem; }
