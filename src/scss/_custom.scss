@@ -427,6 +427,91 @@ textarea.form-control {
   font-size: 12px !important;
 }
 
+// ─── CoreUI ghost color variants (usados em ícones de ação nas tabelas) ──
+// variant="ghost" + color="success/info/danger" → btn-ghost-{color}
+.btn-ghost-primary, .btn-ghost-success, .btn-ghost-info,
+.btn-ghost-warning, .btn-ghost-danger, .btn-ghost-secondary {
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  transition: all var(--ja-dur-fast);
+}
+
+.btn-ghost-primary {
+  color: var(--ja-brand) !important;
+  &:hover, &:focus {
+    background-color: var(--ja-brand-subtle) !important;
+    color: var(--ja-brand-dim) !important;
+  }
+}
+.btn-ghost-success {
+  color: var(--ja-ok) !important;
+  &:hover, &:focus {
+    background-color: rgba(21, 128, 61, .10) !important;
+    color: var(--ja-ok-dim) !important;
+  }
+}
+.btn-ghost-info {
+  color: var(--ja-info) !important;
+  &:hover, &:focus {
+    background-color: rgba(3, 105, 161, .10) !important;
+  }
+}
+.btn-ghost-warning {
+  color: var(--ja-amber-dim) !important;
+  &:hover, &:focus {
+    background-color: rgba(217, 119, 6, .10) !important;
+    color: var(--ja-amber-dim) !important;
+  }
+}
+.btn-ghost-danger {
+  color: var(--ja-red) !important;
+  &:hover, &:focus {
+    background-color: rgba(190, 18, 60, .10) !important;
+    color: var(--ja-red-dim) !important;
+  }
+}
+.btn-ghost-secondary {
+  color: var(--ja-fg-3) !important;
+  &:hover, &:focus {
+    background-color: var(--ja-brand-subtle) !important;
+    color: var(--ja-brand) !important;
+  }
+}
+
+[data-coreui-theme="dark"] {
+  .btn-ghost-success { color: #4ade80 !important; }
+  .btn-ghost-info    { color: #38bdf8 !important; }
+  .btn-ghost-warning { color: #fbbf24 !important; }
+  .btn-ghost-danger  { color: #fb7185 !important; }
+  .btn-ghost-secondary { color: var(--ja-fg-3) !important; }
+}
+
+// ─── Bootstrap utility overrides ──────────────────────────────
+.text-muted { color: var(--ja-fg-4) !important; }
+.text-secondary { color: var(--ja-fg-3) !important; }
+
+// ─── Modal header/footer — superfícies warm ───────────────────
+.modal-header, .modal-footer {
+  border-color: var(--ja-border) !important;
+}
+.modal-title {
+  font-family: var(--ja-font-display);
+  font-weight: 700;
+  color: var(--ja-fg-1);
+}
+
+// ─── Page header pattern (h2 + ações em CRUDs simples) ────────
+.container-lg {
+  > .d-flex > h2,
+  > .d-flex > h1 {
+    font-family: var(--ja-font-display) !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+    color: var(--ja-fg-1);
+    letter-spacing: -.01em;
+  }
+}
+
 // ─── Badges ───────────────────────────────────────────────────
 // Padrão = SUBTLE (cor sutil + texto colorido). Solid só pra AO VIVO/Finalizado.
 .badge {
