@@ -69,8 +69,8 @@ export class UploadQueueService implements OnDestroy {
     const item = this.queueSubject.value.find(i => i.uuid === uuid);
     if (!item) return;
     this.processing.delete(uuid);
-    await this.updateItem(uuid, { status: 'PENDING', errorMessage: undefined });
-    if (navigator.onLine) this.process({ ...item, status: 'PENDING' });
+    await this.updateItem(uuid, { status: 'PENDING', errorMessage: undefined, presignedUrl: undefined });
+    if (navigator.onLine) this.process({ ...item, status: 'PENDING', presignedUrl: undefined });
   }
 
   private async reprocessPending(): Promise<void> {
