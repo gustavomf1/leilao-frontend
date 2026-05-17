@@ -1,0 +1,49 @@
+<div class="fotos-section">
+  <div class="fotos-header">
+    <h3 class="fotos-title">Fotos do Lote</h3>
+    <span class="fotos-counter">{{ totalFotos }}/20</span>
+  </div>
+
+  <div *ngIf="podeEditar() && !seletorDesabilitado" class="upload-area">
+    <label class="upload-label">
+      <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" hidden />
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      Selecionar fotos
+    </label>
+  </div>
+
+  <p *ngIf="seletorDesabilitado" class="limit-msg">Limite de 20 fotos atingido.</p>
+
+  <div class="fotos-grid">
+    <div *ngFor="let item of queueItems" class="foto-card" [class]="'foto-card--' + item.status.toLowerCase()">
+      <img [src]="item.localUrl" [alt]="item.fileName" class="foto-thumb" />
+      <div class="foto-overlay">
+        <ng-container [ngSwitch]="item.status">
+          <span *ngSwitchCase="'PENDING'" class="status-badge status-badge--pending">
+            &#x23F3; Aguardando conexão
+          </span>
+          <div *ngSwitchCase="'UPLOADING'" class="status-badge status-badge--uploading">
+            <span class="spinner"></span> Enviando&hellip;
+          </div>
+          <div *ngSwitchCase="'FAILED'" class="status-badge status-badge--failed">
+            <span>&#x26A0; Erro</span>
+            <button class="btn-retry" (click)="retry(item.uuid)">Tentar novamente</button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div *ngFor="let foto of confirmedFotos" class="foto-card foto-card--done">
+      <img [src]="foto.viewUrl" [alt]="'Foto ' + foto.id" class="foto-thumb" />
+      <div class="foto-overlay foto-overlay--hover">
+        <button *ngIf="podeEditar()" class="btn-delete" (click)="deletarConfirmada(foto)">
+          &#x1F5D1;
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
