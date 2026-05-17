@@ -1,6 +1,6 @@
 import {
   Component, Input, OnInit, OnChanges, SimpleChanges,
-  ChangeDetectorRef, DestroyRef, inject
+  ChangeDetectorRef, DestroyRef, HostListener, inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -17,7 +17,8 @@ import { AlertService } from '../../../shared/services/alert.service';
   styleUrl: './lote-fotos.component.css'
 })
 export class LoteFotosComponent implements OnInit, OnChanges {
-  @Input() loteId!: number;
+  @Input() loteId: number | null = null;
+  @Input() permitirEdicao = false;
 
   private queue = inject(UploadQueueService);
   private fotoService = inject(LoteFotoService);
@@ -29,6 +30,19 @@ export class LoteFotosComponent implements OnInit, OnChanges {
   queueItems: QueueItem[] = [];
   confirmedFotos: LoteFoto[] = [];
 
+  isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  uploadMenuAberto = false;
+
+  toggleUploadMenu(event: MouseEvent) {
+    event.stopPropagation();
+    this.uploadMenuAberto = !this.uploadMenuAberto;
+  }
+
+  @HostListener('document:click')
+  fecharUploadMenu() {
+    this.uploadMenuAberto = false;
+  }
+
   get totalFotos(): number {
     return this.queueItems.filter(i => i.status !== 'DONE').length + this.confirmedFotos.length;
   }
@@ -37,20 +51,41 @@ export class LoteFotosComponent implements OnInit, OnChanges {
     return this.totalFotos >= 20;
   }
 
+  pendingCadastro(item: QueueItem): boolean {
+    return item.loteId === null;
+  }
+
   ngOnInit() {
     this.queue.queue$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(items => {
-      this.queueItems = items.filter(i => i.loteId === this.loteId);
+      this.queueItems = items.filter(i =>
+        this.loteId !== null ? i.loteId === this.loteId : i.loteId === null
+      );
+      this.cdr.markForCheck();
+    });
+
+    this.queue.completed$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(foto => {
+      if (foto.loteId !== this.loteId) return;
+      if (this.confirmedFotos.some(f => f.id === foto.id)) return;
+      this.confirmedFotos = [...this.confirmedFotos, foto].sort((a, b) => a.ordem - b.ordem);
       this.cdr.markForCheck();
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['loteId']?.currentValue) {
-      this.carregarFotosConfirmadas();
+    if (changes['loteId']) {
+      const curr: number | null = changes['loteId'].currentValue;
+      const prev: number | null = changes['loteId'].previousValue ?? null;
+      if (curr !== null && prev === null) {
+        this.queue.assignLoteId(curr);
+      }
+      if (curr !== null) {
+        this.carregarFotosConfirmadas();
+      }
     }
   }
 
   carregarFotosConfirmadas() {
+    if (this.loteId === null) return;
     this.fotoService.listar(this.loteId).subscribe({
       next: fotos => {
         this.confirmedFotos = fotos;
@@ -72,6 +107,7 @@ export class LoteFotosComponent implements OnInit, OnChanges {
       }
       this.queue.enqueue(this.loteId, file);
     }
+    this.uploadMenuAberto = false;
     input.value = '';
   }
 
@@ -80,8 +116,9 @@ export class LoteFotosComponent implements OnInit, OnChanges {
   }
 
   deletarConfirmada(foto: LoteFoto) {
+    if (this.loteId === null) return;
     this.alert.confirm(`Excluir esta foto?`, () => {
-      this.fotoService.deletar(this.loteId, foto.id).subscribe({
+      this.fotoService.deletar(this.loteId!, foto.id).subscribe({
         next: () => {
           this.confirmedFotos = this.confirmedFotos.filter(f => f.id !== foto.id);
           this.cdr.markForCheck();
@@ -92,6 +129,6 @@ export class LoteFotosComponent implements OnInit, OnChanges {
   }
 
   podeEditar(): boolean {
-    return this.auth.isAdmin() || this.auth.hasPermission('LOTES', 'EDITAR');
+    return this.permitirEdicao || this.auth.isAdmin() || this.auth.hasPermission('LOTES', 'EDITAR');
   }
 }
