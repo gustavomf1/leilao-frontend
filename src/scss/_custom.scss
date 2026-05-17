@@ -1098,6 +1098,113 @@ select option {
   box-shadow: var(--ja-shadow-lg) !important;
 }
 
+.ja-modal-subtitle {
+  display: block;
+  font-family: var(--ja-font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ja-fg-3);
+  letter-spacing: .02em;
+  margin-top: 2px;
+}
+
+// ─── Empty state (reaproveitável em listas/tabelas vazias) ────
+.ja-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  gap: 8px;
+  text-align: center;
+}
+
+.ja-empty-icon {
+  font-size: 32px;
+  color: var(--ja-border-strong);
+  margin-bottom: 4px;
+}
+
+.ja-empty-text {
+  margin: 0;
+  color: var(--ja-fg-2);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ja-empty-hint {
+  margin: 0;
+  color: var(--ja-fg-4);
+  font-size: 12px;
+}
+
+// ─── Pix modal específicas ────────────────────────────────────
+.ja-pix-modal-body {
+  padding: 0 !important;
+}
+
+.ja-pix-add-section,
+.ja-pix-list-section {
+  padding: 16px 20px;
+}
+
+.ja-pix-add-section {
+  border-bottom: 1px solid var(--ja-border);
+  background: var(--ja-surface-2);
+
+  .ja-form-section-title {
+    padding: 0 0 10px;
+    border-bottom: 0;
+  }
+}
+
+.ja-pix-add-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: 10px 14px;
+  align-items: end;
+}
+
+@media (max-width: 575px) {
+  .ja-pix-add-grid { grid-template-columns: 1fr; }
+}
+
+.ja-pix-add-action {
+  margin-top: 22px;
+}
+
+@media (max-width: 575px) {
+  .ja-pix-add-action { margin-top: 0; }
+}
+
+.ja-pix-list-section .ja-form-section-title {
+  padding: 0 0 10px;
+  border-bottom: 0;
+}
+
+.ja-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 18px;
+  padding: 0 6px;
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--ja-brand);
+  background: var(--ja-brand-subtle);
+  border-radius: var(--ja-radius-pill);
+  letter-spacing: 0;
+}
+
+.ja-pix-key-value {
+  font-family: var(--ja-font-mono);
+  font-size: 13px;
+  color: var(--ja-fg-1);
+  word-break: break-all;
+}
+
 // ─── Dividers ─────────────────────────────────────────────────
 .ja-divider-accent {
   height: 2px;
