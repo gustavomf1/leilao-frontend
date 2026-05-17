@@ -512,6 +512,171 @@ textarea.form-control {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// JA-FORM PATTERN — padrão reaproveitável pros forms de cadastro
+// Usar em cliente-details, fazenda-details, funcionario-details, etc.
+// Estrutura: header (breadcrumb + título + ações) → sections (overline + grid) → sticky footer
+// ═══════════════════════════════════════════════════════════════
+.ja-form-page {
+  padding-block: 0.5rem 6rem; // espaço pro sticky footer
+}
+
+.ja-form-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.ja-breadcrumb-overline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ja-fg-3);
+  margin-bottom: 6px;
+
+  .sep {
+    color: var(--ja-fg-4);
+    font-weight: 400;
+  }
+
+  a {
+    color: var(--ja-fg-3);
+    text-decoration: none;
+    transition: color var(--ja-dur-fast);
+    &:hover { color: var(--ja-brand); }
+  }
+
+  .current {
+    color: var(--ja-fg-1);
+  }
+}
+
+.ja-page-title {
+  font-family: var(--ja-font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: var(--ja-fg-1);
+  margin: 0;
+  letter-spacing: -.01em;
+  line-height: 1.15;
+}
+
+.ja-form-actions {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+// Section card with overline header
+.ja-form-section {
+  background: var(--ja-surface-3);
+  border: 1px solid var(--ja-border);
+  border-radius: var(--ja-radius);
+  box-shadow: var(--ja-shadow-sm);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.ja-form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ja-brand);
+  border-bottom: 1px solid var(--ja-border);
+  background: transparent;
+
+  fa-icon, svg, .ja-icon {
+    color: var(--ja-brand);
+    font-size: 12px;
+  }
+}
+
+[data-coreui-theme="dark"] .ja-form-section-title {
+  color: #f5b8a4;
+  fa-icon, svg, .ja-icon { color: #f5b8a4; }
+}
+
+.ja-form-section-body {
+  padding: 20px;
+}
+
+// 2-col grid for inputs
+.ja-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+
+@media (max-width: 767px) {
+  .ja-form-grid { grid-template-columns: 1fr; }
+}
+
+// UF: campo curto (1/4 da linha em telas grandes)
+.ja-form-grid .field-uf {
+  max-width: 100%;
+}
+
+// Field full-width
+.ja-form-grid .field-full {
+  grid-column: 1 / -1;
+}
+
+.ja-form-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ja-form-field .form-hint {
+  font-size: 11px;
+  color: var(--ja-fg-4);
+  margin-top: 4px;
+}
+
+.ja-form-field .form-error {
+  font-size: 12px;
+  color: var(--ja-red);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+// Sticky bottom action bar
+.ja-form-actions-sticky {
+  position: fixed;
+  bottom: 0;
+  left: var(--cui-sidebar-occupy-start, 0);
+  right: 0;
+  background: var(--ja-surface-3);
+  border-top: 1px solid var(--ja-border);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  z-index: 100;
+  box-shadow: 0 -4px 16px rgba(74, 20, 12, .06);
+  transition: left .15s;
+}
+
+[data-coreui-theme="dark"] .ja-form-actions-sticky {
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, .25);
+}
+
+@media (max-width: 991px) {
+  .ja-form-actions-sticky { left: 0; }
+}
+
 // ─── Badges ───────────────────────────────────────────────────
 // Padrão = SUBTLE (cor sutil + texto colorido). Solid só pra AO VIVO/Finalizado.
 .badge {

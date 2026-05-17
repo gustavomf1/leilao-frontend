@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faUser, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -33,6 +33,8 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
+  faUser = faUser;
+  faMapMarker = faMapMarkerAlt;
   form!: FormGroup;
   isEdicao = false;
   private entityId?: number;

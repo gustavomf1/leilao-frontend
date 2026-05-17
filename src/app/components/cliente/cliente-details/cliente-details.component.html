@@ -1,92 +1,84 @@
-<div class="container-lg px-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">{{ isEdicao ? 'Editar Cliente' : 'Novo Cliente' }}</h2>
-    <a routerLink="/clientes/lista" cButton color="secondary" size="sm" variant="ghost">
-      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
-    </a>
+<div class="container-lg px-4 ja-form-page">
+
+  <!-- ─── Header: breadcrumb + título + ações ─────────────── -->
+  <div class="ja-form-page-header">
+    <div>
+      <div class="ja-breadcrumb-overline">
+        <a routerLink="/clientes/lista">Clientes</a>
+        <span class="sep">›</span>
+        <span class="current">{{ isEdicao ? 'Editar' : 'Novo' }}</span>
+      </div>
+      <h1 class="ja-page-title">{{ isEdicao ? 'Editar Cliente' : 'Cadastrar Cliente' }}</h1>
+    </div>
+    <div class="ja-form-actions" *ngIf="!modoSubform">
+      <a routerLink="/clientes/lista" cButton color="secondary" variant="ghost">
+        <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+      </a>
+      <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+        <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+        {{ isEdicao ? 'Salvar Alterações' : 'Salvar Cliente' }}
+      </button>
+    </div>
   </div>
 
-  <c-card>
-    <c-card-header>
-      <strong>Dados do Cliente</strong>
-    </c-card-header>
-    <c-card-body>
-      <form [formGroup]="form" (ngSubmit)="salvar()">
-        <c-row>
+  <!-- ─── Form ───────────────────────────────────────────── -->
+  <form [formGroup]="form" (ngSubmit)="salvar()">
 
-          <c-col xs="12" md="6">
-            <div class="mb-3">
-              <label cLabel for="nome">Nome *</label>
-              <input cFormControl id="nome" formControlName="nome" placeholder="Nome completo" />
-              <c-form-feedback *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" [valid]="false">
-                Nome é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+    <!-- Section: Dados Pessoais -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faUser"></fa-icon>
+        Dados Pessoais
+      </div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
 
-          <c-col xs="12" md="6">
-            <div class="mb-3">
-              <label cLabel for="cpf">CPF *</label>
-              <input cFormControl id="cpf" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00"/>
-              <c-form-feedback *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched" [valid]="false">
-                CPF é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="nome">Nome Completo *</label>
+            <input cFormControl id="nome" formControlName="nome" placeholder="João da Silva" />
+            <span class="form-error" *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched">
+              Nome é obrigatório
+            </span>
+          </div>
 
-          <c-col xs="12" md="6">
-            <div class="mb-3">
-              <label cLabel for="email">E-mail *</label>
-              <input cFormControl id="email" formControlName="email" placeholder="exemplo@email.com" type="email" />
-              <c-form-feedback *ngIf="form.get('email')?.invalid && form.get('email')?.touched" [valid]="false">
-                E-mail é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="rg">RG *</label>
+            <input cFormControl id="rg" formControlName="rg" placeholder="00.000.000-0" mask="00.000.000-0" />
+            <span class="form-error" *ngIf="form.get('rg')?.invalid && form.get('rg')?.touched">
+              RG é obrigatório
+            </span>
+          </div>
 
-          <c-col xs="12" md="6">
-            <div class="mb-3">
-              <label cLabel for="rg">RG *</label>
-              <input cFormControl id="rg" formControlName="rg" placeholder="RG" mask="00.000.000-0"/>
-              <c-form-feedback *ngIf="form.get('rg')?.invalid && form.get('rg')?.touched" [valid]="false">
-                RG é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="cpf">CPF *</label>
+            <input cFormControl id="cpf" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00" />
+            <span class="form-hint" *ngIf="isEdicao">CPF não pode ser alterado após o cadastro</span>
+            <span class="form-error" *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched">
+              CPF é obrigatório
+            </span>
+          </div>
 
-          <c-col xs="12" md="6">
-            <div class="mb-3">
-              <label cLabel for="telefone">Telefone *</label>
-              <input cFormControl id="telefone" formControlName="telefone" placeholder="(00) 00000-0000" mask="(00) 00000-0000||(00) 0000-0000"/>
-              <c-form-feedback *ngIf="form.get('telefone')?.invalid && form.get('telefone')?.touched" [valid]="false">
-                Telefone é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="email">E-mail *</label>
+            <input cFormControl id="email" formControlName="email" placeholder="contato@email.com" type="email" />
+            <span class="form-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+              E-mail válido é obrigatório
+            </span>
+          </div>
 
-          <c-col xs="12" md="6">
-            <div class="mb-3">
-              <label cLabel for="cidade">Cidade *</label>
-              <input cFormControl id="cidade" formControlName="cidade" placeholder="Cidade" />
-              <c-form-feedback *ngIf="form.get('cidade')?.invalid && form.get('cidade')?.touched" [valid]="false">
-                Cidade é obrigatória
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="telefone">Telefone / WhatsApp *</label>
+            <input cFormControl id="telefone" formControlName="telefone"
+                   placeholder="(11) 98765-4321"
+                   mask="(00) 00000-0000||(00) 0000-0000" />
+            <span class="form-error" *ngIf="form.get('telefone')?.invalid && form.get('telefone')?.touched">
+              Telefone é obrigatório
+            </span>
+          </div>
 
-          <c-col xs="12" md="6">
-            <div class="mb-3">
-              <label cLabel for="uf">UF *</label>
-              <input cFormControl id="uf" formControlName="uf" placeholder="UF" maxlength="2" />
-              <c-form-feedback *ngIf="form.get('uf')?.invalid && form.get('uf')?.touched" [valid]="false">
-                UF é obrigatória (2 caracteres)
-              </c-form-feedback>
-            </div>
-          </c-col>
-
-          <c-col xs="12" md="6" *ngIf="!modoSubform">
+          <div class="ja-form-field" *ngIf="!modoSubform">
             <app-subform
-              label="Fazenda"
+              label="Fazenda Padrão (opcional)"
               [displayValue]="nomeFazendaSelecionada"
               modalTitle="Selecionar Fazenda"
               #pickerFazenda>
@@ -95,18 +87,54 @@
               </ng-container>
             </app-subform>
             <input type="hidden" formControlName="fazendaId" />
-          </c-col>
+            <span class="form-hint">Vinculada automaticamente em novos lotes</span>
+          </div>
 
-        </c-row>
-
-        <div class="d-flex gap-2 mt-3">
-          <button type="submit" cButton color="primary" [disabled]="form.invalid">
-            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
-          </button>
-          <a routerLink="/clientes/lista" cButton color="secondary" variant="ghost">Cancelar</a>
         </div>
-      </form>
-    </c-card-body>
-  </c-card>
+      </div>
+    </section>
+
+    <!-- Section: Localização -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faMapMarker"></fa-icon>
+        Localização
+      </div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
+
+          <div class="ja-form-field">
+            <label cLabel for="cidade">Cidade *</label>
+            <input cFormControl id="cidade" formControlName="cidade" placeholder="Pirassununga" />
+            <span class="form-error" *ngIf="form.get('cidade')?.invalid && form.get('cidade')?.touched">
+              Cidade é obrigatória
+            </span>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="uf">UF *</label>
+            <input cFormControl id="uf" formControlName="uf" placeholder="SP" maxlength="2"
+                   style="text-transform: uppercase;" />
+            <span class="form-error" *ngIf="form.get('uf')?.invalid && form.get('uf')?.touched">
+              UF é obrigatória (2 letras)
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </form>
+
+  <!-- ─── Sticky bottom action bar (só fora do modoSubform) ── -->
+  <div class="ja-form-actions-sticky" *ngIf="!modoSubform">
+    <a routerLink="/clientes/lista" cButton color="secondary" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+    </a>
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Cliente' }}
+    </button>
+  </div>
+
 </div>
