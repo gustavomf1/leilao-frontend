@@ -35,6 +35,8 @@ describe('LoteFotosComponent — menu mobile', () => {
     confirm: vi.fn(),
   };
 
+  beforeEach(() => vi.clearAllMocks());
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LoteFotosComponent],
