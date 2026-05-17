@@ -33,25 +33,58 @@ body {
   box-shadow: var(--ja-shadow-sidebar) !important;
 }
 
+// Densidade dos itens — apertado como ERP, não como SaaS
+.sidebar-nav .nav-link {
+  padding: 8px 16px !important;
+  padding-left: 13px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-left: 3px solid transparent !important;
+  min-height: 0 !important;
+
+  .nav-icon {
+    width: 16px !important;
+    font-size: 14px !important;
+    margin-right: 12px !important;
+  }
+}
+
 // Item ativo — linha BRANCA à esquerda (over bordô)
 .sidebar-nav .nav-link.active {
-  border-left: 3px solid #fff !important;
-  padding-left: calc(var(--cui-sidebar-nav-link-padding-x, 1rem) - 3px) !important;
+  border-left-color: #fff !important;
   font-weight: 700 !important;
+  background: rgba(255, 240, 230, .12) !important;
+  color: #fff !important;
+
+  .nav-icon { color: #fff !important; }
 }
 
-// Títulos de seção — uppercase, espaçado, light cream
+// Hover (não ativo)
+.sidebar-nav .nav-link:not(.active):hover {
+  background: rgba(255, 240, 230, .08) !important;
+  color: #fff !important;
+  .nav-icon { color: #fff !important; }
+}
+
+// Títulos de seção — overline 10px, mais discreto
 .sidebar-nav .nav-title {
   font-family: var(--ja-font-body) !important;
-  font-size: .63rem !important;
+  font-size: 10px !important;
   font-weight: 800 !important;
-  letter-spacing: .14em !important;
+  letter-spacing: .13em !important;
   text-transform: uppercase !important;
-  padding: 1.25rem 1rem .4rem !important;
-  color: rgba(255, 240, 230, .42) !important;
+  padding: 14px 16px 4px !important;
+  color: rgba(255, 240, 230, .40) !important;
 }
 
-// Marca/brand area — Playfair, branco sobre bordô profundo
+// Brand area — bordô-deep ocupa o canto INTEIRO (zera padding do wrapper CoreUI)
+.sidebar-header {
+  background: var(--ja-brand-deep) !important;
+  padding: 0 !important;
+  min-height: 65px;
+  border-bottom: 1px solid rgba(255, 240, 230, .08) !important;
+}
+
 .sidebar-brand {
   font-family: var(--ja-font-display) !important;
   font-size: 1.2rem !important;
@@ -59,8 +92,13 @@ body {
   letter-spacing: .01em !important;
   color: #fff !important;
   background: var(--ja-brand-deep) !important;
-  border-bottom: 1px solid rgba(255, 240, 230, .08) !important;
+  border: 0 !important;
+  width: 100% !important;
   min-height: 65px;
+  padding: 10px 14px !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .sidebar-brand-full,
@@ -75,14 +113,16 @@ body {
   gap: 10px;
 }
 
+// PNG já tem moldura branca + bordô interno própria — não adicionar bg/shadow
+// CSS, senão cria 2º anel visível por cima. Deixa o mark "flutuar" sobre o
+// fundo bordô-deep e só arredonda os cantos.
 .ja-brand-mark {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
-  background: var(--ja-brand-deep);
+  background: transparent;
   object-fit: cover;
   flex-shrink: 0;
-  box-shadow: inset 0 0 0 1px rgba(255, 240, 230, .12);
   display: block;
 }
 
@@ -92,6 +132,7 @@ body {
   font-size: 18px;
   letter-spacing: .01em;
   color: #fff;
+  white-space: nowrap;
 }
 
 .sidebar-narrow .ja-brand-text,

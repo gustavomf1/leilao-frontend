@@ -371,8 +371,12 @@ h4 {
 
 // ─── Formulários ──────────────────────────────────────────────
 .form-control, .form-select {
+  min-height: 44px;
+  padding: 0 14px;
   border-radius: var(--ja-radius-sm) !important;
-  border-color: var(--ja-border-strong) !important;
+  border: 1.5px solid var(--ja-border-strong) !important;
+  font-size: 14px;
+  font-family: var(--ja-font-body);
   transition: border-color var(--ja-dur-base), box-shadow var(--ja-dur-base);
 
   &:focus {
@@ -381,38 +385,122 @@ h4 {
   }
 }
 
+// textarea precisa de padding vertical
+textarea.form-control {
+  padding: 10px 14px;
+  min-height: auto;
+}
+
 .form-label {
-  font-size: .78rem;
+  font-size: 11px;
   font-weight: 600;
   color: var(--ja-fg-3);
-  letter-spacing: .02em;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+[data-coreui-theme="dark"] .form-label {
+  color: var(--ja-fg-3);
+}
+
+// ─── Card-header tighter (match preview) ──────────────────────
+.card-header {
+  padding: 12px 16px !important;
+  font-size: 11px !important;
+  letter-spacing: .08em !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-body { padding: 16px !important; }
+.card-footer {
+  padding: 10px 16px !important;
+  font-size: 12px;
+  color: var(--ja-fg-3) !important;
+}
+
+// ─── Sizes ────────────────────────────────────────────────────
+.btn-sm {
+  padding: 6px 10px !important;
+  font-size: 12px !important;
 }
 
 // ─── Badges ───────────────────────────────────────────────────
+// Padrão = SUBTLE (cor sutil + texto colorido). Solid só pra AO VIVO/Finalizado.
 .badge {
   font-family: var(--ja-font-body) !important;
   font-weight: 800 !important;
+  font-size: 11px !important;
   letter-spacing: .04em;
   text-transform: uppercase;
   border-radius: var(--ja-radius-pill) !important;
-  padding: .35em .75em !important;
+  padding: 4px 10px !important;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
+// SUBTLE variants — uso geral nos status (Aguardando, Em Andamento, Animal, etc)
 .badge.bg-success, .badge.text-bg-success {
-  background-color: var(--ja-ok) !important;
-  color: #fff !important;
+  background-color: rgba(21, 128, 61, .12) !important;
+  color: var(--ja-ok) !important;
 }
 .badge.bg-warning, .badge.text-bg-warning {
-  background-color: var(--ja-amber) !important;
-  color: #fff !important;
+  background-color: rgba(245, 158, 11, .14) !important;
+  color: #b45309 !important;
 }
 .badge.bg-danger, .badge.text-bg-danger {
-  background-color: var(--ja-red) !important;
-  color: #fff !important;
+  background-color: rgba(225, 29, 72, .14) !important;
+  color: #9f1239 !important;
+}
+.badge.bg-info, .badge.text-bg-info {
+  background-color: rgba(14, 165, 233, .14) !important;
+  color: #0369a1 !important;
 }
 .badge.bg-primary, .badge.text-bg-primary {
-  background-color: var(--ja-brand) !important;
+  background-color: var(--ja-brand-subtle) !important;
+  color: var(--ja-brand) !important;
+}
+.badge.bg-secondary, .badge.text-bg-secondary,
+.badge.bg-neutral {
+  background-color: rgba(0, 0, 0, .06) !important;
+  color: var(--ja-fg-2) !important;
+}
+.badge.bg-dark, .badge.text-bg-dark {
+  background-color: var(--ja-black-800) !important;
   color: #fff !important;
+}
+
+// SOLID variants — destaque forte (Finalizado, AO VIVO, badges sólidas)
+.badge-solid-success { background: var(--ja-ok) !important; color: #fff !important; }
+.badge-solid-brand   { background: var(--ja-brand) !important; color: #fff !important; }
+.badge-solid-danger  { background: var(--ja-red) !important; color: #fff !important; }
+
+// Dark mode — subtles ficam mais saturadas pra contraste
+[data-coreui-theme="dark"] {
+  .badge.bg-success, .badge.text-bg-success {
+    background-color: rgba(21, 128, 61, .20) !important;
+    color: #4ade80 !important;
+  }
+  .badge.bg-warning, .badge.text-bg-warning {
+    background-color: rgba(245, 158, 11, .18) !important;
+    color: #fbbf24 !important;
+  }
+  .badge.bg-danger, .badge.text-bg-danger {
+    background-color: rgba(225, 29, 72, .18) !important;
+    color: #fb7185 !important;
+  }
+  .badge.bg-info, .badge.text-bg-info {
+    background-color: rgba(14, 165, 233, .18) !important;
+    color: #38bdf8 !important;
+  }
+  .badge.bg-secondary, .badge.bg-neutral {
+    background-color: rgba(255, 255, 255, .08) !important;
+    color: rgba(255, 255, 255, .85) !important;
+  }
 }
 
 // AO VIVO badge — pulsa
