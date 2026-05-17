@@ -1,9 +1,7 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { openDB, IDBPDatabase } from 'idb';
 import { LoteFotoService } from './lote-foto.service';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 
 export type QueueStatus = 'PENDING' | 'UPLOADING' | 'DONE' | 'FAILED';
 
@@ -25,7 +23,6 @@ const STORE = 'queue';
 @Injectable({ providedIn: 'root' })
 export class UploadQueueService implements OnDestroy {
   private fotoService = inject(LoteFotoService);
-  private http = inject(HttpClient);
   private db!: IDBPDatabase;
   private processing = new Set<string>();
   private onlineListener = () => this.reprocessPending();
@@ -71,6 +68,7 @@ export class UploadQueueService implements OnDestroy {
   async retryItem(uuid: string): Promise<void> {
     const item = this.queueSubject.value.find(i => i.uuid === uuid);
     if (!item) return;
+    this.processing.delete(uuid);
     await this.updateItem(uuid, { status: 'PENDING', errorMessage: undefined });
     if (navigator.onLine) this.process({ ...item, status: 'PENDING' });
   }
