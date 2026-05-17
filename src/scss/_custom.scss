@@ -677,6 +677,110 @@ textarea.form-control {
   .ja-form-actions-sticky { left: 0; }
 }
 
+// ─── Grid 3 colunas (Local|Cidade|UF) ─────────────────────────
+.ja-form-grid-3 {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 0.6fr;
+  gap: 16px 20px;
+}
+
+@media (max-width: 767px) {
+  .ja-form-grid-3 { grid-template-columns: 1fr; }
+}
+
+// ─── Toggle group (pills) — usado em Tipo Leilão, Taxa Por ────
+.ja-toggle-group {
+  display: inline-flex;
+  background: var(--ja-surface-2);
+  border: 1px solid var(--ja-border);
+  border-radius: var(--ja-radius-sm);
+  padding: 3px;
+  gap: 2px;
+  width: 100%;
+  min-height: 44px;
+}
+
+.ja-toggle-pill {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 0;
+  color: var(--ja-fg-2);
+  font-family: var(--ja-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all var(--ja-dur-fast);
+  white-space: nowrap;
+
+  &:hover { background: var(--ja-brand-subtle); color: var(--ja-brand); }
+
+  &.active {
+    background: var(--ja-brand);
+    color: #fff;
+    box-shadow: 0 1px 4px rgba(74, 20, 12, .25);
+  }
+
+  fa-icon, svg { font-size: 12px; }
+}
+
+[data-coreui-theme="dark"] .ja-toggle-pill.active {
+  background: var(--ja-brand-dim);
+}
+
+// ─── Readonly display (info de TaxaPadrao) ────────────────────
+.ja-readonly-display {
+  background: var(--ja-surface-2);
+  border: 1px solid var(--ja-border);
+  border-radius: var(--ja-radius-sm);
+  padding: 10px 14px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--ja-fg-2);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+
+  &.empty { color: var(--ja-fg-4); font-style: italic; font-weight: 400; }
+
+  .prefix {
+    color: var(--ja-fg-4);
+    margin-right: 4px;
+    font-weight: 400;
+  }
+}
+
+// ─── Condição selector (input-like display + actions) ─────────
+.ja-input-with-actions {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  min-height: 44px;
+}
+
+.ja-input-with-actions .display {
+  flex: 1;
+  background: var(--ja-surface-2);
+  border: 1.5px solid var(--ja-border-strong);
+  border-radius: var(--ja-radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--ja-fg-2);
+  min-width: 0;
+
+  &.empty { color: var(--ja-fg-4); font-style: italic; }
+
+  strong { color: var(--ja-fg-1); margin-right: 4px; }
+}
+
 // ─── Badges ───────────────────────────────────────────────────
 // Padrão = SUBTLE (cor sutil + texto colorido). Solid só pra AO VIVO/Finalizado.
 .badge {

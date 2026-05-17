@@ -1,168 +1,248 @@
-<div class="container-lg px-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">{{ isEdicao ? 'Editar Leilão' : 'Novo Leilão' }}</h2>
-    <a routerLink="/leiloes/lista" cButton color="secondary" size="sm" variant="ghost">
-      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
-    </a>
+<div class="container-lg px-4 ja-form-page">
+
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <div class="ja-form-page-header">
+    <div>
+      <div class="ja-breadcrumb-overline">
+        <a routerLink="/leiloes/lista">Leilões</a>
+        <span class="sep">›</span>
+        <span class="current">{{ isEdicao ? 'Editar' : 'Novo' }}</span>
+      </div>
+      <h1 class="ja-page-title">{{ isEdicao ? 'Editar Leilão' : 'Cadastrar Leilão' }}</h1>
+    </div>
+    <div class="ja-form-actions">
+      <a routerLink="/leiloes/lista" cButton color="secondary" variant="ghost">
+        <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+      </a>
+      <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+        <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+        {{ isEdicao ? 'Salvar Alterações' : 'Salvar Leilão' }}
+      </button>
+    </div>
   </div>
 
-  <c-card>
-    <c-card-header><strong>Dados do Leilão</strong></c-card-header>
-    <c-card-body>
-      <form [formGroup]="form" (ngSubmit)="salvar()">
-        <c-row>
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="descricao">Descrição *</label>
-              <input cFormControl id="descricao" formControlName="descricao" placeholder="Descrição do leilão" />
-              <c-form-feedback *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" [valid]="false">Descrição é obrigatória</c-form-feedback>
-            </div>
-          </c-col>
+  <!-- ─── Form ───────────────────────────────────────────── -->
+  <form [formGroup]="form" (ngSubmit)="salvar()">
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="local">Local *</label>
-              <input cFormControl id="local" formControlName="local" placeholder="Local do evento" />
-              <c-form-feedback *ngIf="form.get('local')?.invalid && form.get('local')?.touched" [valid]="false">Local é obrigatório</c-form-feedback>
-            </div>
-          </c-col>
+    <!-- Section: Dados Gerais -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faGavel"></fa-icon>
+        Dados Gerais
+      </div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
 
-          <c-col [md]="4">
-            <div class="mb-3">
-              <label cLabel for="cidade">Cidade *</label>
-              <input cFormControl id="cidade" formControlName="cidade" placeholder="Cidade" />
-              <c-form-feedback *ngIf="form.get('cidade')?.invalid && form.get('cidade')?.touched" [valid]="false">Cidade é obrigatória</c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="descricao">Descrição do Leilão *</label>
+            <input cFormControl id="descricao" formControlName="descricao"
+                   placeholder="Ex: Leilão Outono 2026 — Nelore PO" />
+            <span class="form-error" *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched">
+              Descrição é obrigatória
+            </span>
+          </div>
 
-          <c-col [md]="2">
-            <div class="mb-3">
-              <label cLabel for="uf">UF *</label>
-              <input cFormControl id="uf" formControlName="uf" placeholder="UF" maxlength="2" />
-              <c-form-feedback *ngIf="form.get('uf')?.invalid && form.get('uf')?.touched" [valid]="false">UF é obrigatória</c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="data">Data do Evento *</label>
+            <input cFormControl id="data" type="date" formControlName="data" />
+            <span class="form-error" *ngIf="form.get('data')?.invalid && form.get('data')?.touched">
+              Data é obrigatória
+            </span>
+          </div>
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="data">Data *</label>
-              <input cFormControl id="data" type="date" formControlName="data" />
-              <c-form-feedback *ngIf="form.get('data')?.invalid && form.get('data')?.touched" [valid]="false">Data é obrigatória</c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="tipoLeilao">Tipo de Leilão *</label>
+            <select cFormControl id="tipoLeilao" formControlName="tipoLeilao">
+              <option value="" disabled>Selecione...</option>
+              <option *ngFor="let tipo of tiposLeilao" [value]="tipo.value">{{ tipo.label }}</option>
+            </select>
+            <span class="form-error" *ngIf="form.get('tipoLeilao')?.invalid && form.get('tipoLeilao')?.touched">
+              Tipo de leilão é obrigatório
+            </span>
+          </div>
 
-          <c-col [md]="4">
-            <div class="mb-3">
-              <label cLabel for="especieId">Espécie *</label>
-              <select cFormControl id="especieId" formControlName="especieId">
-                <option [ngValue]="null" disabled>Selecione a espécie</option>
-                <option *ngFor="let especie of especies" [ngValue]="especie.id">{{ especie.nome }}</option>
-              </select>
-              <c-form-feedback *ngIf="form.get('especieId')?.invalid && form.get('especieId')?.touched" [valid]="false">
-                Espécie é obrigatória
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="especieId">Espécie *</label>
+            <select cFormControl id="especieId" formControlName="especieId">
+              <option [ngValue]="null" disabled>Selecione...</option>
+              <option *ngFor="let especie of especies" [ngValue]="especie.id">{{ especie.nome }}</option>
+            </select>
+            <span class="form-error" *ngIf="form.get('especieId')?.invalid && form.get('especieId')?.touched">
+              Espécie é obrigatória
+            </span>
+          </div>
 
-          <c-col [md]="4">
-            <div class="mb-3">
-              <label cLabel for="tipoLeilao">Tipo de Leilão *</label>
-              <select cFormControl id="tipoLeilao" formControlName="tipoLeilao">
-                <option value="" disabled>Selecione o tipo</option>
-                <option *ngFor="let tipo of tiposLeilao" [value]="tipo.value">{{ tipo.label }}</option>
-              </select>
-              <c-form-feedback *ngIf="form.get('tipoLeilao')?.invalid && form.get('tipoLeilao')?.touched" [valid]="false">
-                Tipo de leilão é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
-
-          <c-col [md]="4">
-            <div class="mb-3">
-              <label cLabel for="taxaPor">Taxa por *</label>
-              <select cFormControl id="taxaPor" formControlName="taxaPor">
-                <option value="ANIMAL">Animal</option>
-                <option value="LOTE">Lote</option>
-              </select>
-            </div>
-          </c-col>
-
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label class="form-label">Condição de Pagamento *</label>
-              <div class="d-flex gap-2 align-items-center">
-                <div class="flex-grow-1 p-2 border rounded bg-body-secondary" style="min-height: 38px;">
-                  <ng-container *ngIf="condicaoSelecionada; else semCondicao">
-                    <strong>#{{ condicaoSelecionada.id }}</strong> — {{ condicaoSelecionada.descricao }}
-                    <span *ngIf="condicaoSelecionada.parcelas" class="ms-2 badge bg-secondary">{{ condicaoSelecionada.parcelas }}x</span>
-                  </ng-container>
-                  <ng-template #semCondicao>
-                    <span class="text-muted">Nenhuma condição selecionada</span>
-                  </ng-template>
-                </div>
-                <button type="button" cButton color="primary" size="sm" (click)="modalCondicaoAberto = true" title="Selecionar">
-                  <fa-icon [icon]="faSearch"></fa-icon>
-                </button>
-                <button *ngIf="condicaoSelecionada" type="button" cButton color="danger" size="sm" variant="ghost"
-                        (click)="condicaoSelecionada = undefined; form.patchValue({ condicoesId: null })" title="Remover">
-                  <fa-icon [icon]="faTimes"></fa-icon>
-                </button>
-              </div>
-              <div *ngIf="form.get('condicoesId')?.invalid && form.get('condicoesId')?.touched" class="text-danger small mt-1">
-                Selecione uma condição de pagamento
-              </div>
-            </div>
-          </c-col>
-
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="taxaPadraoId">Taxa Padrão</label>
-              <select cFormControl id="taxaPadraoId" formControlName="taxaPadraoId">
-                <option [ngValue]="null">Usar fallback do backend</option>
-                <option *ngIf="taxaPadrao?.id" [ngValue]="taxaPadrao?.id">
-                  #{{ taxaPadrao?.id }} — atual
-                </option>
-              </select>
-              <div class="form-text">Na criação, o backend usa a taxa mais recente se nenhuma for selecionada. Na edição, campo vazio mantém o vínculo atual.</div>
-            </div>
-          </c-col>
-
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label class="form-label">Dados da taxa padrão vigente</label>
-              <div class="p-2 border rounded bg-body-secondary" style="min-height: 38px;">
-                <ng-container *ngIf="taxaPadrao; else semTaxaPadrao">
-                  Taxa: <strong>{{ taxaPadrao.taxa | currency:'BRL':'symbol':'1.2-2' }}</strong>
-                  <span class="mx-2 text-muted">/</span>
-                  Venda: <strong>{{ taxaPadrao.comissaoVenda | number:'1.2-2' }}%</strong>
-                  <span class="mx-2 text-muted">/</span>
-                  Compra: <strong>{{ taxaPadrao.comissaoCompra | number:'1.2-2' }}%</strong>
-                  <span class="mx-2 text-muted">/</span>
-                  GTA: <strong>{{ taxaPadrao.gta | currency:'BRL':'symbol':'1.2-2' }}</strong>
-                  <span *ngIf="taxaPadrao.atualizadoEm" class="ms-2 text-muted small">
-                    Atualizada em {{ taxaPadrao.atualizadoEm | date:'dd/MM/yyyy' }}
-                  </span>
-                </ng-container>
-                <ng-template #semTaxaPadrao>
-                  <span class="text-muted">Nenhuma taxa padrão vigente encontrada</span>
-                </ng-template>
-              </div>
-            </div>
-          </c-col>
-        </c-row>
-
-        <div class="d-flex gap-2 mt-3">
-          <button type="submit" cButton color="primary" [disabled]="form.invalid">
-            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
-          </button>
-          <a routerLink="/leiloes/lista" cButton color="secondary" variant="ghost">Cancelar</a>
         </div>
-      </form>
-    </c-card-body>
-  </c-card>
+      </div>
+    </section>
+
+    <!-- Section: Localização -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faMapMarker"></fa-icon>
+        Localização
+      </div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid-3">
+
+          <div class="ja-form-field">
+            <label cLabel for="local">Local / Recinto *</label>
+            <input cFormControl id="local" formControlName="local" placeholder="Recinto Boa Vista" />
+            <span class="form-error" *ngIf="form.get('local')?.invalid && form.get('local')?.touched">
+              Local é obrigatório
+            </span>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="cidade">Cidade *</label>
+            <input cFormControl id="cidade" formControlName="cidade" placeholder="Pirassununga" />
+            <span class="form-error" *ngIf="form.get('cidade')?.invalid && form.get('cidade')?.touched">
+              Cidade é obrigatória
+            </span>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="uf">UF *</label>
+            <input cFormControl id="uf" formControlName="uf" placeholder="SP" maxlength="2"
+                   style="text-transform: uppercase;" />
+            <span class="form-error" *ngIf="form.get('uf')?.invalid && form.get('uf')?.touched">
+              UF (2 letras)
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Taxas e Comissões (readonly info do TaxaPadrao + toggle taxaPor) -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faPercent"></fa-icon>
+        Taxas e Comissões
+      </div>
+      <div class="ja-form-section-body">
+
+        <div class="ja-form-field mb-3">
+          <label cLabel>Cobrar Taxa Por *</label>
+          <div class="ja-toggle-group">
+            <button type="button" class="ja-toggle-pill"
+                    [class.active]="form.get('taxaPor')?.value === 'ANIMAL'"
+                    (click)="form.patchValue({ taxaPor: 'ANIMAL' })">
+              Por animal
+            </button>
+            <button type="button" class="ja-toggle-pill"
+                    [class.active]="form.get('taxaPor')?.value === 'LOTE'"
+                    (click)="form.patchValue({ taxaPor: 'LOTE' })">
+              Por lote
+            </button>
+          </div>
+          <span class="form-hint">Valor cobrado por animal ou por lote vendido</span>
+        </div>
+
+        <div class="ja-form-grid">
+
+          <div class="ja-form-field">
+            <label cLabel>Taxa Base</label>
+            <div class="ja-readonly-display" [class.empty]="!taxaPadrao">
+              <ng-container *ngIf="taxaPadrao; else semTaxa">
+                <span class="prefix">R$</span>{{ taxaPadrao.taxa | number: '1.2-2':'pt-BR' }}
+              </ng-container>
+              <ng-template #semTaxa>Nenhuma taxa vigente</ng-template>
+            </div>
+            <span class="form-hint">Valor fixo (configurado em Taxa Padrão)</span>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel>GTA</label>
+            <div class="ja-readonly-display" [class.empty]="!taxaPadrao">
+              <ng-container *ngIf="taxaPadrao; else semGta">
+                <span class="prefix">R$</span>{{ taxaPadrao.gta | number: '1.2-2':'pt-BR' }}
+              </ng-container>
+              <ng-template #semGta>—</ng-template>
+            </div>
+            <span class="form-hint">Guia de Trânsito Animal</span>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel>Comissão sobre Venda</label>
+            <div class="ja-readonly-display" [class.empty]="!taxaPadrao">
+              <ng-container *ngIf="taxaPadrao; else semCv">
+                {{ taxaPadrao.comissaoVenda | number: '1.2-2':'pt-BR' }}<span class="prefix ms-1">%</span>
+              </ng-container>
+              <ng-template #semCv>—</ng-template>
+            </div>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel>Comissão sobre Compra</label>
+            <div class="ja-readonly-display" [class.empty]="!taxaPadrao">
+              <ng-container *ngIf="taxaPadrao; else semCc">
+                {{ taxaPadrao.comissaoCompra | number: '1.2-2':'pt-BR' }}<span class="prefix ms-1">%</span>
+              </ng-container>
+              <ng-template #semCc>—</ng-template>
+            </div>
+          </div>
+
+        </div>
+
+        <input type="hidden" formControlName="taxaPadraoId" />
+        <div class="form-hint mt-3" *ngIf="taxaPadrao?.atualizadoEm">
+          Taxa vigente atualizada em {{ taxaPadrao?.atualizadoEm | date: 'dd/MM/yyyy' }} · para alterar, acesse <a routerLink="/taxas/lista">Taxa Padrão</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section: Condição de Pagamento -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faFileLines"></fa-icon>
+        Condição de Pagamento
+      </div>
+      <div class="ja-form-section-body">
+
+        <div class="ja-form-field">
+          <label cLabel>Condição padrão para vendas deste leilão *</label>
+          <div class="ja-input-with-actions">
+            <div class="display" [class.empty]="!condicaoSelecionada">
+              <ng-container *ngIf="condicaoSelecionada; else semCondicao">
+                <strong>#{{ condicaoSelecionada.id }}</strong> {{ condicaoSelecionada.descricao }}
+                <span *ngIf="condicaoSelecionada.parcelas" class="badge bg-secondary ms-2">{{ condicaoSelecionada.parcelas }}x</span>
+              </ng-container>
+              <ng-template #semCondicao>Selecione uma condição...</ng-template>
+            </div>
+            <button type="button" cButton color="primary" (click)="modalCondicaoAberto = true" title="Selecionar">
+              <fa-icon [icon]="faSearch"></fa-icon>
+            </button>
+            <button *ngIf="condicaoSelecionada" type="button" cButton color="danger" variant="ghost"
+                    (click)="condicaoSelecionada = undefined; form.patchValue({ condicoesId: null })" title="Remover">
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+          </div>
+          <span class="form-error" *ngIf="form.get('condicoesId')?.invalid && form.get('condicoesId')?.touched">
+            Selecione uma condição de pagamento
+          </span>
+        </div>
+
+      </div>
+    </section>
+
+  </form>
+
+  <!-- ─── Sticky bottom action bar ─────────────────────── -->
+  <div class="ja-form-actions-sticky">
+    <a routerLink="/leiloes/lista" cButton color="secondary" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+    </a>
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Leilão' }}
+    </button>
+  </div>
+
 </div>
 
+<!-- ─── Modal: Selecionar Condição de Pagamento ─────────── -->
 <c-modal [visible]="modalCondicaoAberto" (visibleChange)="modalCondicaoAberto = $event" size="lg" scrollable>
   <c-modal-header>
     <h5 cModalTitle>Selecionar Condição de Pagamento</h5>

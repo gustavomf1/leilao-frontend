@@ -7,7 +7,7 @@ import {
   ModalModule, TableModule, TableDirective
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft, faSearch, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faSearch, faCheck, faTimes, faGavel, faPercent, faFileLines, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { CondicoesService } from '../../../core/services/condicoes.service';
@@ -41,6 +41,10 @@ export class LeiloesDetailsComponent implements OnInit {
   faSearch   = faSearch;
   faCheck    = faCheck;
   faTimes    = faTimes;
+  faGavel    = faGavel;
+  faPercent  = faPercent;
+  faFileLines = faFileLines;
+  faMapMarker = faMapMarkerAlt;
 
   form!: FormGroup;
   isEdicao = false;
