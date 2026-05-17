@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faHome, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -35,6 +35,8 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
+  faHome = faHome;
+  faMapMarker = faMapMarkerAlt;
   form!: FormGroup;
   isEdicao = false;
   private entityId?: number;
