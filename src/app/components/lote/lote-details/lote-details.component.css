@@ -12,13 +12,13 @@
   --green-dim:  rgba(138,59,44,.12);
   --green-glow: rgba(151,60,42,.30);
   /* Usa variáveis do CoreUI — trocam automaticamente em light/dark */
-  --surface:    var(--cui-secondary-bg, #f8f9fa);
-  --surface-2:  var(--cui-tertiary-bg, #e9ecef);
-  --border:     var(--cui-border-color, #dee2e6);
-  --border-2:   var(--cui-border-color-translucent, #ced4da);
-  --text:       var(--cui-body-color, #212529);
-  --text-muted: var(--cui-secondary-color, #6c757d);
-  --dropdown-bg: var(--cui-body-bg, #fff);
+  --surface:    var(--ja-surface-3);
+  --surface-2:  var(--ja-surface-2);
+  --border:     var(--ja-border);
+  --border-2:   var(--ja-border-strong);
+  --text:       var(--ja-fg-1);
+  --text-muted: var(--ja-fg-3);
+  --dropdown-bg: var(--ja-surface-3);
   --radius:     10px;
   font-family: var(--ja-font-body, 'Nunito', sans-serif);
   display: block;
@@ -198,7 +198,7 @@
 .field-input {
   display: block;
   width: 100%;
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
@@ -229,7 +229,7 @@
 .field-select {
   display: block;
   width: 100%;
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
@@ -248,7 +248,7 @@
 }
 .field-select option {
   background: var(--cui-body-bg, #fff);
-  color: var(--cui-body-color, #212529);
+  color: var(--ja-fg-1);
 }
 .select-arrow {
   position: absolute;
@@ -273,7 +273,7 @@
   padding: .6rem .5rem;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   color: var(--text-muted);
   font-size: .85rem;
   font-weight: 500;
@@ -332,7 +332,7 @@
   display: flex;
   align-items: center;
   gap: .5rem;
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0 .85rem;

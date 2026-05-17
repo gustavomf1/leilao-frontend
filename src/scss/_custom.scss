@@ -155,8 +155,23 @@ h4 {
     --cui-body-bg: var(--ja-surface);
     --cui-body-color: var(--ja-fg-2);
     --cui-tertiary-bg: var(--ja-surface-2);
+    --cui-secondary-bg: var(--ja-surface-2);
     --cui-border-color: var(--ja-border);
     --cui-secondary-color: var(--ja-fg-3);
+
+    // Brand mapping → bordô (afeta bg-primary, text-primary, btn-primary etc)
+    --cui-primary: var(--ja-brand);
+    --cui-primary-rgb: 97, 27, 17;
+    --cui-info: var(--ja-info);
+    --cui-info-rgb: 3, 105, 161;
+
+    // Card + input + dropdown — warm cream
+    --cui-card-bg: var(--ja-surface-3);
+    --cui-card-cap-bg: var(--ja-surface-3);
+    --cui-input-bg: var(--ja-surface-3);
+    --cui-input-border-color: var(--ja-border-strong);
+    --cui-dropdown-bg: var(--ja-surface-3);
+    --cui-dropdown-border-color: var(--ja-border);
   }
 
   h1, h2, h3, h4 { color: var(--ja-fg-1); }
@@ -207,8 +222,23 @@ h4 {
     --cui-body-bg: var(--ja-surface);
     --cui-body-color: var(--ja-fg-2);
     --cui-tertiary-bg: var(--ja-surface-2);
+    --cui-secondary-bg: var(--ja-surface-2);
     --cui-border-color: var(--ja-border);
     --cui-secondary-color: var(--ja-fg-3);
+
+    // Brand mapping → bordô (afeta bg-primary, btn-primary, text-primary etc)
+    --cui-primary: var(--ja-brand-soft);
+    --cui-primary-rgb: 138, 59, 44;
+    --cui-info: #38bdf8;
+    --cui-info-rgb: 56, 189, 248;
+
+    // Card + input + dropdown — warm-charcoal
+    --cui-card-bg: var(--ja-surface-3);
+    --cui-card-cap-bg: var(--ja-surface-3);
+    --cui-input-bg: var(--ja-surface-2);
+    --cui-input-border-color: var(--ja-border-strong);
+    --cui-dropdown-bg: var(--ja-surface-3);
+    --cui-dropdown-border-color: var(--ja-border);
   }
 
   h1, h2, h3, h4 { color: var(--ja-fg-1); }
