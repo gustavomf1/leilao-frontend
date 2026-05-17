@@ -1,58 +1,105 @@
 @use "@coreui/coreui/scss/mixins/transition" as *;
 @use "@coreui/coreui/scss/mixins/color-mode" as *;
 
+// ═══════════════════════════════════════════════════════════════
+// JA-LEILÕES — Theme overrides (sidebar + shell)
+// Sidebar SEMPRE bordô (extensão visual do logo oficial).
+// ═══════════════════════════════════════════════════════════════
+
 body {
   background-color: var(--ja-surface, var(--cui-tertiary-bg));
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────
-// Sempre preta — verde só no ícone/borda do item ativo
+// Sempre BORDÔ (#611b11) — independente do tema light/dark
 .sidebar {
-  --cui-sidebar-bg:                      #111111;
-  --cui-sidebar-brand-bg:                #080808;
-  --cui-sidebar-color:                   rgba(255,255,255,.75);
-  --cui-sidebar-border-width:            0;
-  --cui-sidebar-nav-link-color:          rgba(255,255,255,.58);
-  --cui-sidebar-nav-link-icon-color:     rgba(255,255,255,.32);
-  --cui-sidebar-nav-link-hover-bg:       rgba(255,255,255,.055);
-  --cui-sidebar-nav-link-hover-color:    #fff;
-  --cui-sidebar-nav-link-hover-icon-color: rgba(255,255,255,.65);
-  --cui-sidebar-nav-link-active-bg:      rgba(34, 197, 94, .07);
-  --cui-sidebar-nav-link-active-color:   #fff;
-  --cui-sidebar-nav-link-active-icon-color: #22c55e;
-  --cui-sidebar-nav-title-color:         rgba(255,255,255,.22);
-  --cui-sidebar-toggler-bg:              #080808;
-  --cui-sidebar-toggler-hover-bg:        #000;
-  --cui-sidebar-toggler-indicator-color: rgba(255,255,255,.4);
+  --cui-sidebar-bg:                         var(--ja-brand);
+  --cui-sidebar-brand-bg:                   var(--ja-brand-deep);
+  --cui-sidebar-color:                      rgba(255, 240, 230, .82);
+  --cui-sidebar-border-width:               0;
+  --cui-sidebar-nav-link-color:             rgba(255, 240, 230, .72);
+  --cui-sidebar-nav-link-icon-color:        rgba(255, 240, 230, .55);
+  --cui-sidebar-nav-link-hover-bg:          rgba(255, 240, 230, .08);
+  --cui-sidebar-nav-link-hover-color:       #fff;
+  --cui-sidebar-nav-link-hover-icon-color:  #fff;
+  --cui-sidebar-nav-link-active-bg:         rgba(255, 240, 230, .12);
+  --cui-sidebar-nav-link-active-color:      #fff;
+  --cui-sidebar-nav-link-active-icon-color: #fff;
+  --cui-sidebar-nav-title-color:            rgba(255, 240, 230, .42);
+  --cui-sidebar-toggler-bg:                 var(--ja-brand-deep);
+  --cui-sidebar-toggler-hover-bg:           rgba(0, 0, 0, .3);
+  --cui-sidebar-toggler-indicator-color:    rgba(255, 240, 230, .6);
 
-  box-shadow: 2px 0 24px rgba(0,0,0,.5) !important;
+  box-shadow: var(--ja-shadow-sidebar) !important;
 }
 
-// Barra verde no item ativo
+// Item ativo — linha BRANCA à esquerda (over bordô)
 .sidebar-nav .nav-link.active {
-  border-left: 3px solid #22c55e !important;
+  border-left: 3px solid #fff !important;
   padding-left: calc(var(--cui-sidebar-nav-link-padding-x, 1rem) - 3px) !important;
+  font-weight: 700 !important;
 }
 
-// Títulos de seção
+// Títulos de seção — uppercase, espaçado, light cream
 .sidebar-nav .nav-title {
-  font-family: 'Nunito', sans-serif !important;
+  font-family: var(--ja-font-body) !important;
   font-size: .63rem !important;
   font-weight: 800 !important;
   letter-spacing: .14em !important;
   text-transform: uppercase !important;
   padding: 1.25rem 1rem .4rem !important;
+  color: rgba(255, 240, 230, .42) !important;
 }
 
-// Área da marca
+// Marca/brand area — Playfair, branco sobre bordô profundo
 .sidebar-brand {
-  font-family: 'Playfair Display', serif !important;
+  font-family: var(--ja-font-display) !important;
   font-size: 1.2rem !important;
   font-weight: 700 !important;
   letter-spacing: .01em !important;
   color: #fff !important;
+  background: var(--ja-brand-deep) !important;
+  border-bottom: 1px solid rgba(255, 240, 230, .08) !important;
+  min-height: 65px;
 }
 
+.sidebar-brand-full,
+.sidebar-brand-narrow {
+  color: #fff !important;
+}
+
+// Lockup: marca + wordmark
+.ja-brand-lockup {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px;
+}
+
+.ja-brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--ja-brand-deep);
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 240, 230, .12);
+  display: block;
+}
+
+.ja-brand-text {
+  font-family: var(--ja-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: .01em;
+  color: #fff;
+}
+
+.sidebar-narrow .ja-brand-text,
+.sidebar-narrow-unfoldable:not(:hover) .ja-brand-text {
+  display: none;
+}
+
+// ─── Wrapper / Header / Footer ────────────────────────────────
 .wrapper {
   width: 100%;
   padding-inline: var(--cui-sidebar-occupy-start, 0) var(--cui-sidebar-occupy-end, 0);
@@ -93,20 +140,50 @@ body {
   }
 }
 
+.header {
+  background: var(--ja-surface-3) !important;
+  border-bottom: 1px solid var(--ja-border) !important;
+  min-height: 65px;
+
+  .header-toggler {
+    color: var(--ja-fg-2);
+    &:hover { background: var(--ja-brand-subtle); }
+  }
+}
+
 .header > .container-fluid + .container-fluid {
   min-height: 3rem;
 }
 
 .footer {
   min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
+  background: var(--ja-surface) !important;
+  border-top: 1px solid var(--ja-border) !important;
+  color: var(--ja-fg-3);
 }
 
+// ─── Brand do header (avatar) ─────────────────────────────────
+.header .c-avatar, .header img.avatar {
+  border-radius: 8px !important;
+  border: 2px solid transparent;
+  transition: border-color var(--ja-dur-base);
+  &:hover { border-color: var(--ja-brand); }
+}
+
+// ─── Dark mode overrides ──────────────────────────────────────
 @include color-mode(dark) {
   body {
-    background-color: #080808;
+    background-color: var(--ja-black-950);
+  }
+
+  .header {
+    background: var(--ja-black-800) !important;
+    border-bottom-color: rgba(255, 240, 230, .06) !important;
   }
 
   .footer {
-    --cui-footer-bg: var(--cui-body-bg);
+    --cui-footer-bg: var(--ja-black-900);
+    background: var(--ja-black-900) !important;
+    border-top-color: rgba(255, 240, 230, .06) !important;
   }
 }

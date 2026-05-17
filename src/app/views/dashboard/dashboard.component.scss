@@ -1,7 +1,264 @@
-:host {
-  .legend {
-    small {
-      font-size: x-small;
+:host { display: block; }
+
+.ja-dashboard {
+  padding-block: 0.5rem 2rem;
+}
+
+// ─── Page header ──────────────────────────────────────────────
+.page-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  margin: 0;
+  font-family: var(--ja-font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  letter-spacing: -.01em;
+  color: var(--cui-body-color);
+}
+
+.page-subtitle {
+  color: var(--ja-fg-3);
+  font-size: .8125rem;
+  margin-top: 2px;
+
+  &::first-letter { text-transform: uppercase; }
+}
+
+.page-actions {
+  display: flex;
+  gap: .5rem;
+}
+
+// ─── KPI card ─────────────────────────────────────────────────
+.kpi {
+  background: var(--ja-surface-3);
+  border: 1px solid var(--ja-border);
+  border-radius: var(--ja-radius);
+  padding: 1rem 1.125rem;
+  box-shadow: var(--ja-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  color: var(--ja-fg-2);
+}
+
+.kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kpi-label {
+  font-size: .6875rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ja-fg-3);
+}
+
+.kpi-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--ja-fg-4);
+}
+
+.kpi-value {
+  font-family: var(--ja-font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  color: var(--ja-fg-1);
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-sub {
+  font-size: .75rem;
+  color: var(--ja-fg-3);
+  margin-top: 2px;
+}
+
+.kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .75rem;
+  font-weight: 600;
+  margin-top: 4px;
+
+  svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  &.up   { color: var(--ja-ok); }
+  &.down { color: var(--ja-red); }
+}
+
+.kpi.accent {
+  .kpi-value { color: var(--ja-brand); }
+  .kpi-icon  { color: var(--ja-brand); }
+}
+
+.kpi.dark {
+  background: var(--ja-brand-deep);
+  border-color: rgba(255, 240, 230, .08);
+  color: #fff;
+
+  .kpi-label { color: rgba(255, 240, 230, .58); }
+  .kpi-value { color: #fff; }
+  .kpi-sub   { color: rgba(255, 240, 230, .60); }
+  .kpi-icon  { color: rgba(255, 240, 230, .65); }
+}
+.kpi.dark.accent .kpi-value { color: #f5b8a4; }
+.kpi.dark.accent .kpi-icon  { color: #f5b8a4; }
+
+// ─── Card header refinements ──────────────────────────────────
+.card-header-flex {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.card-header-meta {
+  font-size: .6875rem;
+  font-weight: 600;
+  color: var(--ja-fg-4);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.card-header-link {
+  font-size: .6875rem;
+  font-weight: 700;
+  color: var(--ja-brand);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  svg { width: 10px; height: 10px; }
+
+  &:hover { color: var(--ja-brand-dim); }
+}
+
+// ─── Color helpers ────────────────────────────────────────────
+.text-brand { color: var(--ja-brand); }
+.text-amber { color: var(--ja-amber); }
+.text-info  { color: var(--ja-info); }
+
+// ─── Bar chart (CSS, sem ChartJS) ─────────────────────────────
+.bar-chart {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: .875rem;
+  height: 180px;
+  align-items: end;
+}
+
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.bar-stack {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+}
+
+.bar {
+  width: 14px;
+  border-radius: 4px 4px 0 0;
+  transition: height .35s var(--ja-ease-out);
+  min-height: 1px;
+}
+
+.bar-ofertas { background: rgba(97, 27, 17, .28); }
+.bar-vendas  { background: var(--ja-ok); }
+
+[data-coreui-theme="dark"] .bar-ofertas { background: rgba(138, 59, 44, .45); }
+
+.bar-label {
+  font-size: .6875rem;
+  color: var(--ja-fg-3);
+  font-weight: 600;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: .75rem;
+  color: var(--ja-fg-3);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .dot.ok    { background: var(--ja-ok); }
+  .dot.brand { background: rgba(97, 27, 17, .28); }
+}
+
+// ─── Tight table variant ──────────────────────────────────────
+.ja-table-tight tbody td {
+  padding: .65rem .9rem !important;
+}
+
+// ─── Action buttons (ghost icon) ──────────────────────────────
+.actions-cell {
+  white-space: nowrap;
+
+  .btn-ghost-icon {
+    background: transparent;
+    border: 0;
+    padding: 6px 8px;
+    color: var(--ja-fg-3);
+    border-radius: 6px;
+    transition: all var(--ja-dur-fast);
+
+    svg { width: 14px; height: 14px; }
+
+    &:hover {
+      background: var(--ja-brand-subtle);
+      color: var(--ja-brand);
+    }
+    &.brand:hover {
+      color: var(--ja-brand);
     }
   }
+}
+
+// ─── Mobile ───────────────────────────────────────────────────
+@media (max-width: 575px) {
+  .page-title { font-size: 1.375rem; }
+  .page-actions { width: 100%; }
+  .page-actions .btn { flex: 1; }
 }

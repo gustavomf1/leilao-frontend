@@ -7,9 +7,12 @@
   visible
 >
   <c-sidebar-header class="border-bottom">
-    <c-sidebar-brand [routerLink]="[]">
-      <svg [class]="{icon: false}" cIcon class="sidebar-brand-full" height="32" name="logo" title="CoreUI Logo"></svg>
-      <svg cIcon class="sidebar-brand-narrow" height="32" name="signet" title="CoreUI Logo"></svg>
+    <c-sidebar-brand [routerLink]="['/dashboard']" class="ja-brand-row">
+      <span class="sidebar-brand-full ja-brand-lockup" title="JA Leilões">
+        <img src="assets/brand/logo-mark.png" alt="JA Leilões" class="ja-brand-mark" />
+        <span class="ja-brand-text">Leilões</span>
+      </span>
+      <img src="assets/brand/logo-mark.png" alt="JA Leilões" class="sidebar-brand-narrow ja-brand-mark" />
     </c-sidebar-brand>
   </c-sidebar-header>
 
