@@ -56,8 +56,15 @@
 
           <c-col xs="12" md="6">
             <div class="mb-3">
-              <label cLabel for="telefone">Telefone *</label>
-              <input cFormControl id="telefone" formControlName="telefone" placeholder="(00) 00000-0000" mask="(00) 00000-0000||(00) 0000-0000"/>
+              <label cLabel>Telefone *</label>
+              <div class="input-group">
+                <select cFormControl formControlName="ddi" style="max-width: 180px;">
+                  <option *ngFor="let op of ddiOptions" [value]="op.value">{{ op.label }}</option>
+                </select>
+                <input cFormControl id="telefone" formControlName="telefone"
+                  [placeholder]="isBrazilianDdi ? '(00) 00000-0000' : 'número'"
+                  [mask]="isBrazilianDdi ? '(00) 00000-0000||(00) 0000-0000' : ''" />
+              </div>
               <c-form-feedback *ngIf="form.get('telefone')?.invalid && form.get('telefone')?.touched" [valid]="false">
                 Telefone é obrigatório
               </c-form-feedback>
