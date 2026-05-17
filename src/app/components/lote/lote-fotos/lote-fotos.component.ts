@@ -1,7 +1,8 @@
 import {
   Component, Input, OnInit, OnChanges, SimpleChanges,
-  ChangeDetectorRef, inject
+  ChangeDetectorRef, DestroyRef, inject
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { UploadQueueService, QueueItem } from '../../../core/services/upload-queue.service';
 import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.service';
@@ -21,8 +22,9 @@ export class LoteFotosComponent implements OnInit, OnChanges {
   private queue = inject(UploadQueueService);
   private fotoService = inject(LoteFotoService);
   private cdr = inject(ChangeDetectorRef);
-  auth = inject(AuthService);
+  private auth = inject(AuthService);
   private alert = inject(AlertService);
+  private destroyRef = inject(DestroyRef);
 
   queueItems: QueueItem[] = [];
   confirmedFotos: LoteFoto[] = [];
@@ -36,7 +38,7 @@ export class LoteFotosComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.queue.queue$.subscribe(items => {
+    this.queue.queue$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(items => {
       this.queueItems = items.filter(i => i.loteId === this.loteId);
       this.cdr.markForCheck();
     });
@@ -54,7 +56,7 @@ export class LoteFotosComponent implements OnInit, OnChanges {
         this.confirmedFotos = fotos;
         this.cdr.markForCheck();
       },
-      error: () => {}
+      error: () => this.alert.error('Erro ao carregar fotos')
     });
   }
 
