@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { vi } from 'vitest';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { LoteFotosComponent } from './lote-fotos.component';
 import { UploadQueueService } from '../../../core/services/upload-queue.service';
@@ -13,25 +14,25 @@ describe('LoteFotosComponent — menu mobile', () => {
   const mockQueue = {
     queue$: new BehaviorSubject<any[]>([]),
     completed$: new Subject<any>(),
-    enqueue: jasmine.createSpy('enqueue'),
-    assignLoteId: jasmine.createSpy('assignLoteId'),
-    retryItem: jasmine.createSpy('retryItem'),
+    enqueue: vi.fn(),
+    assignLoteId: vi.fn(),
+    retryItem: vi.fn(),
   };
 
   const mockFotoService = {
-    listar: jasmine.createSpy('listar').and.returnValue(of([])),
-    deletar: jasmine.createSpy('deletar').and.returnValue(of(null)),
+    listar: vi.fn().mockReturnValue(of([])),
+    deletar: vi.fn().mockReturnValue(of(null)),
   };
 
   const mockAuth = {
-    isAdmin: jasmine.createSpy('isAdmin').and.returnValue(false),
-    hasPermission: jasmine.createSpy('hasPermission').and.returnValue(false),
-    isManejo: jasmine.createSpy('isManejo').and.returnValue(true),
+    isAdmin: vi.fn().mockReturnValue(false),
+    hasPermission: vi.fn().mockReturnValue(false),
+    isManejo: vi.fn().mockReturnValue(true),
   };
 
   const mockAlert = {
-    error: jasmine.createSpy('error'),
-    confirm: jasmine.createSpy('confirm'),
+    error: vi.fn(),
+    confirm: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -51,29 +52,28 @@ describe('LoteFotosComponent — menu mobile', () => {
   });
 
   it('uploadMenuAberto começa como false', () => {
-    expect(component.uploadMenuAberto).toBeFalse();
+    expect(component.uploadMenuAberto).toBe(false);
   });
 
   it('toggleUploadMenu abre o menu e chama stopPropagation', () => {
-    const event = new MouseEvent('click');
-    spyOn(event, 'stopPropagation');
+    const stopPropagation = vi.fn();
+    const event = { stopPropagation } as unknown as MouseEvent;
     component.toggleUploadMenu(event);
-    expect(component.uploadMenuAberto).toBeTrue();
-    expect(event.stopPropagation).toHaveBeenCalled();
+    expect(component.uploadMenuAberto).toBe(true);
+    expect(stopPropagation).toHaveBeenCalled();
   });
 
   it('toggleUploadMenu fecha o menu quando já está aberto', () => {
     component.uploadMenuAberto = true;
-    const event = new MouseEvent('click');
-    spyOn(event, 'stopPropagation');
+    const event = { stopPropagation: vi.fn() } as unknown as MouseEvent;
     component.toggleUploadMenu(event);
-    expect(component.uploadMenuAberto).toBeFalse();
+    expect(component.uploadMenuAberto).toBe(false);
   });
 
   it('fecharUploadMenu define uploadMenuAberto como false', () => {
     component.uploadMenuAberto = true;
     component.fecharUploadMenu();
-    expect(component.uploadMenuAberto).toBeFalse();
+    expect(component.uploadMenuAberto).toBe(false);
   });
 
   it('onFileSelected fecha o menu após selecionar arquivos', () => {
@@ -83,6 +83,6 @@ describe('LoteFotosComponent — menu mobile', () => {
     Object.defineProperty(input, 'files', { value: [file] });
     const event = { target: input } as unknown as Event;
     component.onFileSelected(event);
-    expect(component.uploadMenuAberto).toBeFalse();
+    expect(component.uploadMenuAberto).toBe(false);
   });
 });
