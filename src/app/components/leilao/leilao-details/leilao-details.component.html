@@ -136,7 +136,11 @@
               Por lote
             </button>
           </div>
-          <span class="form-hint">Valor cobrado por animal ou por lote vendido</span>
+          <span class="form-hint">
+            Taxa Base e GTA são cobrados
+            <strong>{{ form.get('taxaPor')?.value === 'ANIMAL' ? 'por cabeça' : 'por lote' }}</strong>
+            vendido. Comissões % incidem sobre o preço de venda.
+          </span>
         </div>
 
         <div class="ja-form-grid">
@@ -146,10 +150,11 @@
             <div class="ja-readonly-display" [class.empty]="!taxaPadrao">
               <ng-container *ngIf="taxaPadrao; else semTaxa">
                 <span class="prefix">R$</span>{{ taxaPadrao.taxa | number: '1.2-2':'pt-BR' }}
+                <span class="suffix">/{{ form.get('taxaPor')?.value === 'ANIMAL' ? 'animal' : 'lote' }}</span>
               </ng-container>
               <ng-template #semTaxa>Nenhuma taxa vigente</ng-template>
             </div>
-            <span class="form-hint">Valor fixo (configurado em Taxa Padrão)</span>
+            <span class="form-hint">Valor fixo configurado em Taxa Padrão</span>
           </div>
 
           <div class="ja-form-field">
@@ -157,6 +162,7 @@
             <div class="ja-readonly-display" [class.empty]="!taxaPadrao">
               <ng-container *ngIf="taxaPadrao; else semGta">
                 <span class="prefix">R$</span>{{ taxaPadrao.gta | number: '1.2-2':'pt-BR' }}
+                <span class="suffix">/{{ form.get('taxaPor')?.value === 'ANIMAL' ? 'animal' : 'lote' }}</span>
               </ng-container>
               <ng-template #semGta>—</ng-template>
             </div>

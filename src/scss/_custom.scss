@@ -391,6 +391,39 @@ textarea.form-control {
   min-height: auto;
 }
 
+// ─── Select customizado (chevron bordô, warm bg) ──────────────
+// Native appearance removida pra matchear visual dos inputs
+select.form-control,
+select.form-select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-color: var(--ja-surface-3) !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b5247'%3e%3cpath fill-rule='evenodd' d='M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z' clip-rule='evenodd'/%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
+  padding-right: 36px !important;
+  cursor: pointer;
+}
+
+[data-coreui-theme="dark"] select.form-control,
+[data-coreui-theme="dark"] select.form-select {
+  background-color: var(--ja-surface-2) !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23f5ebe2' fill-opacity='0.72'%3e%3cpath fill-rule='evenodd' d='M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z' clip-rule='evenodd'/%3e%3c/svg%3e") !important;
+}
+
+// Opções dentro do select — fundo warm em dark
+select option {
+  background: var(--ja-surface-3);
+  color: var(--ja-fg-1);
+}
+
+[data-coreui-theme="dark"] select option {
+  background: var(--ja-black-800);
+  color: var(--ja-fg-1);
+}
+
 .form-label {
   font-size: 11px;
   font-weight: 600;
@@ -753,6 +786,14 @@ textarea.form-control {
     color: var(--ja-fg-4);
     margin-right: 4px;
     font-weight: 400;
+  }
+
+  .suffix {
+    color: var(--ja-fg-4);
+    margin-left: 6px;
+    font-weight: 400;
+    font-size: 12px;
+    font-variant-numeric: normal;
   }
 }
 
