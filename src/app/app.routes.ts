@@ -284,6 +284,20 @@ export const routes: Routes = [
           { path: '', redirectTo: 'fatura-venda', pathMatch: 'full' },
         ],
       },
+       {
+        path: 'catalogos',
+        children: [
+          {
+            path: 'catalogo',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/catalogos/catalogo/catalogo.component').then(
+                (m) => m.CatalogoComponent
+              ),
+          },
+          { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
+        ],
+      },
       {
         path: 'funcionarios',
         children: [

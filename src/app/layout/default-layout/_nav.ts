@@ -360,6 +360,23 @@ export const navItemsLeilao: INavData[] = [
       },
     ],
   },
+  // ─── Catalogos ───────────────────────────────────────────────
+  {
+    title: true,
+    name: 'Catalogos',
+  },
+  {
+    name: 'Catalogos',
+    url: '/catalogos',
+    iconComponent: { name: 'cil-description' },
+    children: [
+      {
+        name: 'Catalogo',
+        url: '/catalogos/catalogo',
+        icon: 'nav-icon-bullet',
+      },
+    ],
+  },
 
   // ─── Comunicação ──────────────────────────────────────────────
   {
