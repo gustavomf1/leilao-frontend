@@ -1,123 +1,131 @@
-<div class="container-lg px-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">{{ isEdicao ? 'Editar Condição' : 'Nova Condição' }}</h2>
-    <a routerLink="/condicoes/lista" cButton color="secondary" size="sm" variant="ghost">
-      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
-    </a>
+<div class="container-lg px-4 ja-form-page">
+
+  <div class="ja-form-page-header">
+    <div>
+      <div class="ja-breadcrumb-overline">
+        <a routerLink="/condicoes/lista">Condições</a>
+        <span class="sep">›</span>
+        <span class="current">{{ isEdicao ? 'Editar' : 'Nova' }}</span>
+      </div>
+      <h1 class="ja-page-title">{{ isEdicao ? 'Editar Condição' : 'Cadastrar Condição' }}</h1>
+    </div>
+    <div class="ja-form-actions">
+      <a routerLink="/condicoes/lista" cButton color="secondary" variant="ghost">
+        <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+      </a>
+      <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+        <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+        {{ isEdicao ? 'Salvar Alterações' : 'Salvar Condição' }}
+      </button>
+    </div>
   </div>
 
-  <c-card>
-    <c-card-header>
-      <strong>Condições de Pagamento</strong>
-    </c-card-header>
-    <c-card-body>
-      <form [formGroup]="form" (ngSubmit)="salvar()">
+  <form [formGroup]="form" (ngSubmit)="salvar()">
 
-        <!-- Descrição -->
-        <c-row>
-          <c-col [md]="12">
-            <div class="mb-3">
-              <label cLabel for="descricao">Descrição *</label>
-              <input cFormControl id="descricao" formControlName="descricao" placeholder="Ex: 10 DIAS DIRETO" />
-              <c-form-feedback *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched" [valid]="false">
-                Descrição é obrigatória
-              </c-form-feedback>
-            </div>
-          </c-col>
-        </c-row>
-
-        <!-- Captação, Parcelas, Qtd Dias, % Desconto -->
-        <c-row>
-          <c-col [md]="3">
-            <div class="mb-3">
-              <label cLabel for="captacao">Captação</label>
-              <input cFormControl type="number" id="captacao" formControlName="captacao" />
-            </div>
-          </c-col>
-
-          <c-col [md]="3">
-            <div class="mb-3">
-              <label cLabel for="parcelas">Parcelas</label>
-              <input cFormControl type="number" id="parcelas" formControlName="parcelas" />
-            </div>
-          </c-col>
-
-          <c-col [md]="3">
-            <div class="mb-3">
-              <label cLabel for="qtdDias">Qtd Dias</label>
-              <input cFormControl type="number" id="qtdDias" formControlName="qtdDias" />
-            </div>
-          </c-col>
-
-          <c-col [md]="3">
-            <div class="mb-3">
-              <label cLabel for="percentualDesconto">% Desconto</label>
-              <input cFormControl type="number" id="percentualDesconto" formControlName="percentualDesconto" />
-            </div>
-          </c-col>
-        </c-row>
-
-        <!-- Opções: Com Entrada / Mesmo Dia -->
-        <c-row>
-          <c-col [md]="12">
-            <div class="mb-3">
-              <label cLabel class="d-block mb-2">Opções</label>
-              <div class="d-flex gap-4">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="comEntrada"
-                    [checked]="form.get('comEntrada')?.value === 'S'"
-                    (change)="form.get('comEntrada')?.setValue($any($event.target).checked ? 'S' : 'N')" />
-                  <label class="form-check-label" for="comEntrada">Com Entrada</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="mesmoDia"
-                    [checked]="form.get('mesmoDia')?.value === 'S'"
-                    (change)="form.get('mesmoDia')?.setValue($any($event.target).checked ? 'S' : 'N')" />
-                  <label class="form-check-label" for="mesmoDia">Mesmo Dia</label>
-                </div>
-              </div>
-            </div>
-          </c-col>
-        </c-row>
-
-        <!-- Tipo -->
-        <c-row>
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel class="d-block mb-2">Tipo</label>
-              <div class="d-flex flex-wrap gap-3">
-                <div class="form-check" *ngFor="let tipo of tiposCondicao">
-                  <input class="form-check-input" type="radio" formControlName="tipoCondicao"
-                    [id]="'tipo_' + tipo" [value]="tipo" />
-                  <label class="form-check-label" [for]="'tipo_' + tipo">{{ tipo }}</label>
-                </div>
-              </div>
-            </div>
-          </c-col>
-
-          <!-- Aceite Integrado (Comissão Venda) -->
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel class="d-block mb-2">Aceite Integrado (Comissão Venda)</label>
-              <div class="d-flex flex-column gap-2">
-                <div class="form-check" *ngFor="let aceite of aceitesIntegrado">
-                  <input class="form-check-input" type="radio" formControlName="aceiteIntegrado"
-                    [id]="'aceite_' + aceite.value" [value]="aceite.value" />
-                  <label class="form-check-label" [for]="'aceite_' + aceite.value">{{ aceite.label }}</label>
-                </div>
-              </div>
-            </div>
-          </c-col>
-        </c-row>
-
-        <div class="d-flex gap-2 mt-3">
-          <button type="submit" cButton color="primary" [disabled]="form.invalid">
-            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
-          </button>
-          <a routerLink="/condicoes/lista" cButton color="secondary" variant="ghost">Cancelar</a>
+    <!-- Identificação -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">Identificação</div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
+          <div class="ja-form-field field-full">
+            <label cLabel for="descricao">Descrição *</label>
+            <input cFormControl id="descricao" formControlName="descricao"
+                   placeholder="Ex: 10 DIAS DIRETO" />
+            <span class="form-error" *ngIf="form.get('descricao')?.invalid && form.get('descricao')?.touched">
+              Descrição é obrigatória
+            </span>
+          </div>
         </div>
-      </form>
-    </c-card-body>
-  </c-card>
+      </div>
+    </section>
+
+    <!-- Parâmetros financeiros -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">Parâmetros Financeiros</div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
+
+          <div class="ja-form-field">
+            <label cLabel for="captacao">Captação</label>
+            <input cFormControl id="captacao" type="number" formControlName="captacao"
+                   placeholder="Dias de captação" />
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="parcelas">Parcelas</label>
+            <input cFormControl id="parcelas" type="number" formControlName="parcelas"
+                   placeholder="Nº de parcelas" />
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="qtdDias">Quantidade de Dias</label>
+            <input cFormControl id="qtdDias" type="number" formControlName="qtdDias"
+                   placeholder="Dias entre parcelas" />
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="percentualDesconto">% Desconto</label>
+            <input cFormControl id="percentualDesconto" type="number" formControlName="percentualDesconto"
+                   placeholder="0,00" step="0.01" />
+          </div>
+
+        </div>
+
+        <div class="ja-form-field mt-3">
+          <label cLabel>Opções</label>
+          <div class="ja-toggle-group" style="max-width: 420px;">
+            <button type="button" class="ja-toggle-pill"
+                    [class.active]="form.get('comEntrada')?.value === 'S'"
+                    (click)="form.get('comEntrada')?.setValue(form.get('comEntrada')?.value === 'S' ? 'N' : 'S')">
+              Com entrada
+            </button>
+            <button type="button" class="ja-toggle-pill"
+                    [class.active]="form.get('mesmoDia')?.value === 'S'"
+                    (click)="form.get('mesmoDia')?.setValue(form.get('mesmoDia')?.value === 'S' ? 'N' : 'S')">
+              Mesmo dia
+            </button>
+          </div>
+          <span class="form-hint">Toque para alternar cada opção</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Classificação -->
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">Classificação</div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
+
+          <div class="ja-form-field">
+            <label cLabel for="tipoCondicao">Tipo</label>
+            <select cFormControl id="tipoCondicao" formControlName="tipoCondicao">
+              <option [ngValue]="null">— Sem tipo específico —</option>
+              <option *ngFor="let tipo of tiposCondicao" [value]="tipo">{{ tipo }}</option>
+            </select>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="aceiteIntegrado">Aceite Integrado (Comissão Venda)</label>
+            <select cFormControl id="aceiteIntegrado" formControlName="aceiteIntegrado">
+              <option *ngFor="let aceite of aceitesIntegrado" [value]="aceite.value">{{ aceite.label }}</option>
+            </select>
+            <span class="form-hint">Como descontar a comissão de venda nas parcelas</span>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </form>
+
+  <div class="ja-form-actions-sticky">
+    <a routerLink="/condicoes/lista" cButton color="secondary" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+    </a>
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Condição' }}
+    </button>
+  </div>
+
 </div>

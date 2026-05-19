@@ -796,6 +796,187 @@ select option {
   .ja-form-actions-sticky { left: 0; }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// JA-DRAWER PATTERN — painel lateral 480px com overlay
+// Usar como alternativa a modais grandes (ex: seletor de Condição)
+// ═══════════════════════════════════════════════════════════════
+.ja-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(21, 11, 7, .55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ja-dur-base);
+
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.ja-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 480px;
+  max-width: 100vw;
+  background: var(--ja-surface-3);
+  border-left: 1px solid var(--ja-border);
+  box-shadow: -16px 0 48px rgba(0, 0, 0, .25);
+  z-index: 1051;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--ja-dur-slow) var(--ja-ease-out);
+
+  &.open { transform: translateX(0); }
+}
+
+.ja-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ja-border);
+  background: var(--ja-surface-3);
+
+  h3 {
+    font-family: var(--ja-font-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ja-fg-1);
+    margin: 0;
+  }
+
+  .ja-drawer-close {
+    background: transparent;
+    border: 0;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--ja-radius-sm);
+    color: var(--ja-fg-3);
+    cursor: pointer;
+    transition: all var(--ja-dur-fast);
+
+    &:hover { background: var(--ja-brand-subtle); color: var(--ja-brand); }
+  }
+}
+
+.ja-drawer-search {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--ja-border);
+
+  input {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 12px;
+    background: var(--ja-surface-2);
+    border: 1px solid var(--ja-border-strong);
+    border-radius: var(--ja-radius-sm);
+    color: var(--ja-fg-1);
+    font-size: 14px;
+
+    &::placeholder { color: var(--ja-fg-4); }
+    &:focus {
+      outline: none;
+      border-color: var(--ja-brand);
+      box-shadow: var(--ja-glow-brand);
+    }
+  }
+}
+
+.ja-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 20px;
+
+  // Scrollbar warm-tinted
+  &::-webkit-scrollbar { width: 8px; }
+  &::-webkit-scrollbar-thumb {
+    background: var(--ja-border-strong);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover { background: var(--ja-brand-soft); }
+}
+
+.ja-drawer-card {
+  background: var(--ja-surface-3);
+  border: 1.5px solid var(--ja-border);
+  border-radius: var(--ja-radius);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all var(--ja-dur-fast);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &:hover {
+    border-color: var(--ja-brand);
+    background: var(--ja-brand-subtle);
+    transform: translateY(-1px);
+  }
+
+  &.selected {
+    border-color: var(--ja-brand);
+    background: var(--ja-brand-subtle);
+    box-shadow: 0 0 0 2px var(--ja-brand-glow);
+  }
+
+  .ja-drawer-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .ja-drawer-card-title {
+    font-weight: 700;
+    color: var(--ja-fg-1);
+    font-size: 14px;
+    line-height: 1.3;
+
+    .id-prefix {
+      color: var(--ja-fg-4);
+      font-weight: 600;
+      margin-right: 6px;
+    }
+  }
+
+  .ja-drawer-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+  }
+}
+
+.ja-drawer-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--ja-fg-4);
+  font-size: 13px;
+}
+
+.ja-drawer-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--ja-border);
+  background: var(--ja-surface-3);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 575px) {
+  .ja-drawer-panel { width: 100vw; border-left: 0; }
+}
+
 // ─── Grid 3 colunas (Local|Cidade|UF) ─────────────────────────
 .ja-form-grid-3 {
   display: grid;

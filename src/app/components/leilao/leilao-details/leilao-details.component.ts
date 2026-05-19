@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   CardModule, ButtonDirective, FormModule, GridModule,
-  ModalModule, TableModule, TableDirective
+  ModalModule
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSave, faArrowLeft, faSearch, faCheck, faTimes, faGavel, faPercent, faFileLines, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +15,7 @@ import { EspecieService } from '../../../core/services/especie.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Taxas, Condicoes, Especie, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
+import { UF_LIST } from '../../../core/constants/uf.constant';
 
 @Component({
   selector: 'app-leiloes-details',
@@ -22,7 +23,7 @@ import { Taxas, Condicoes, Especie, TipoLeilao, TIPO_LEILAO_LABELS } from '../..
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
-    ModalModule, TableModule, TableDirective,
+    ModalModule,
     FontAwesomeModule
   ],
   templateUrl: './leilao-details.component.html',
@@ -56,6 +57,7 @@ export class LeiloesDetailsComponent implements OnInit {
   condicoes: Condicoes[] = [];
   especies: Especie[] = [];
   tiposLeilao = Object.entries(TIPO_LEILAO_LABELS).map(([value, label]) => ({ value: value as TipoLeilao, label }));
+  ufs = UF_LIST;
 
   // Selecionados
   condicaoSelecionada?: Condicoes;

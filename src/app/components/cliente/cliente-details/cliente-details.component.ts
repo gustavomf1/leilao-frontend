@@ -12,6 +12,7 @@ import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { NgxMaskDirective } from 'ngx-mask';
+import { UF_LIST } from '../../../core/constants/uf.constant';
 
 @Component({
   selector: 'app-clientes-details',
@@ -35,6 +36,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   faArrowLeft = faArrowLeft;
   faUser = faUser;
   faMapMarker = faMapMarkerAlt;
+  ufs = UF_LIST;
   form!: FormGroup;
   isEdicao = false;
   private entityId?: number;

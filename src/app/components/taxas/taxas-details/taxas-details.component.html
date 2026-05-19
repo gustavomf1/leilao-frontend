@@ -1,71 +1,99 @@
-<div class="container-lg px-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Nova Taxa Padrão</h2>
-    <a routerLink="/taxas/lista" cButton color="secondary" size="sm" variant="ghost">
-      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
-    </a>
+<div class="container-lg px-4 ja-form-page">
+
+  <div class="ja-form-page-header">
+    <div>
+      <div class="ja-breadcrumb-overline">
+        <a routerLink="/taxas/lista">Taxa Padrão</a>
+        <span class="sep">›</span>
+        <span class="current">{{ isEdicao ? 'Editar' : 'Nova' }}</span>
+      </div>
+      <h1 class="ja-page-title">{{ isEdicao ? 'Editar Taxa Padrão' : 'Cadastrar Taxa Padrão' }}</h1>
+    </div>
+    <div class="ja-form-actions">
+      <a routerLink="/taxas/lista" cButton color="secondary" variant="ghost">
+        <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+      </a>
+      <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+        <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+        {{ isEdicao ? 'Salvar Alterações' : 'Salvar Taxa' }}
+      </button>
+    </div>
   </div>
 
-  <c-card>
-    <c-card-header>
-      <strong>Dados da Taxa Padrão</strong>
-    </c-card-header>
-    <c-card-body>
-      <form [formGroup]="form" (ngSubmit)="salvar()">
-        <c-row>
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="taxa">Taxa (R$) *</label>
-              <input cFormControl id="taxa" type="number" formControlName="taxa" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('taxa')?.invalid && form.get('taxa')?.touched" [valid]="false">
-                Taxa é obrigatória
-              </c-form-feedback>
-            </div>
-          </c-col>
+  <form [formGroup]="form" (ngSubmit)="salvar()">
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="gta">GTA (R$) *</label>
-              <input cFormControl id="gta" type="number" formControlName="gta" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('gta')?.invalid && form.get('gta')?.touched" [valid]="false">
-                GTA é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">Valores Fixos</div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="comissaoVenda">Comissão Venda (%) *</label>
-              <input cFormControl id="comissaoVenda" type="number" formControlName="comissaoVenda" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('comissaoVenda')?.invalid && form.get('comissaoVenda')?.touched" [valid]="false">
-                Comissão de venda é obrigatória
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="taxa">Taxa Base (R$) *</label>
+            <input cFormControl id="taxa" type="number" formControlName="taxa"
+                   placeholder="0,00" step="0.01" min="0" />
+            <span class="form-hint">Valor fixo cobrado por animal/lote vendido</span>
+            <span class="form-error" *ngIf="form.get('taxa')?.invalid && form.get('taxa')?.touched">
+              Taxa é obrigatória (≥ 0)
+            </span>
+          </div>
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="comissaoCompra">Comissão Compra (%) *</label>
-              <input cFormControl id="comissaoCompra" type="number" formControlName="comissaoCompra" placeholder="0.00" step="0.01" />
-              <c-form-feedback *ngIf="form.get('comissaoCompra')?.invalid && form.get('comissaoCompra')?.touched" [valid]="false">
-                Comissão de compra é obrigatória
-              </c-form-feedback>
-            </div>
-          </c-col>
-        </c-row>
+          <div class="ja-form-field">
+            <label cLabel for="gta">GTA (R$) *</label>
+            <input cFormControl id="gta" type="number" formControlName="gta"
+                   placeholder="0,00" step="0.01" min="0" />
+            <span class="form-hint">Guia de Trânsito Animal</span>
+            <span class="form-error" *ngIf="form.get('gta')?.invalid && form.get('gta')?.touched">
+              GTA é obrigatório (≥ 0)
+            </span>
+          </div>
 
-        <p class="text-body-secondary small mb-0">
+        </div>
+      </div>
+    </section>
+
+    <section class="ja-form-section">
+      <div class="ja-form-section-title">Comissões Percentuais</div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
+
+          <div class="ja-form-field">
+            <label cLabel for="comissaoVenda">Comissão sobre Venda (%) *</label>
+            <input cFormControl id="comissaoVenda" type="number" formControlName="comissaoVenda"
+                   placeholder="2,50" step="0.01" min="0" />
+            <span class="form-hint">% sobre o preço de venda (pago pelo vendedor)</span>
+            <span class="form-error" *ngIf="form.get('comissaoVenda')?.invalid && form.get('comissaoVenda')?.touched">
+              Comissão sobre venda é obrigatória (≥ 0)
+            </span>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="comissaoCompra">Comissão sobre Compra (%) *</label>
+            <input cFormControl id="comissaoCompra" type="number" formControlName="comissaoCompra"
+                   placeholder="1,50" step="0.01" min="0" />
+            <span class="form-hint">% sobre o preço de venda (pago pelo comprador)</span>
+            <span class="form-error" *ngIf="form.get('comissaoCompra')?.invalid && form.get('comissaoCompra')?.touched">
+              Comissão sobre compra é obrigatória (≥ 0)
+            </span>
+          </div>
+
+        </div>
+
+        <p class="form-hint mt-3">
           Ao cadastrar, uma nova taxa padrão será criada. Novos leilões podem usar essa taxa como vínculo ou como fallback automático.
         </p>
+      </div>
+    </section>
 
-        <div class="d-flex gap-2 mt-3">
-          <button type="submit" cButton color="primary" [disabled]="form.invalid">
-            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-            Cadastrar
-          </button>
-          <a routerLink="/taxas/lista" cButton color="secondary" variant="ghost">Cancelar</a>
-        </div>
-      </form>
-    </c-card-body>
-  </c-card>
+  </form>
+
+  <div class="ja-form-actions-sticky">
+    <a routerLink="/taxas/lista" cButton color="secondary" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+    </a>
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Taxa' }}
+    </button>
+  </div>
+
 </div>

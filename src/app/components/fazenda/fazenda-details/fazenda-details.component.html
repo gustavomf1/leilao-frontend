@@ -93,10 +93,12 @@
 
           <div class="ja-form-field">
             <label cLabel for="uf">UF *</label>
-            <input cFormControl id="uf" formControlName="uf" placeholder="SP" maxlength="2"
-                   style="text-transform: uppercase;" />
+            <select cFormControl id="uf" formControlName="uf">
+              <option value="" disabled>Selecione...</option>
+              <option *ngFor="let uf of ufs" [value]="uf">{{ uf }}</option>
+            </select>
             <span class="form-error" *ngIf="form.get('uf')?.invalid && form.get('uf')?.touched">
-              UF é obrigatória (2 letras)
+              UF é obrigatória
             </span>
           </div>
 

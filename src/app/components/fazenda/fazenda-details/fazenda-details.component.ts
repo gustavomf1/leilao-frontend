@@ -13,6 +13,7 @@ import { SubformComponent } from '../../../shared/components/subform/subform.com
 import { ClientePickerComponent } from '../../../shared/components/cliente-picker/cliente-picker.component';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { NgxMaskDirective } from 'ngx-mask';
+import { UF_LIST } from '../../../core/constants/uf.constant';
 
 @Component({
   selector: 'app-fazendas-details',
@@ -37,6 +38,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
   faArrowLeft = faArrowLeft;
   faHome = faHome;
   faMapMarker = faMapMarkerAlt;
+  ufs = UF_LIST;
   form!: FormGroup;
   isEdicao = false;
   private entityId?: number;
