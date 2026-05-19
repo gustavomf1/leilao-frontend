@@ -108,7 +108,16 @@
         <!-- Raça -->
         <div class="field-wrap field-wrap--md">
           <label class="field-label">Raça <span class="req">*</span></label>
-          <input class="field-input" formControlName="raca" placeholder="Ex: Nelore, Angus..." />
+          <div class="select-wrap">
+            <select class="field-select" formControlName="raca">
+              <option value="">Selecione a raça...</option>
+              <option *ngFor="let r of racas" [value]="r.nome">{{ r.nome }}</option>
+            </select>
+            <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
           <span class="field-error" *ngIf="form.get('raca')?.invalid && form.get('raca')?.touched">
             Campo obrigatório
           </span>

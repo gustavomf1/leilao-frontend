@@ -127,6 +127,14 @@ export interface Especie {
   inativo?: string;
 }
 
+export interface Raca {
+  id?: number;
+  nome: string;
+  especieId: number;
+  especieNome?: string;
+  inativo?: string;
+}
+
 export interface Taxas {
   id?: number;
   taxa: number;
@@ -165,6 +173,7 @@ export interface Lote {
   peso: number;
   raca: string;
   especie: string;
+  especieId?: number;
   categoriaAnimal: string;
   obs: string;
   leilaoId?: number;

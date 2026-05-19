@@ -12,9 +12,10 @@ import { LoteService } from '../../../core/services/lote.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { EspecieService } from '../../../core/services/especie.service';
+import { RacaService } from '../../../core/services/raca.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { ClienteService } from '../../../core/services/cliente.service';
-import { Especie, LeilaoDetalhes, Cliente } from '../../../core/models/entities.model';
+import { Especie, Raca, LeilaoDetalhes, Cliente } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-lotes-details',
@@ -34,6 +35,7 @@ export class LotesDetailsComponent implements OnInit {
   private alert = inject(AlertService);
   auth = inject(AuthService);
   private especieService = inject(EspecieService);
+  private racaService = inject(RacaService);
   private leilaoService = inject(LeilaoService);
   private clienteService = inject(ClienteService);
 
@@ -52,6 +54,7 @@ export class LotesDetailsComponent implements OnInit {
   origemLeilaoId?: number;
 
   especies: Especie[] = [];
+  racas: Raca[] = [];
   leiloes: LeilaoDetalhes[] = [];
   clientes: Cliente[] = [];
   clientesFiltrados: Cliente[] = [];
@@ -176,6 +179,10 @@ export class LotesDetailsComponent implements OnInit {
 
     this.form.get('sexo')?.valueChanges.subscribe(() => atualizarCategoria());
     this.form.get('idadeEmMeses')?.valueChanges.subscribe(() => atualizarCategoria());
+    this.form.get('especieId')?.valueChanges.subscribe((especieId) => {
+      this.carregarRacasPorEspecie(especieId);
+      this.form.get('raca')?.setValue('');
+    });
 
     if (leilaoIdParam) {
       this.form.get('leilaoId')?.setValue(+leilaoIdParam);
@@ -220,7 +227,10 @@ export class LotesDetailsComponent implements OnInit {
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => {
           this.loteCarregado = data;
-          this.form.patchValue(data);
+          this.form.patchValue(data, { emitEvent: false });
+          if (data.especieId) {
+            this.carregarRacasPorEspecie(data.especieId, data.raca);
+          }
           this.restaurarSelecoes();
           this.carregarTaxaDoLeilao(data.leilaoId);
         },
@@ -552,6 +562,25 @@ export class LotesDetailsComponent implements OnInit {
           this.recolocacaoComissaoComprador = comissaoCompraPadrao;
         this.cdr.markForCheck();
       }
+    });
+  }
+
+  private carregarRacasPorEspecie(especieId?: number | null, racaAtual?: string | null) {
+    if (!especieId) {
+      this.racas = [];
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.racaService.listarPorEspecie(especieId).subscribe({
+      next: (racas) => {
+        this.racas = racas;
+        if (racaAtual && !racas.some(r => r.nome === racaAtual)) {
+          this.racas = [{ nome: racaAtual, especieId }, ...racas];
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar racas')
     });
   }
 

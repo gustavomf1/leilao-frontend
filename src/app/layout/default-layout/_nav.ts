@@ -315,6 +315,26 @@ export const navItemsLeilao: INavData[] = [
       }
     ]
   },
+  {
+    name: 'Raças',
+    url: '/racas',
+    iconComponent: { name: 'cil-animal' },
+    attributes: { ambiente: 'ESPECIES' },
+    children: [
+      {
+        name: 'Listar Raças',
+        url: '/racas/lista',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'VISUALIZAR' }
+      },
+      {
+        name: 'Cadastrar Raça',
+        url: '/racas/cadastrar',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'CRIAR' }
+      }
+    ]
+  },
 
   // ─── Movimentação ─────────────────────────────────────────────
   {
