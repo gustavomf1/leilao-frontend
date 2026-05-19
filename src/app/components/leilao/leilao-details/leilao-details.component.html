@@ -263,9 +263,16 @@
     </button>
   </div>
 
+  <div class="ja-drawer-search">
+    <input type="text"
+           [(ngModel)]="condicaoFiltro"
+           [ngModelOptions]="{ standalone: true }"
+           placeholder="Buscar por descrição, tipo ou ID..." />
+  </div>
+
   <div class="ja-drawer-body">
     <div class="ja-drawer-card"
-         *ngFor="let c of condicoes"
+         *ngFor="let c of condicoesFiltradas"
          [class.selected]="condicaoSelecionada?.id === c.id"
          (click)="selecionarCondicao(c)">
       <div class="ja-drawer-card-head">
@@ -281,9 +288,14 @@
       </div>
     </div>
 
-    <div class="ja-drawer-empty" *ngIf="!condicoes?.length">
-      Nenhuma condição cadastrada.<br>
-      <a routerLink="/condicoes/cadastrar">Cadastrar nova</a>
+    <div class="ja-drawer-empty" *ngIf="condicoesFiltradas.length === 0">
+      <ng-container *ngIf="!condicoes?.length; else semResultados">
+        Nenhuma condição cadastrada.<br>
+        <a routerLink="/condicoes/cadastrar">Cadastrar nova</a>
+      </ng-container>
+      <ng-template #semResultados>
+        Nenhum resultado para "<strong>{{ condicaoFiltro }}</strong>"
+      </ng-template>
     </div>
   </div>
 

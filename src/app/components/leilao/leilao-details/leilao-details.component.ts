@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   CardModule, ButtonDirective, FormModule, GridModule,
   ModalModule
@@ -21,7 +21,7 @@ import { UF_LIST } from '../../../core/constants/uf.constant';
   selector: 'app-leiloes-details',
   standalone: true,
   imports: [
-    CommonModule, RouterModule, ReactiveFormsModule,
+    CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
     ModalModule,
     FontAwesomeModule
@@ -62,8 +62,19 @@ export class LeiloesDetailsComponent implements OnInit {
   // Selecionados
   condicaoSelecionada?: Condicoes;
 
-  // Modais
+  // Drawer (era modal)
   modalCondicaoAberto = false;
+  condicaoFiltro = '';
+
+  get condicoesFiltradas(): Condicoes[] {
+    const termo = this.condicaoFiltro.trim().toLowerCase();
+    if (!termo) return this.condicoes;
+    return this.condicoes.filter(c =>
+      c.descricao?.toLowerCase().includes(termo) ||
+      c.tipoCondicao?.toLowerCase().includes(termo) ||
+      String(c.id).includes(termo)
+    );
+  }
 
   constructor(
     private fb: FormBuilder,
