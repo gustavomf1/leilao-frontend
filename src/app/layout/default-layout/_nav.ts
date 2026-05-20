@@ -315,6 +315,26 @@ export const navItemsLeilao: INavData[] = [
       }
     ]
   },
+  {
+    name: 'Raças',
+    url: '/racas',
+    iconComponent: { name: 'cil-animal' },
+    attributes: { ambiente: 'ESPECIES' },
+    children: [
+      {
+        name: 'Listar Raças',
+        url: '/racas/lista',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'VISUALIZAR' }
+      },
+      {
+        name: 'Cadastrar Raça',
+        url: '/racas/cadastrar',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'CRIAR' }
+      }
+    ]
+  },
 
   // ─── Movimentação ─────────────────────────────────────────────
   {
@@ -356,6 +376,23 @@ export const navItemsLeilao: INavData[] = [
       {
         name: 'Fatura de Venda',
         url: '/relatorios/fatura-venda',
+        icon: 'nav-icon-bullet',
+      },
+    ],
+  },
+  // ─── Catalogos ───────────────────────────────────────────────
+  {
+    title: true,
+    name: 'Catalogos',
+  },
+  {
+    name: 'Catalogos',
+    url: '/catalogos',
+    iconComponent: { name: 'cil-description' },
+    children: [
+      {
+        name: 'Catalogo',
+        url: '/catalogos/catalogo',
         icon: 'nav-icon-bullet',
       },
     ],

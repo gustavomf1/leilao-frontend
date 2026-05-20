@@ -1,0 +1,50 @@
+<div class="container-lg px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">{{ isEdicao ? 'Editar Raca' : 'Nova Raca' }}</h2>
+    <a routerLink="/racas/lista" cButton color="secondary" size="sm" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
+    </a>
+  </div>
+
+  <c-card>
+    <c-card-header>
+      <strong>Dados da Raca</strong>
+    </c-card-header>
+    <c-card-body>
+      <form [formGroup]="form" (ngSubmit)="salvar()">
+        <c-row>
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="nome">Nome *</label>
+              <input cFormControl id="nome" formControlName="nome" placeholder="Ex: NELORE" />
+              <c-form-feedback *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" [valid]="false">
+                Nome e obrigatorio (max. 80 caracteres)
+              </c-form-feedback>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
+              <label cLabel for="especieId">Especie *</label>
+              <select cFormControl id="especieId" formControlName="especieId">
+                <option [ngValue]="null">Selecione a especie...</option>
+                <option *ngFor="let especie of especies" [ngValue]="especie.id">{{ especie.nome }}</option>
+              </select>
+              <c-form-feedback *ngIf="form.get('especieId')?.invalid && form.get('especieId')?.touched" [valid]="false">
+                Especie e obrigatoria
+              </c-form-feedback>
+            </div>
+          </c-col>
+        </c-row>
+
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" cButton color="primary" [disabled]="form.invalid">
+            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+            {{ isEdicao ? 'Salvar Alteracoes' : 'Cadastrar' }}
+          </button>
+          <a routerLink="/racas/lista" cButton color="secondary" variant="ghost">Cancelar</a>
+        </div>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

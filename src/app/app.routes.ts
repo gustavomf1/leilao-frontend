@@ -221,6 +221,31 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'racas',
+        children: [
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
+          {
+            path: 'lista',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/raca/raca-list/raca-list.component').then(
+                (m) => m.RacaListComponent),
+          },
+          {
+            path: 'cadastrar',
+            loadComponent: () =>
+              import('./components/raca/raca-details/raca-details.component').then(
+                (m) => m.RacaDetailsComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./components/raca/raca-details/raca-details.component').then(
+                (m) => m.RacaDetailsComponent),
+          },
+        ],
+      },
+      {
         path: 'taxas',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
@@ -282,6 +307,20 @@ export const routes: Routes = [
               ),
           },
           { path: '', redirectTo: 'fatura-venda', pathMatch: 'full' },
+        ],
+      },
+       {
+        path: 'catalogos',
+        children: [
+          {
+            path: 'catalogo',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/catalogos/catalogo/catalogo.component').then(
+                (m) => m.CatalogoComponent
+              ),
+          },
+          { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
         ],
       },
       {
