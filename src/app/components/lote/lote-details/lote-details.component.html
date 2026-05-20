@@ -341,6 +341,11 @@
       </div>
     </div>
 
+    <!-- ══ SEÇÃO 5: Fotos do Lote ══════════════════════════ -->
+    <div class="form-section" *ngIf="isEdicao" style="margin-top: 2rem;">
+      <app-lote-fotos [loteId]="loteIdAtual!"></app-lote-fotos>
+    </div>
+
     <!-- ══ Actions ══════════════════════════════════════════ -->
     <div class="form-actions">
       <a [routerLink]="rotaRetorno" class="btn-cancel">Cancelar</a>
