@@ -822,6 +822,41 @@ select option[disabled] {
   .ja-form-actions-sticky { left: 0; }
 }
 
+// ─── Mobile polish (≤575px) — formulários ─────────────────────
+@media (max-width: 575px) {
+  // Título menor pra não estourar
+  .ja-page-title { font-size: 1.375rem; }
+
+  // Header: título em cima, ações embaixo ocupando largura total
+  .ja-form-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .75rem;
+  }
+  .ja-form-actions {
+    width: 100%;
+    a[cButton], button[cButton] { flex: 1; justify-content: center; }
+  }
+
+  // Sticky footer: botões dividem a largura, sem estourar
+  .ja-form-actions-sticky {
+    padding: 10px 14px;
+    a[cButton], button[cButton] { flex: 1; justify-content: center; }
+  }
+
+  // Sections com menos padding lateral
+  .ja-form-section-body { padding: 16px 14px; }
+  .ja-form-section-title { padding: 12px 14px; }
+
+  // Espaço extra embaixo pro sticky footer não cobrir conteúdo
+  .ja-form-page { padding-bottom: 5.5rem; }
+}
+
+// Drawer: em telas curtas o body precisa rolar sem empurrar footer
+@media (max-height: 560px) {
+  .ja-drawer-header, .ja-drawer-search, .ja-drawer-footer { flex-shrink: 0; }
+}
+
 // ═══════════════════════════════════════════════════════════════
 // JA-DRAWER PATTERN — painel lateral 480px com overlay
 // Usar como alternativa a modais grandes (ex: seletor de Condição)
