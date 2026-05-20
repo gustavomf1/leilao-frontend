@@ -68,9 +68,14 @@
 
           <div class="ja-form-field">
             <label cLabel for="telefone">Telefone / WhatsApp *</label>
-            <input cFormControl id="telefone" formControlName="telefone"
-                   placeholder="(11) 98765-4321"
-                   mask="(00) 00000-0000||(00) 0000-0000" />
+            <div class="ja-input-group">
+              <select cFormControl formControlName="ddi" class="ja-ddi-select" aria-label="DDI">
+                <option *ngFor="let op of ddiOptions" [value]="op.value">{{ op.label }}</option>
+              </select>
+              <input cFormControl id="telefone" formControlName="telefone"
+                     [placeholder]="isBrazilianDdi ? '(11) 98765-4321' : 'número'"
+                     [mask]="isBrazilianDdi ? '(00) 00000-0000||(00) 0000-0000' : ''" />
+            </div>
             <span class="form-error" *ngIf="form.get('telefone')?.invalid && form.get('telefone')?.touched">
               Telefone é obrigatório
             </span>

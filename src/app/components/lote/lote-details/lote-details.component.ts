@@ -15,6 +15,7 @@ import { EspecieService } from '../../../core/services/especie.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { Especie, LeilaoDetalhes, Cliente } from '../../../core/models/entities.model';
+import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
 
 @Component({
   selector: 'app-lotes-details',
@@ -22,7 +23,7 @@ import { Especie, LeilaoDetalhes, Cliente } from '../../../core/models/entities.
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
-    ModalModule, FontAwesomeModule
+    ModalModule, FontAwesomeModule, LoteFotosComponent
   ],
   templateUrl: './lote-details.component.html',
   styleUrl: './lote-details.component.css'
@@ -85,6 +86,10 @@ export class LotesDetailsComponent implements OnInit {
       this.mostrarDropdownComprador = false;
       this.mostrarDropdownValidacaoComprador = false;
     }
+  }
+
+  get loteIdAtual(): number | undefined {
+    return this.entityId;
   }
 
   get isManejoMode(): boolean {

@@ -39,6 +39,21 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   ufs = UF_LIST;
   form!: FormGroup;
   isEdicao = false;
+
+  readonly ddiOptions = [
+    { label: 'Brasil (+55)', value: '55' },
+    { label: 'Argentina (+54)', value: '54' },
+    { label: 'Paraguai (+595)', value: '595' },
+    { label: 'Uruguai (+598)', value: '598' },
+    { label: 'Bolívia (+591)', value: '591' },
+    { label: 'EUA (+1)', value: '1' },
+    { label: 'Portugal (+351)', value: '351' },
+    { label: 'Outro', value: 'outro' },
+  ];
+
+  get isBrazilianDdi(): boolean {
+    return this.form?.get('ddi')?.value === '55';
+  }
   private entityId?: number;
   nomeFazendaSelecionada = '';
   fazendaPickerComponent?: Type<any>;
@@ -59,6 +74,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
       nome:      ['', Validators.required],
       email:     ['', [Validators.required, Validators.email]],
       cpf:       ['', Validators.required],
+      ddi:       ['55', Validators.required],
       telefone:  ['', Validators.required],
       cidade:    ['', Validators.required],
       uf:        ['', [Validators.required, Validators.maxLength(2)]],
