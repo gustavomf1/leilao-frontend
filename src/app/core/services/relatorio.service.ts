@@ -8,6 +8,11 @@ export interface VendedorResumo {
   nome: string;
 }
 
+export interface CompradorResumo {
+  id: number;
+  nome: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RelatorioService {
   private http = inject(HttpClient);
@@ -23,6 +28,19 @@ export class RelatorioService {
   getVendedoresDoLeilao(leilaoId: number): Observable<VendedorResumo[]> {
     return this.http.get<VendedorResumo[]>(
       `${this.baseUrl}/api/leiloes/${leilaoId}/vendedores`
+    );
+  }
+
+  gerarFaturaCompra(leilaoId: number, compradorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/fatura-compra`, {
+      params: { leilaoId, compradorId },
+      responseType: 'blob',
+    });
+  }
+
+  getCompradoresDoLeilao(leilaoId: number): Observable<CompradorResumo[]> {
+    return this.http.get<CompradorResumo[]>(
+      `${this.baseUrl}/api/leiloes/${leilaoId}/compradores`
     );
   }
 }
