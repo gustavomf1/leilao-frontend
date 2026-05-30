@@ -169,13 +169,13 @@
 }
 .req { color: var(--green); font-size: .75em; }
 .field-unit {
-  color: rgba(255,255,255,.25);
+  color: var(--ja-fg-4);
   font-weight: 400;
   text-transform: lowercase;
   letter-spacing: 0;
 }
 .field-hint {
-  color: rgba(255,255,255,.2);
+  color: var(--ja-fg-4);
   font-weight: 400;
   text-transform: lowercase;
   letter-spacing: 0;

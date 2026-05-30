@@ -1,7 +1,7 @@
 <div class="container-lg px-4 ja-form-page">
 
   <!-- ─── Header ─────────────────────────────────────────── -->
-  <div class="ja-form-page-header">
+  <div class="ja-form-page-header" *ngIf="!modoDrawer">
     <div>
       <div class="ja-breadcrumb-overline">
         <a routerLink="/fazendas/lista">Fazendas</a>
@@ -106,10 +106,18 @@
       </div>
     </section>
 
+  <!-- ─── Botão salvar inline para modoDrawer ── -->
+  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Fazenda' }}
+    </button>
+  </div>
+
   </form>
 
   <!-- ─── Sticky footer ──────────────────────────────────── -->
-  <div class="ja-form-actions-sticky" *ngIf="!modoSubform">
+  <div class="ja-form-actions-sticky" *ngIf="!modoSubform && !modoDrawer">
     <a routerLink="/fazendas/lista" cButton color="secondary" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
     </a>

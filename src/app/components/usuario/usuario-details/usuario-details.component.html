@@ -1,6 +1,6 @@
 <div class="container-lg px-4 ja-form-page">
 
-  <div class="ja-form-page-header">
+  <div class="ja-form-page-header" *ngIf="!modoDrawer">
     <div>
       <div class="ja-breadcrumb-overline">
         <a routerLink="/usuarios/lista">Usuários</a>
@@ -23,7 +23,9 @@
   <form [formGroup]="form" (ngSubmit)="salvar()">
 
     <section class="ja-form-section">
-      <div class="ja-form-section-title">Dados do Usuário</div>
+      <div class="ja-form-section-title"><fa-icon [icon]="faUser"></fa-icon>
+        Dados do Usuário
+      </div>
       <div class="ja-form-section-body">
         <div class="ja-form-grid">
 
@@ -67,9 +69,16 @@
       </div>
     </section>
 
+  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Usuário' }}
+    </button>
+  </div>
+
   </form>
 
-  <div class="ja-form-actions-sticky">
+  <div class="ja-form-actions-sticky" *ngIf="!modoDrawer">
     <a routerLink="/usuarios/lista" cButton color="secondary" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
     </a>

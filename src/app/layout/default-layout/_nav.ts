@@ -89,6 +89,12 @@ export const navItemsLeilao: INavData[] = [
     iconComponent: { name: 'cil-animal' },
     attributes: { ambiente: 'ESPECIES', acao: 'VISUALIZAR' }
   },
+  {
+    name: 'Raças',
+    url: '/racas',
+    iconComponent: { name: 'cil-animal' },
+    attributes: { ambiente: 'ESPECIES', acao: 'VISUALIZAR' }
+  },
 
   // ─── Movimentação ─────────────────────────────────────────────
   {
@@ -112,6 +118,17 @@ export const navItemsLeilao: INavData[] = [
     name: 'Fatura de Venda',
     url: '/relatorios/fatura-venda',
     iconComponent: { name: 'cil-spreadsheet' }
+  },
+
+  // ─── Catálogos ────────────────────────────────────────────────
+  {
+    title: true,
+    name: 'Catálogos'
+  },
+  {
+    name: 'Catálogo',
+    url: '/catalogos/catalogo',
+    iconComponent: { name: 'cil-description' }
   },
 
   // ─── Comunicação ──────────────────────────────────────────────

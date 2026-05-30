@@ -1,7 +1,7 @@
 <div class="container-lg px-4 ja-form-page">
 
   <!-- ─── Header: breadcrumb + título + ações ─────────────── -->
-  <div class="ja-form-page-header">
+  <div class="ja-form-page-header" *ngIf="!modoDrawer">
     <div>
       <div class="ja-breadcrumb-overline">
         <a routerLink="/clientes/lista">Clientes</a>
@@ -131,10 +131,18 @@
       </div>
     </section>
 
+  <!-- ─── Botão salvar inline para modoDrawer ── -->
+  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Cliente' }}
+    </button>
+  </div>
+
   </form>
 
   <!-- ─── Sticky bottom action bar (só fora do modoSubform) ── -->
-  <div class="ja-form-actions-sticky" *ngIf="!modoSubform">
+  <div class="ja-form-actions-sticky" *ngIf="!modoSubform && !modoDrawer">
     <a routerLink="/clientes/lista" cButton color="secondary" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
     </a>

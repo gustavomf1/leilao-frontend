@@ -1,6 +1,6 @@
 <div class="container-lg px-4 ja-form-page">
 
-  <div class="ja-form-page-header">
+  <div class="ja-form-page-header" *ngIf="!modoDrawer">
     <div>
       <div class="ja-breadcrumb-overline">
         <a routerLink="/taxas/lista">Taxa Padrão</a>
@@ -23,7 +23,9 @@
   <form [formGroup]="form" (ngSubmit)="salvar()">
 
     <section class="ja-form-section">
-      <div class="ja-form-section-title">Valores Fixos</div>
+      <div class="ja-form-section-title"><fa-icon [icon]="faDollarSign"></fa-icon>
+        Valores Fixos
+      </div>
       <div class="ja-form-section-body">
         <div class="ja-form-grid">
 
@@ -52,7 +54,9 @@
     </section>
 
     <section class="ja-form-section">
-      <div class="ja-form-section-title">Comissões Percentuais</div>
+      <div class="ja-form-section-title"><fa-icon [icon]="faPercent"></fa-icon>
+        Comissões Percentuais
+      </div>
       <div class="ja-form-section-body">
         <div class="ja-form-grid">
 
@@ -84,9 +88,16 @@
       </div>
     </section>
 
+  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Taxa' }}
+    </button>
+  </div>
+
   </form>
 
-  <div class="ja-form-actions-sticky">
+  <div class="ja-form-actions-sticky" *ngIf="!modoDrawer">
     <a routerLink="/taxas/lista" cButton color="secondary" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
     </a>

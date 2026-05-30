@@ -1,10 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faFileLines, faDollarSign, faTag } from '@fortawesome/free-solid-svg-icons';
 import { CondicoesService } from '../../../core/services/condicoes.service';
 import { AlertService } from '../../../shared/services/alert.service';
 
@@ -18,8 +18,15 @@ export class CondicoesDetailsComponent implements OnInit {
   private service = inject(CondicoesService);
   private alert = inject(AlertService);
 
+  @Input() modoDrawer = false;
+  @Input() drawerEntityId?: number;
+  @Output() aoSalvar = new EventEmitter<any>();
+
   faSave = faSave;
   faArrowLeft = faArrowLeft;
+  faFileLines = faFileLines;
+  faDollarSign = faDollarSign;
+  faTag = faTag;
 
   form!: FormGroup;
   isEdicao = false;
@@ -51,10 +58,11 @@ export class CondicoesDetailsComponent implements OnInit {
       aceiteIntegrado:    ['NORMAL']
     });
 
-    const id = this.route.snapshot.paramMap.get('id');
+    const routeId = this.route.snapshot.paramMap.get('id');
+    const id = this.drawerEntityId ?? (routeId ? +routeId : null);
     if (id) {
       this.isEdicao = true;
-      this.entityId = +id;
+      this.entityId = id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => this.form.patchValue(data),
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar condição')
@@ -70,9 +78,13 @@ export class CondicoesDetailsComponent implements OnInit {
         : this.service.salvar(dados);
 
       op.subscribe({
-        next: () => {
+        next: (res) => {
           this.alert.success(this.isEdicao ? 'Condição atualizada!' : 'Condição cadastrada!');
-          this.router.navigate(['/condicoes/lista']);
+          if (this.modoDrawer || this.aoSalvar.observed) {
+            this.aoSalvar.emit(res);
+          } else {
+            this.router.navigate(['/condicoes/lista']);
+          }
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar condição')
       });

@@ -29,6 +29,8 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   @Input() modoSubform = false;
+  @Input() modoDrawer = false;
+  @Input() drawerEntityId?: number;
   @Output() aoSalvar = new EventEmitter<any>();
   @ViewChild('pickerFazenda') pickerFazenda!: SubformComponent;
 
@@ -91,10 +93,11 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
     });
 
     if (!this.modoSubform) {
-      const id = this.route.snapshot.paramMap.get('id');
+      const routeId = this.route.snapshot.paramMap.get('id');
+      const id = this.drawerEntityId ?? (routeId ? +routeId : null);
       if (id) {
         this.isEdicao = true;
-        this.entityId = +id;
+        this.entityId = id;
         this.form.get('cpf')?.disable();
         this.service.buscarPorId(this.entityId).subscribe({
           next: (data) => {
@@ -144,11 +147,10 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
           this.alert.success(this.isEdicao ? 'Cliente atualizado!' : 'Cliente cadastrado!');
           if (this.modoSubform) {
             this.subformService.emitir('titular', res);
-          } else {
+          } else if (this.modoDrawer || this.aoSalvar.observed) {
             this.aoSalvar.emit(res);
-            if (!this.aoSalvar.observed) {
-              this.router.navigate(['/clientes/lista']);
-            }
+          } else {
+            this.router.navigate(['/clientes/lista']);
           }
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar cliente')

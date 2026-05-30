@@ -1,6 +1,6 @@
 <div class="container-lg px-4 ja-form-page">
 
-  <div class="ja-form-page-header">
+  <div class="ja-form-page-header" *ngIf="!modoDrawer">
     <div>
       <div class="ja-breadcrumb-overline">
         <a routerLink="/especies/lista">Espécies</a>
@@ -22,7 +22,9 @@
 
   <form [formGroup]="form" (ngSubmit)="salvar()">
     <section class="ja-form-section">
-      <div class="ja-form-section-title">Dados da Espécie</div>
+      <div class="ja-form-section-title"><fa-icon [icon]="faPaw"></fa-icon>
+        Dados da Espécie
+      </div>
       <div class="ja-form-section-body">
         <div class="ja-form-grid">
           <div class="ja-form-field field-full">
@@ -38,9 +40,16 @@
         </div>
       </div>
     </section>
+  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Espécie' }}
+    </button>
+  </div>
+
   </form>
 
-  <div class="ja-form-actions-sticky">
+  <div class="ja-form-actions-sticky" *ngIf="!modoDrawer">
     <a routerLink="/especies/lista" cButton color="secondary" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
     </a>
