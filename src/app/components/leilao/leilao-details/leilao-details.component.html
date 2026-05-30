@@ -289,7 +289,7 @@
     </div>
 
     <div class="ja-drawer-empty" *ngIf="condicoesFiltradas.length === 0">
-      <ng-container *ngIf="!condicoes?.length; else semResultados">
+      <ng-container *ngIf="!condicoes.length; else semResultados">
         Nenhuma condição cadastrada.<br>
         <a routerLink="/condicoes/cadastrar">Cadastrar nova</a>
       </ng-container>

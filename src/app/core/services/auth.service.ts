@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { LoteWebsocketService } from '../services/lote-websocket.service';
 import { tap } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 export interface TokenPayload {
   sub: string;
