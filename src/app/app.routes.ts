@@ -348,6 +348,26 @@ export const routes: Routes = [
             (m) => m.AdminRolesComponent,
           ),
       },
+      {
+        path: 'configuracoes',
+        loadComponent: () =>
+          import('./components/configuracoes/configuracoes.component').then(
+            (m) => m.ConfiguracoesComponent,
+          ),
+      },
+      {
+        path: 'catalogos',
+        children: [
+          {
+            path: 'catalogo',
+            loadComponent: () =>
+              import('./components/catalogos/catalogo.component').then(
+                (m) => m.CatalogoComponent,
+              ),
+          },
+          { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
+        ],
+      },
     ],
   },
   {
