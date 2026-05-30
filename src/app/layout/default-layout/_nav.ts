@@ -378,6 +378,11 @@ export const navItemsLeilao: INavData[] = [
         url: '/relatorios/fatura-venda',
         icon: 'nav-icon-bullet',
       },
+      {
+        name: 'Fatura de Compra',
+        url: '/relatorios/fatura-compra',
+        icon: 'nav-icon-bullet',
+      },
     ],
   },
   // ─── Catalogos ───────────────────────────────────────────────
