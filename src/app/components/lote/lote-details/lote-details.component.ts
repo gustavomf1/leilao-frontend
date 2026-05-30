@@ -12,9 +12,10 @@ import { LoteService } from '../../../core/services/lote.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { EspecieService } from '../../../core/services/especie.service';
+import { RacaService } from '../../../core/services/raca.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { ClienteService } from '../../../core/services/cliente.service';
-import { Especie, LeilaoDetalhes, Cliente } from '../../../core/models/entities.model';
+import { Especie, Raca, LeilaoDetalhes, Cliente } from '../../../core/models/entities.model';
 import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
 
 @Component({
@@ -29,39 +30,41 @@ import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
   styleUrl: './lote-details.component.css'
 })
 export class LotesDetailsComponent implements OnInit {
-  private el             = inject(ElementRef);
-  private cdr            = inject(ChangeDetectorRef);
-  private service        = inject(LoteService);
-  private alert          = inject(AlertService);
-  auth                   = inject(AuthService);
+  private el = inject(ElementRef);
+  private cdr = inject(ChangeDetectorRef);
+  private service = inject(LoteService);
+  private alert = inject(AlertService);
+  auth = inject(AuthService);
   private especieService = inject(EspecieService);
-  private leilaoService  = inject(LeilaoService);
+  private racaService = inject(RacaService);
+  private leilaoService = inject(LeilaoService);
   private clienteService = inject(ClienteService);
 
-  faSave      = faSave;
+  faSave = faSave;
   faArrowLeft = faArrowLeft;
-  faCheck     = faCheck;
-  faTimes     = faTimes;
+  faCheck = faCheck;
+  faTimes = faTimes;
 
   form!: FormGroup;
-  isEdicao      = false;
+  isEdicao = false;
   isValidacaoEscritorio = false;
   isValidacaoLance = false;
   isValidacaoFinal = false;
-  modalVisible  = false;
+  modalVisible = false;
   private entityId?: number;
   origemLeilaoId?: number;
 
-  especies: Especie[]          = [];
-  leiloes: LeilaoDetalhes[]    = [];
-  clientes: Cliente[]          = [];
+  especies: Especie[] = [];
+  racas: Raca[] = [];
+  leiloes: LeilaoDetalhes[] = [];
+  clientes: Cliente[] = [];
   clientesFiltrados: Cliente[] = [];
-  vendedorBusca                = '';
-  mostrarDropdownVendedor      = false;
+  vendedorBusca = '';
+  mostrarDropdownVendedor = false;
   vendedorSelecionado: Cliente | null = null;
 
-  compradorBusca               = '';
-  mostrarDropdownComprador     = false;
+  compradorBusca = '';
+  mostrarDropdownComprador = false;
   compradorSelecionado: Cliente | null = null;
   compradorFiltrados: Cliente[] = [];
 
@@ -82,7 +85,7 @@ export class LotesDetailsComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     if (!this.el.nativeElement.contains(event.target as Node)) {
-      this.mostrarDropdownVendedor  = false;
+      this.mostrarDropdownVendedor = false;
       this.mostrarDropdownComprador = false;
       this.mostrarDropdownValidacaoComprador = false;
     }
@@ -124,17 +127,17 @@ export class LotesDetailsComponent implements OnInit {
   get resumoParaConfirmacao(): { label: string; valor: any }[] {
     const f = this.form.getRawValue();
     return [
-      { label: 'Código',           valor: f.codigo },
-      { label: 'Qtd. Animais',     valor: f.qntdAnimais },
-      { label: 'Sexo',             valor: f.sexo },
-      { label: 'Espécie',          valor: this.especies.find(e => e.id === f.especieId)?.nome ?? f.especieId },
-      { label: 'Raça',             valor: f.raca },
-      { label: 'Categoria',        valor: f.categoriaAnimal },
-      { label: 'Idade (meses)',    valor: f.idadeEmMeses },
-      { label: 'Peso (kg)',        valor: f.peso },
-      { label: 'Vendedor',         valor: f.vendedorNomeRascunho || '—' },
-      { label: 'Leilão',            valor: this.leiloes.find(l => l.id === f.leilaoId)?.descricao ?? f.leilaoId ?? '—' },
-      { label: 'Observações',      valor: f.obs || '—' },
+      { label: 'Código', valor: f.codigo },
+      { label: 'Qtd. Animais', valor: f.qntdAnimais },
+      { label: 'Sexo', valor: f.sexo },
+      { label: 'Espécie', valor: this.especies.find(e => e.id === f.especieId)?.nome ?? f.especieId },
+      { label: 'Raça', valor: f.raca },
+      { label: 'Categoria', valor: f.categoriaAnimal },
+      { label: 'Idade (meses)', valor: f.idadeEmMeses },
+      { label: 'Peso (kg)', valor: f.peso },
+      { label: 'Vendedor', valor: f.vendedorNomeRascunho || '—' },
+      { label: 'Leilão', valor: this.leiloes.find(l => l.id === f.leilaoId)?.descricao ?? f.leilaoId ?? '—' },
+      { label: 'Observações', valor: f.obs || '—' },
     ].filter(i => i.valor !== null && i.valor !== undefined);
   }
 
@@ -142,7 +145,7 @@ export class LotesDetailsComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     const modoValidacao = this.route.snapshot.queryParamMap.get('validar');
@@ -154,20 +157,36 @@ export class LotesDetailsComponent implements OnInit {
     this.origemLeilaoId = origemLeilaoIdParam ? +origemLeilaoIdParam : undefined;
 
     this.form = this.fb.group({
-      codigo:               ['', Validators.required],
-      qntdAnimais:          [1,  [Validators.required, Validators.min(1)]],
-      sexo:                 ['', Validators.required],
-      idadeEmMeses:         [0,  [Validators.required, Validators.min(0)]],
-      peso:                 [0,  [Validators.required, Validators.min(0)]],
-      raca:                 ['', Validators.required],
-      especieId:            [null, Validators.required],
-      categoriaAnimal:      ['', Validators.required],
-      obs:                  [''],
-      leilaoId:             [null],
+      codigo: ['', Validators.required],
+      qntdAnimais: [1, [Validators.required, Validators.min(1)]],
+      sexo: ['', Validators.required],
+      idadeEmMeses: [0, [Validators.required, Validators.min(0)]],
+      peso: [0, [Validators.required, Validators.min(0)]],
+      raca: ['', Validators.required],
+      especieId: [null, Validators.required],
+      categoriaAnimal: ['', Validators.required],
+      obs: [''],
+      leilaoId: [null],
       vendedorNomeRascunho: [''],
-      vendedorId:           [null],
-      compradorId:          [null],
-      precoCompra:          [null]
+      vendedorId: [null],
+      compradorId: [null],
+      precoCompra: [null]
+    });
+
+    const atualizarCategoria = () => {
+      const sexo = this.form.get('sexo')?.value;
+      const idade = this.form.get('idadeEmMeses')?.value;
+      const categoria = this.calcularCategoria(sexo, Number(idade));
+      if (categoria) {
+        this.form.get('categoriaAnimal')?.setValue(categoria, { emitEvent: false });
+      }
+    };
+
+    this.form.get('sexo')?.valueChanges.subscribe(() => atualizarCategoria());
+    this.form.get('idadeEmMeses')?.valueChanges.subscribe(() => atualizarCategoria());
+    this.form.get('especieId')?.valueChanges.subscribe((especieId) => {
+      this.carregarRacasPorEspecie(especieId);
+      this.form.get('raca')?.setValue('');
     });
 
     if (leilaoIdParam) {
@@ -208,12 +227,15 @@ export class LotesDetailsComponent implements OnInit {
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.isEdicao  = true;
-      this.entityId  = +id;
+      this.isEdicao = true;
+      this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => {
           this.loteCarregado = data;
-          this.form.patchValue(data);
+          this.form.patchValue(data, { emitEvent: false });
+          if (data.especieId) {
+            this.carregarRacasPorEspecie(data.especieId, data.raca);
+          }
           this.restaurarSelecoes();
           this.carregarTaxaDoLeilao(data.leilaoId);
         },
@@ -548,11 +570,39 @@ export class LotesDetailsComponent implements OnInit {
     });
   }
 
+  private carregarRacasPorEspecie(especieId?: number | null, racaAtual?: string | null) {
+    if (!especieId) {
+      this.racas = [];
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.racaService.listarPorEspecie(especieId).subscribe({
+      next: (racas) => {
+        this.racas = racas;
+        if (racaAtual && !racas.some(r => r.nome === racaAtual)) {
+          this.racas = [{ nome: racaAtual, especieId }, ...racas];
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar racas')
+    });
+  }
+
   abrirDropdownValidacaoComprador() {
     this.validacaoCompradorFiltrados = this.validacaoCompradorBusca.trim()
       ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.validacaoCompradorBusca.toLowerCase()))
       : this.clientes;
     this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
     this.cdr.markForCheck();
+  }
+
+  private calcularCategoria(sexo: string, idadeEmMeses: number): string {
+    if (!sexo || idadeEmMeses == null) return '';
+    const macho = sexo === 'Macho';
+    if (idadeEmMeses <= 12) return macho ? 'Bezerro' : 'Bezerra';
+    if (idadeEmMeses <= 24) return macho ? 'Garrote' : 'Novilha';
+    if (idadeEmMeses <= 36) return macho ? 'Novilho' : 'Novilha';
+    return macho ? 'Boi' : 'Vaca';
   }
 }

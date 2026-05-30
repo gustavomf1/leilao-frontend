@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Raca } from '../models/entities.model';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class RacaService {
@@ -11,6 +11,10 @@ export class RacaService {
 
   listarTodas(): Observable<Raca[]> {
     return this.http.get<Raca[]>(`${this.baseUrl}/todas`);
+  }
+
+  listarPorEspecie(especieId: number): Observable<Raca[]> {
+    return this.http.get<Raca[]>(`${this.baseUrl}/especie/${especieId}`);
   }
 
   buscarPorId(id: number): Observable<Raca> {

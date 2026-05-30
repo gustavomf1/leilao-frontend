@@ -171,13 +171,12 @@ export class LeiloesDetailsComponent implements OnInit {
       const op = this.isEdicao
         ? this.service.atualizar(this.entityId!, dados)
         : this.service.salvar(dados);
-
       op.subscribe({
         next: () => {
           this.alert.success(this.isEdicao ? 'Leilão atualizado!' : 'Leilão cadastrado!');
           this.router.navigate(['/leiloes/lista']);
         },
-        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar leilão'),
+        error: (err) => this.alert.error(err.error?.mensagem ),
       });
     }
   }

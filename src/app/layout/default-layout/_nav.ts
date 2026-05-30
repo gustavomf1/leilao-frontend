@@ -95,6 +95,26 @@ export const navItemsLeilao: INavData[] = [
     iconComponent: { name: 'cil-animal' },
     attributes: { ambiente: 'ESPECIES', acao: 'VISUALIZAR' }
   },
+  {
+    name: 'Raças',
+    url: '/racas',
+    iconComponent: { name: 'cil-animal' },
+    attributes: { ambiente: 'ESPECIES' },
+    children: [
+      {
+        name: 'Listar Raças',
+        url: '/racas/lista',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'VISUALIZAR' }
+      },
+      {
+        name: 'Cadastrar Raça',
+        url: '/racas/cadastrar',
+        icon: 'nav-icon-bullet',
+        attributes: { ambiente: 'ESPECIES', acao: 'CRIAR' }
+      }
+    ]
+  },
 
   // ─── Movimentação ─────────────────────────────────────────────
   {
@@ -129,6 +149,23 @@ export const navItemsLeilao: INavData[] = [
     name: 'Catálogo',
     url: '/catalogos/catalogo',
     iconComponent: { name: 'cil-description' }
+  },
+  // ─── Catalogos ───────────────────────────────────────────────
+  {
+    title: true,
+    name: 'Catalogos',
+  },
+  {
+    name: 'Catalogos',
+    url: '/catalogos',
+    iconComponent: { name: 'cil-description' },
+    children: [
+      {
+        name: 'Catalogo',
+        url: '/catalogos/catalogo',
+        icon: 'nav-icon-bullet',
+      },
+    ],
   },
 
   // ─── Comunicação ──────────────────────────────────────────────

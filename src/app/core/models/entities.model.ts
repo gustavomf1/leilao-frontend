@@ -173,6 +173,7 @@ export interface Lote {
   peso: number;
   raca: string;
   especie: string;
+  especieId?: number;
   categoriaAnimal: string;
   obs: string;
   leilaoId?: number;
