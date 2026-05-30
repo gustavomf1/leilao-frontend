@@ -312,6 +312,98 @@
   flex-shrink: 0;
 }
 
+// ─── Header avatar de iniciais ──────────────────────────────
+.ja-header-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--ja-radius-sm);
+  background: var(--ja-brand-subtle);
+  color: var(--ja-brand);
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: .04em;
+  border: 1.5px solid var(--ja-border-strong);
+  flex-shrink: 0;
+  transition: background var(--ja-dur-fast);
+
+  &:hover { background: var(--ja-brand); color: #fff; }
+}
+
+[data-coreui-theme="dark"] .ja-header-avatar {
+  background: rgba(138, 59, 44, .22);
+  color: #f5b8a4;
+}
+
+// ─── Error pages (404, 500) ──────────────────────────────────
+.ja-error-page {
+  background: var(--ja-surface);
+}
+
+.ja-error-body {
+  text-align: center;
+  padding: 2rem 1rem;
+  max-width: 440px;
+}
+
+.ja-error-code {
+  font-family: var(--ja-font-display);
+  font-size: 7rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ja-brand);
+  letter-spacing: -.04em;
+  margin-bottom: .5rem;
+  opacity: .18;
+}
+
+.ja-error-title {
+  font-family: var(--ja-font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--ja-fg-1);
+  margin-bottom: .75rem;
+}
+
+.ja-error-desc {
+  color: var(--ja-fg-3);
+  font-size: .9375rem;
+  margin-bottom: 1.5rem;
+}
+
+// ─── CoreUI Tabs — JA override ───────────────────────────────
+.nav-tabs {
+  border-bottom: 2px solid var(--ja-border);
+  gap: 0;
+
+  .nav-link {
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    color: var(--ja-fg-3);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 0;
+    transition: all var(--ja-dur-fast);
+
+    &:hover { color: var(--ja-fg-1); background: var(--ja-brand-subtle); }
+
+    &.active {
+      color: var(--ja-brand) !important;
+      border-bottom-color: var(--ja-brand) !important;
+      background: transparent !important;
+      font-weight: 700;
+    }
+  }
+}
+
+.tab-content {
+  padding-top: 1.25rem;
+}
+
 // ─── Calendar fix ──────────────────────────────────────────────
 .calendar-cell.today { --cui-calendar-cell-today-color: var(--cui-info) !important; }
 .select-week .calendar-row.current { cursor: pointer; }

@@ -221,6 +221,31 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'racas',
+        children: [
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
+          {
+            path: 'lista',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/racas/raca-list/raca-list.component').then(
+                (m) => m.RacaListComponent),
+          },
+          {
+            path: 'cadastrar',
+            loadComponent: () =>
+              import('./components/racas/raca-details/raca-details.component').then(
+                (m) => m.RacaDetailsComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./components/racas/raca-details/raca-details.component').then(
+                (m) => m.RacaDetailsComponent),
+          },
+        ],
+      },
+      {
         path: 'taxas',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },

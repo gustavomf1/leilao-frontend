@@ -1,55 +1,65 @@
-<c-row>
-  <c-col>
-    <c-card>
-      <c-card-header>
-        <strong>Relatório — Fatura de Venda</strong>
-      </c-card-header>
-      <c-card-body>
-        <c-row class="mb-3">
-          <c-col [md]="5">
-            <label class="form-label fw-semibold">Leilão</label>
-            <select class="form-select"
-                    [(ngModel)]="selectedLeilaoId"
-                    (ngModelChange)="onLeilaoChange()">
-              <option [ngValue]="undefined">Selecione um leilão...</option>
-              <option *ngFor="let l of leiloes" [ngValue]="l.id">
-                {{ l.descricao }} — {{ l.data }}
-              </option>
-            </select>
-          </c-col>
-          <c-col [md]="5">
-            <label class="form-label fw-semibold">Vendedor</label>
-            <select class="form-select"
-                    [(ngModel)]="selectedVendedorId"
-                    [disabled]="!selectedLeilaoId || vendedores.length === 0">
-              <option [ngValue]="undefined">
-                {{ selectedLeilaoId && vendedores.length === 0
-                   ? 'Nenhum vendedor encontrado'
-                   : 'Selecione um vendedor...' }}
-              </option>
-              <option *ngFor="let v of vendedores" [ngValue]="v.id">
-                {{ v.nome }}
-              </option>
-            </select>
-          </c-col>
-          <c-col [md]="2" class="d-flex align-items-end">
-            <button cButton color="primary"
-                    class="w-100"
-                    [disabled]="!canGenerate"
-                    (click)="gerarFatura()">
-              <c-spinner *ngIf="loading" size="sm" class="me-1"></c-spinner>
-              {{ loading ? 'Gerando...' : 'Gerar PDF' }}
-            </button>
-          </c-col>
-        </c-row>
-        <c-row *ngIf="selectedLeilaoId && vendedores.length === 0">
-          <c-col>
-            <p class="text-muted small mb-0">
-              Nenhum vendedor com lotes encontrado neste leilão.
-            </p>
-          </c-col>
-        </c-row>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
+<div class="container-lg px-4 ja-anim-fade-in">
+
+  <div class="ja-form-page-header">
+    <div>
+      <div class="ja-breadcrumb-overline">
+        <span class="current">Relatórios</span>
+      </div>
+      <h1 class="ja-page-title">Fatura de Venda</h1>
+    </div>
+  </div>
+
+  <section class="ja-form-section ja-anim-slide-up">
+    <div class="ja-form-section-title">
+      <svg cIcon name="cilSpreadsheet" style="width:12px;height:12px;"></svg>
+      Parâmetros do Relatório
+    </div>
+    <div class="ja-form-section-body">
+      <div class="ja-form-grid">
+
+        <div class="ja-form-field">
+          <label class="form-label">Leilão *</label>
+          <select class="form-control"
+                  [(ngModel)]="selectedLeilaoId"
+                  (ngModelChange)="onLeilaoChange()">
+            <option [ngValue]="undefined">Selecione um leilão...</option>
+            <option *ngFor="let l of leiloes" [ngValue]="l.id">
+              {{ l.descricao }} — {{ l.data }}
+            </option>
+          </select>
+        </div>
+
+        <div class="ja-form-field">
+          <label class="form-label">Vendedor *</label>
+          <select class="form-control"
+                  [(ngModel)]="selectedVendedorId"
+                  [disabled]="!selectedLeilaoId || vendedores.length === 0">
+            <option [ngValue]="undefined">
+              {{ selectedLeilaoId && vendedores.length === 0
+                 ? 'Nenhum vendedor encontrado'
+                 : 'Selecione um vendedor...' }}
+            </option>
+            <option *ngFor="let v of vendedores" [ngValue]="v.id">
+              {{ v.nome }}
+            </option>
+          </select>
+          <span class="form-hint"
+                *ngIf="selectedLeilaoId && vendedores.length === 0">
+            Nenhum vendedor com lotes neste leilão.
+          </span>
+        </div>
+
+      </div>
+
+      <div class="d-flex justify-content-end mt-3">
+        <button cButton color="primary"
+                [disabled]="!canGenerate"
+                (click)="gerarFatura()">
+          <c-spinner *ngIf="loading" size="sm" class="me-1"></c-spinner>
+          {{ loading ? 'Gerando...' : 'Gerar PDF' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+</div>

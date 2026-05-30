@@ -1,4 +1,4 @@
-<div class="container-lg px-4 ja-form-page">
+<div class="container-lg px-4 ja-form-page ja-anim-fade-in">
 
   <!-- ─── Header ─────────────────────────────────────────── -->
   <div class="ja-form-page-header" *ngIf="!modoDrawer">
@@ -25,7 +25,7 @@
   <form [formGroup]="form" (ngSubmit)="salvar()">
 
     <!-- Section: Dados de Acesso -->
-    <section class="ja-form-section">
+    <section class="ja-form-section ja-anim-slide-up">
       <div class="ja-form-section-title">
         <fa-icon [icon]="faIdCard"></fa-icon>
         Dados de Acesso
@@ -75,7 +75,7 @@
     </section>
 
     <!-- Section: Perfil de Acesso -->
-    <section class="ja-form-section">
+    <section class="ja-form-section ja-anim-slide-up">
       <div class="ja-form-section-title">
         <fa-icon [icon]="faShieldAlt"></fa-icon>
         Perfil de Acesso

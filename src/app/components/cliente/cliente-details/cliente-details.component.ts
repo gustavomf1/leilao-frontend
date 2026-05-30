@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft, faUser, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faUser, faMapMarkerAlt, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -38,6 +38,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   faArrowLeft = faArrowLeft;
   faUser = faUser;
   faMapMarker = faMapMarkerAlt;
+  faBullhorn = faBullhorn;
   ufs = UF_LIST;
   form!: FormGroup;
   isEdicao = false;
@@ -81,7 +82,8 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
       cidade:    ['', Validators.required],
       uf:        ['', [Validators.required, Validators.maxLength(2)]],
       rg:        ['', Validators.required],
-      fazendaId: [null]
+      fazendaId: [null],
+      usu_aceita_remarketing: [false]
     });
 
     this.sub = this.subformService.resultado$.subscribe(({ chave, dados }) => {

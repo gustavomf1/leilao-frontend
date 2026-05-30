@@ -3,19 +3,19 @@
   <div class="ja-form-page-header" *ngIf="!modoDrawer">
     <div>
       <div class="ja-breadcrumb-overline">
-        <a routerLink="/especies/lista">Espécies</a>
+        <a routerLink="/racas/lista">Raças</a>
         <span class="sep">›</span>
         <span class="current">{{ isEdicao ? 'Editar' : 'Nova' }}</span>
       </div>
-      <h1 class="ja-page-title">{{ isEdicao ? 'Editar Espécie' : 'Cadastrar Espécie' }}</h1>
+      <h1 class="ja-page-title">{{ isEdicao ? 'Editar Raça' : 'Cadastrar Raça' }}</h1>
     </div>
     <div class="ja-form-actions">
-      <a routerLink="/especies/lista" cButton color="secondary" variant="ghost">
+      <a routerLink="/racas/lista" cButton color="secondary" variant="ghost">
         <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
       </a>
       <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
         <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-        {{ isEdicao ? 'Salvar Alterações' : 'Salvar Espécie' }}
+        {{ isEdicao ? 'Salvar Alterações' : 'Salvar Raça' }}
       </button>
     </div>
   </div>
@@ -23,18 +23,28 @@
   <form [formGroup]="form" (ngSubmit)="salvar()">
     <section class="ja-form-section ja-anim-slide-up">
       <div class="ja-form-section-title"><fa-icon [icon]="faPaw"></fa-icon>
-        Dados da Espécie
+        Dados da Raça
       </div>
       <div class="ja-form-section-body">
         <div class="ja-form-grid">
           <div class="ja-form-field field-full">
             <label cLabel for="nome">Nome *</label>
             <input cFormControl id="nome" formControlName="nome"
-                   placeholder="Ex: BOVINOS" maxlength="50"
+                   placeholder="Ex: NELORE" maxlength="50"
                    style="text-transform: uppercase;" />
             <span class="form-hint">Máx. 50 caracteres, salvo em maiúsculas</span>
             <span class="form-error" *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched">
               Nome é obrigatório
+            </span>
+          </div>
+          <div class="ja-form-field field-full">
+            <label cLabel for="especieId">Espécie *</label>
+            <select cFormControl id="especieId" formControlName="especieId">
+              <option [ngValue]="null" disabled>Selecione uma espécie</option>
+              <option *ngFor="let especie of especies" [ngValue]="especie.id">{{ especie.nome }}</option>
+            </select>
+            <span class="form-error" *ngIf="form.get('especieId')?.invalid && form.get('especieId')?.touched">
+              Espécie é obrigatória
             </span>
           </div>
         </div>
@@ -43,19 +53,19 @@
   <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
     <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
       <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Espécie' }}
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Raça' }}
     </button>
   </div>
 
   </form>
 
   <div class="ja-form-actions-sticky" *ngIf="!modoDrawer">
-    <a routerLink="/especies/lista" cButton color="secondary" variant="ghost">
+    <a routerLink="/racas/lista" cButton color="secondary" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
     </a>
     <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
       <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Espécie' }}
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Raça' }}
     </button>
   </div>
 

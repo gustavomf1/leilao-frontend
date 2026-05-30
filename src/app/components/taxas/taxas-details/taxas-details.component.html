@@ -1,4 +1,4 @@
-<div class="container-lg px-4 ja-form-page">
+<div class="container-lg px-4 ja-form-page ja-anim-fade-in">
 
   <div class="ja-form-page-header" *ngIf="!modoDrawer">
     <div>
@@ -22,7 +22,7 @@
 
   <form [formGroup]="form" (ngSubmit)="salvar()">
 
-    <section class="ja-form-section">
+    <section class="ja-form-section ja-anim-slide-up">
       <div class="ja-form-section-title"><fa-icon [icon]="faDollarSign"></fa-icon>
         Valores Fixos
       </div>
@@ -53,7 +53,7 @@
       </div>
     </section>
 
-    <section class="ja-form-section">
+    <section class="ja-form-section ja-anim-slide-up">
       <div class="ja-form-section-title"><fa-icon [icon]="faPercent"></fa-icon>
         Comissões Percentuais
       </div>
