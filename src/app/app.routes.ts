@@ -306,6 +306,14 @@ export const routes: Routes = [
                 (m) => m.FaturaVendaComponent
               ),
           },
+          {
+            path: 'fatura-compra',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/fatura-compra/fatura-compra.component').then(
+                (m) => m.FaturaCompraComponent
+              ),
+          },
           { path: '', redirectTo: 'fatura-venda', pathMatch: 'full' },
         ],
       },
