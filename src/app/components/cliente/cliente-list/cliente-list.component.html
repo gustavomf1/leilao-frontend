@@ -1,14 +1,14 @@
-<div class="container-lg px-4">
+<div class="container-lg px-4 ja-anim-fade-in">
 
   <!-- ── Cabeçalho ── -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Clientes</h2>
-    <a *ngIf="auth.hasPermission('CLIENTES', 'CRIAR')"
-       routerLink="/clientes/cadastrar"
-       cButton color="primary">
+    <button *ngIf="auth.hasPermission('CLIENTES', 'CRIAR')"
+            type="button" cButton color="primary"
+            (click)="abrirDrawerNovo()">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Cliente
-    </a>
+    </button>
   </div>
 
   <!-- ── DESKTOP: Tabela ── -->
@@ -26,7 +26,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let cliente of clientes$ | async">
+          <tr *ngFor="let cliente of clientes$ | async; let i = index"
+              [style.--ja-stagger-i]="i" class="ja-anim-slide-up ja-stagger">
             <td class="text-muted" style="font-size:.8rem">{{ cliente.id }}</td>
             <td><strong>{{ cliente.nome }}</strong></td>
             <td>{{ cliente.cpf }}</td>
@@ -37,11 +38,11 @@
                       (click)="abrirModalPix(cliente)" title="Chaves Pix">
                 <fa-icon [icon]="faKey"></fa-icon>
               </button>
-              <a *ngIf="auth.hasPermission('CLIENTES', 'EDITAR')"
-                 [routerLink]="['/clientes', cliente.id]"
-                 cButton color="info" size="sm" variant="ghost" title="Editar">
+              <button *ngIf="auth.hasPermission('CLIENTES', 'EDITAR')"
+                      cButton color="info" size="sm" variant="ghost"
+                      (click)="abrirDrawerEditar(cliente.id!)" title="Editar">
                 <fa-icon [icon]="faPencil"></fa-icon>
-              </a>
+              </button>
               <button *ngIf="auth.hasPermission('CLIENTES', 'DELETAR')"
                       cButton color="danger" size="sm" variant="ghost"
                       (click)="deletar(cliente.id!)" title="Inativar">
@@ -56,7 +57,9 @@
 
   <!-- ── MOBILE: Cards ── -->
   <div class="d-desktop-none">
-    <div *ngFor="let cliente of clientes$ | async" class="ja-mobile-card">
+    <div *ngFor="let cliente of clientes$ | async; let i = index"
+         class="ja-mobile-card ja-anim-slide-up ja-stagger"
+         [style.--ja-stagger-i]="i">
       <div class="ja-mc-title">{{ cliente.nome }}</div>
       <div class="ja-mc-subtitle">CPF: {{ cliente.cpf }}</div>
       <div class="ja-mc-meta">
@@ -68,11 +71,11 @@
                 (click)="abrirModalPix(cliente)">
           <fa-icon [icon]="faKey" class="me-1"></fa-icon> Pix
         </button>
-        <a *ngIf="auth.hasPermission('CLIENTES', 'EDITAR')"
-           [routerLink]="['/clientes', cliente.id]"
-           cButton color="info" size="sm" variant="ghost">
+        <button *ngIf="auth.hasPermission('CLIENTES', 'EDITAR')"
+                cButton color="info" size="sm" variant="ghost"
+                (click)="abrirDrawerEditar(cliente.id!)">
           <fa-icon [icon]="faPencil" class="me-1"></fa-icon> Editar
-        </a>
+        </button>
         <button *ngIf="auth.hasPermission('CLIENTES', 'DELETAR')"
                 cButton color="danger" size="sm" variant="ghost"
                 (click)="deletar(cliente.id!)">
@@ -84,60 +87,114 @@
 
 </div>
 
+<!-- ─── Drawer: Cadastrar / Editar Cliente ───────────────────── -->
+@if (drawerAberto) {
+  <div class="ja-form-drawer-backdrop" (click)="fecharDrawer()"></div>
+  <aside class="ja-form-drawer lg" role="dialog" aria-modal="true"
+         aria-label="{{ drawerClienteId ? 'Editar Cliente' : 'Cadastrar Cliente' }}">
+
+    <div class="ja-form-drawer-header">
+      <div class="ja-form-drawer-meta">
+        <div class="ja-form-drawer-overline">{{ drawerClienteId ? 'Editar' : 'Novo Cadastro' }}</div>
+        <h2 class="ja-form-drawer-title">{{ drawerClienteId ? 'Editar Cliente' : 'Cadastrar Cliente' }}</h2>
+      </div>
+      <button type="button" class="ja-form-drawer-close"
+              (click)="fecharDrawer()" aria-label="Fechar">
+        <fa-icon [icon]="faXmark"></fa-icon>
+      </button>
+    </div>
+
+    <div class="ja-form-drawer-body">
+      <app-clientes-details
+        [modoDrawer]="true"
+        [drawerEntityId]="drawerClienteId"
+        (aoSalvar)="onClienteSalvo()">
+      </app-clientes-details>
+    </div>
+
+    <div class="ja-form-drawer-footer">
+      <button type="button" cButton color="secondary" variant="ghost"
+              (click)="fecharDrawer()">
+        Cancelar
+      </button>
+    </div>
+
+  </aside>
+}
+
 <!-- ─── Modal de Chaves Pix ─────────────────────────────────── -->
 <c-modal [(visible)]="modalPixVisivel" alignment="center" size="lg">
   <c-modal-header>
     <h5 cModalTitle>
-      <fa-icon [icon]="faKey" class="me-2"></fa-icon>
-      Chaves Pix — {{ clienteSelecionado?.nome }}
+      <fa-icon [icon]="faKey" class="me-2" style="color: var(--ja-brand);"></fa-icon>
+      Chaves Pix
+      <span class="ja-modal-subtitle">{{ clienteSelecionado?.nome }}</span>
     </h5>
     <button cButtonClose (click)="fecharModalPix()"></button>
   </c-modal-header>
-  <c-modal-body>
+  <c-modal-body class="ja-pix-modal-body">
 
-    <div class="row g-3 align-items-end mb-4">
-      <div class="col-12 col-md-4">
-        <label cLabel>Tipo</label>
-        <select cFormSelect [(ngModel)]="novoPix.tipo">
-          <option *ngFor="let tipo of tiposPix" [value]="tipo">{{ tipo }}</option>
-        </select>
+    <div class="ja-pix-add-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faPlus"></fa-icon>
+        Nova chave
       </div>
-      <div class="col-12 col-md-5">
-        <label cLabel>Chave</label>
-        <input cFormControl [(ngModel)]="novoPix.chave" placeholder="Ex: email@email.com" />
-      </div>
-      <div class="col-12 col-md-3">
-        <button cButton color="primary" (click)="adicionarPix()">
-          <fa-icon [icon]="faPlus" class="me-1"></fa-icon> Adicionar
-        </button>
+      <div class="ja-pix-add-grid">
+        <div class="ja-form-field">
+          <label cLabel>Tipo</label>
+          <select cFormSelect [(ngModel)]="novoPix.tipo">
+            <option *ngFor="let tipo of tiposPix" [value]="tipo">{{ tipo }}</option>
+          </select>
+        </div>
+        <div class="ja-form-field">
+          <label cLabel>Chave</label>
+          <input cFormControl [(ngModel)]="novoPix.chave"
+                 placeholder="email@email.com, CPF, telefone, etc." />
+        </div>
+        <div class="ja-form-field ja-pix-add-action">
+          <button cButton color="primary" (click)="adicionarPix()"
+                  [disabled]="!novoPix.chave">
+            <fa-icon [icon]="faPlus" class="me-1"></fa-icon> Adicionar
+          </button>
+        </div>
       </div>
     </div>
 
-    <table cTable hover responsive>
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Chave</th>
-          <th class="text-center">Remover</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let pix of pixKeys">
-          <td><c-badge color="info">{{ pix.tipo }}</c-badge></td>
-          <td>{{ pix.chave }}</td>
-          <td class="text-center">
-            <button cButton color="danger" size="sm" variant="ghost" (click)="deletarPix(pix.pixId!)">
-              <fa-icon [icon]="faTrash"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="pixKeys.length === 0">
-          <td colspan="3" class="text-center text-muted py-3">
-            Nenhuma chave cadastrada
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="ja-pix-list-section">
+      <div class="ja-form-section-title">
+        <fa-icon [icon]="faKey"></fa-icon>
+        Chaves cadastradas
+        <span class="ja-section-count" *ngIf="pixKeys.length > 0">{{ pixKeys.length }}</span>
+      </div>
+
+      <table cTable hover *ngIf="pixKeys.length > 0">
+        <thead>
+          <tr>
+            <th style="width:130px">Tipo</th>
+            <th>Chave</th>
+            <th class="text-center" style="width:70px">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pix of pixKeys">
+            <td><c-badge color="primary">{{ pix.tipo }}</c-badge></td>
+            <td class="ja-pix-key-value">{{ pix.chave }}</td>
+            <td class="text-center">
+              <button cButton color="danger" size="sm" variant="ghost"
+                      (click)="deletarPix(pix.pixId!)" title="Remover chave">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ja-empty-state" *ngIf="pixKeys.length === 0">
+        <fa-icon [icon]="faKey" class="ja-empty-icon"></fa-icon>
+        <p class="ja-empty-text">Nenhuma chave Pix cadastrada</p>
+        <p class="ja-empty-hint">Adicione acima a primeira chave deste cliente</p>
+      </div>
+    </div>
 
   </c-modal-body>
   <c-modal-footer>

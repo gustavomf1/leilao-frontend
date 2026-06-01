@@ -1,15 +1,10 @@
-<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
-  <c-container>
-    <c-row class="justify-content-center">
-      <c-col md="6">
-        <div class="clearfix">
-          <h1 class="float-start display-3 me-4">404</h1>
-          <h4 class="pt-3">Oops! You're lost.</h4>
-          <p class="text-body-secondary float-start">
-            The page you are looking for was not found.
-          </p>
-        </div>
-      </c-col>
-    </c-row>
-  </c-container>
+<div class="ja-error-page min-vh-100 d-flex align-items-center justify-content-center ja-anim-fade-in">
+  <div class="ja-error-body">
+    <div class="ja-error-code">404</div>
+    <h1 class="ja-error-title">Página não encontrada</h1>
+    <p class="ja-error-desc">O endereço que você acessou não existe ou foi movido.</p>
+    <a routerLink="/dashboard" cButton color="primary">
+      Voltar ao início
+    </a>
+  </div>
 </div>

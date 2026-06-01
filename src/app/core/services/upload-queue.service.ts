@@ -1,13 +1,13 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
-import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, Subject, firstValueFrom } from 'rxjs';
 import { openDB, IDBPDatabase } from 'idb';
-import { LoteFotoService } from './lote-foto.service';
+import { LoteFotoService, LoteFoto } from './lote-foto.service';
 
 export type QueueStatus = 'PENDING' | 'UPLOADING' | 'DONE' | 'FAILED';
 
 export interface QueueItem {
   uuid: string;
-  loteId: number;
+  loteId: number | null;
   fileBlob: Blob;
   fileName: string;
   status: QueueStatus;
@@ -30,6 +30,9 @@ export class UploadQueueService implements OnDestroy {
   private queueSubject = new BehaviorSubject<QueueItem[]>([]);
   queue$ = this.queueSubject.asObservable();
 
+  private completedSubject = new Subject<LoteFoto>();
+  completed$ = this.completedSubject.asObservable();
+
   constructor() {
     this.init();
   }
@@ -51,7 +54,7 @@ export class UploadQueueService implements OnDestroy {
     this.queueSubject.next(all);
   }
 
-  async enqueue(loteId: number, file: File): Promise<void> {
+  async enqueue(loteId: number | null, file: File): Promise<void> {
     const item: QueueItem = {
       uuid: crypto.randomUUID(),
       loteId,
@@ -62,7 +65,18 @@ export class UploadQueueService implements OnDestroy {
     };
     await this.db.put(STORE, item);
     this.emit([...this.queueSubject.value, item]);
-    if (navigator.onLine) this.process(item);
+    if (loteId !== null && navigator.onLine) this.process(item);
+  }
+
+  async assignLoteId(loteId: number): Promise<void> {
+    const toAssign = this.queueSubject.value.filter(i => i.loteId === null);
+    for (const item of toAssign) {
+      await this.updateItem(item.uuid, { loteId });
+    }
+    const assigned = this.queueSubject.value.filter(i => i.loteId === loteId && i.status === 'PENDING');
+    if (navigator.onLine) {
+      for (const item of assigned) this.process(item);
+    }
   }
 
   async retryItem(uuid: string): Promise<void> {
@@ -81,9 +95,10 @@ export class UploadQueueService implements OnDestroy {
   }
 
   private async process(item: QueueItem): Promise<void> {
-    if (this.processing.has(item.uuid)) return;
+    if (item.loteId === null || this.processing.has(item.uuid)) return;
     this.processing.add(item.uuid);
 
+    const loteId = item.loteId;
     const ext = item.fileName.split('.').pop() ?? 'jpg';
     const delays = [0, 5000, 15000, 30000];
 
@@ -96,17 +111,18 @@ export class UploadQueueService implements OnDestroy {
         let presignedUrl = item.presignedUrl;
 
         if (!key || !presignedUrl) {
-          const res = await firstValueFrom(this.fotoService.getPresignedUrl(item.loteId, ext));
+          const res = await firstValueFrom(this.fotoService.getPresignedUrl(loteId, ext));
           key = res.key;
           presignedUrl = res.presignedUrl;
           await this.updateItem(item.uuid, { r2Key: key, presignedUrl });
         }
 
         await this.putToR2(presignedUrl!, item.fileBlob);
-        const ordem = this.queueSubject.value.filter(i => i.status === 'DONE' && i.loteId === item.loteId).length;
-        await firstValueFrom(this.fotoService.confirmar(item.loteId, key!, ordem));
+        const ordem = this.queueSubject.value.filter(i => i.status === 'DONE' && i.loteId === loteId).length;
+        const foto = await firstValueFrom(this.fotoService.confirmar(loteId, key!, ordem));
         await this.db.delete(STORE, item.uuid);
         this.emit(this.queueSubject.value.filter(i => i.uuid !== item.uuid));
+        this.completedSubject.next(foto);
         this.processing.delete(item.uuid);
         return;
       } catch (err: any) {

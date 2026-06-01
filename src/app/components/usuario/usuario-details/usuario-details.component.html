@@ -1,67 +1,91 @@
-<div class="container-lg px-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">{{ isEdicao ? 'Editar Usuário' : 'Novo Usuário' }}</h2>
-    <a routerLink="/usuarios/lista" cButton color="secondary" size="sm" variant="ghost">
-      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
-    </a>
+<div class="container-lg px-4 ja-form-page ja-anim-fade-in">
+
+  <div class="ja-form-page-header" *ngIf="!modoDrawer">
+    <div>
+      <div class="ja-breadcrumb-overline">
+        <a routerLink="/usuarios/lista">Usuários</a>
+        <span class="sep">›</span>
+        <span class="current">{{ isEdicao ? 'Editar' : 'Novo' }}</span>
+      </div>
+      <h1 class="ja-page-title">{{ isEdicao ? 'Editar Usuário' : 'Cadastrar Usuário' }}</h1>
+    </div>
+    <div class="ja-form-actions">
+      <a routerLink="/usuarios/lista" cButton color="secondary" variant="ghost">
+        <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+      </a>
+      <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+        <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+        {{ isEdicao ? 'Salvar Alterações' : 'Salvar Usuário' }}
+      </button>
+    </div>
   </div>
 
-  <c-card>
-    <c-card-header>
-      <strong>Dados do Usuário</strong>
-    </c-card-header>
-    <c-card-body>
-      <form [formGroup]="form" (ngSubmit)="salvar()">
-        <c-row>
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="nome">Nome *</label>
-              <input cFormControl id="nome" formControlName="nome" placeholder="Nome completo" />
-              <c-form-feedback *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched" [valid]="false">
-                Nome é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+  <form [formGroup]="form" (ngSubmit)="salvar()">
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="cpf">CPF *</label>
-              <input cFormControl id="cpf" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00"/>
-              <c-form-feedback *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched" [valid]="false">
-                CPF é obrigatório
-              </c-form-feedback>
-            </div>
-          </c-col>
+    <section class="ja-form-section ja-anim-slide-up">
+      <div class="ja-form-section-title"><fa-icon [icon]="faUser"></fa-icon>
+        Dados do Usuário
+      </div>
+      <div class="ja-form-section-body">
+        <div class="ja-form-grid">
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="email">Email *</label>
-              <input cFormControl id="email" type="email" formControlName="email" placeholder="email@exemplo.com" />
-              <c-form-feedback *ngIf="form.get('email')?.invalid && form.get('email')?.touched" [valid]="false">
-                Email inválido
-              </c-form-feedback>
-            </div>
-          </c-col>
+          <div class="ja-form-field">
+            <label cLabel for="nome">Nome Completo *</label>
+            <input cFormControl id="nome" formControlName="nome" placeholder="Nome completo" />
+            <span class="form-error" *ngIf="form.get('nome')?.invalid && form.get('nome')?.touched">
+              Nome é obrigatório
+            </span>
+          </div>
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="senha">Senha *</label>
-              <input cFormControl id="senha" type="password" formControlName="senha" placeholder="••••••••" />
-              <c-form-feedback *ngIf="form.get('senha')?.invalid && form.get('senha')?.touched" [valid]="false">
-                Senha é obrigatória (mínimo 6 caracteres)
-              </c-form-feedback>
-            </div>
-          </c-col>
-        </c-row>
+          <div class="ja-form-field">
+            <label cLabel for="email">E-mail *</label>
+            <input cFormControl id="email" type="email" formControlName="email"
+                   placeholder="usuario@email.com" />
+            <span class="form-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+              E-mail válido é obrigatório
+            </span>
+          </div>
 
-        <div class="d-flex gap-2 mt-3">
-          <button type="submit" cButton color="primary" [disabled]="form.invalid">
-            <fa-icon [icon]="faSave" class="me-1"></fa-icon>
-            {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar' }}
-          </button>
-          <a routerLink="/usuarios/lista" cButton color="secondary" variant="ghost">Cancelar</a>
+          <div class="ja-form-field">
+            <label cLabel for="cpf">CPF *</label>
+            <input cFormControl id="cpf" formControlName="cpf"
+                   placeholder="000.000.000-00" mask="000.000.000-00" />
+            <span class="form-hint" *ngIf="isEdicao">CPF não pode ser alterado após o cadastro</span>
+            <span class="form-error" *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched">
+              CPF é obrigatório
+            </span>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="senha">Senha *</label>
+            <input cFormControl id="senha" type="password" formControlName="senha"
+                   placeholder="Mínimo 6 caracteres" />
+            <span class="form-error" *ngIf="form.get('senha')?.invalid && form.get('senha')?.touched">
+              Senha é obrigatória (mínimo 6 caracteres)
+            </span>
+          </div>
+
         </div>
-      </form>
-    </c-card-body>
-  </c-card>
+      </div>
+    </section>
+
+  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Usuário' }}
+    </button>
+  </div>
+
+  </form>
+
+  <div class="ja-form-actions-sticky" *ngIf="!modoDrawer">
+    <a routerLink="/usuarios/lista" cButton color="secondary" variant="ghost">
+      <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
+    </a>
+    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <fa-icon [icon]="faSave" class="me-1"></fa-icon>
+      {{ isEdicao ? 'Salvar Alterações' : 'Salvar Usuário' }}
+    </button>
+  </div>
+
 </div>

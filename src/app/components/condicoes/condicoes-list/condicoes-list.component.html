@@ -1,41 +1,55 @@
-<div class="container-lg px-4">
+<div class="container-lg px-4 ja-anim-fade-in">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">Condições</h2>
-    <a *ngIf="auth.hasPermission('CONDICOES', 'CRIAR')" routerLink="/condicoes/cadastrar" cButton color="primary" size="sm">
+    <button *ngIf="auth.hasPermission('CONDICOES', 'CRIAR')"
+            type="button" cButton color="primary"
+            (click)="abrirDrawerNovo()">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Nova Condição
-    </a>
+    </button>
   </div>
 
-  <c-card>
-    <c-card-body>
+  <!-- ── DESKTOP: Tabela ── -->
+  <c-card class="d-mobile-none">
+    <c-card-body class="p-0">
       <table cTable hover responsive>
         <thead>
           <tr>
             <th>#</th>
             <th>Descrição</th>
             <th>Tipo</th>
-            <th>Parcelas</th>
-            <th>Qtd Dias</th>
-            <th>% Desconto</th>
-            <th>Com Entrada</th>
+            <th class="text-end">Parcelas</th>
+            <th class="text-end">Qtd Dias</th>
+            <th class="text-end">% Desconto</th>
+            <th class="text-center">Com Entrada</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let condicao of condicoes$ | async">
-            <td>{{ condicao.id }}</td>
-            <td>{{ condicao.descricao }}</td>
-            <td>{{ condicao.tipoCondicao }}</td>
-            <td>{{ condicao.parcelas }}</td>
-            <td>{{ condicao.qtdDias }}</td>
-            <td>{{ condicao.percentualDesconto }}</td>
-            <td>{{ condicao.comEntrada === 'S' ? 'Sim' : 'Não' }}</td>
+          <tr *ngFor="let condicao of condicoes$ | async; let i = index" [style.--ja-stagger-i]="i" class="ja-anim-slide-up ja-stagger">
+            <td class="text-muted" style="font-size:.8rem">{{ condicao.id }}</td>
+            <td><strong>{{ condicao.descricao }}</strong></td>
+            <td>
+              <span *ngIf="condicao.tipoCondicao" class="badge bg-primary">{{ condicao.tipoCondicao }}</span>
+              <span *ngIf="!condicao.tipoCondicao" class="text-muted">—</span>
+            </td>
+            <td class="text-end num">{{ condicao.parcelas ?? '—' }}</td>
+            <td class="text-end num">{{ condicao.qtdDias ?? '—' }}</td>
+            <td class="text-end num">{{ condicao.percentualDesconto != null ? (condicao.percentualDesconto | number:'1.2-2') + '%' : '—' }}</td>
             <td class="text-center">
-              <a *ngIf="auth.hasPermission('CONDICOES', 'EDITAR')" [routerLink]="['/condicoes', condicao.id]" cButton color="info" size="sm" variant="ghost">
+              <span [class]="condicao.comEntrada === 'S' ? 'badge bg-success' : 'badge bg-secondary'">
+                {{ condicao.comEntrada === 'S' ? 'Sim' : 'Não' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <button *ngIf="auth.hasPermission('CONDICOES', 'EDITAR')"
+                      cButton color="info" size="sm" variant="ghost"
+                      (click)="abrirDrawerEditar(condicao.id!)" title="Editar">
                 <fa-icon [icon]="faPencil"></fa-icon>
-              </a>
-              <button *ngIf="auth.hasPermission('CONDICOES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(condicao.id!)">
+              </button>
+              <button *ngIf="auth.hasPermission('CONDICOES', 'DELETAR')"
+                      cButton color="danger" size="sm" variant="ghost"
+                      (click)="deletar(condicao.id!)" title="Remover">
                 <fa-icon [icon]="faTrash"></fa-icon>
               </button>
             </td>
@@ -44,4 +58,64 @@
       </table>
     </c-card-body>
   </c-card>
+
+  <!-- ── MOBILE: Cards ── -->
+  <div class="d-desktop-none">
+    <div *ngFor="let condicao of condicoes$ | async; let i = index" class="ja-mobile-card ja-anim-slide-up ja-stagger" [style.--ja-stagger-i]="i">
+      <div class="ja-mc-title">{{ condicao.descricao }}</div>
+      <div class="ja-mc-subtitle" *ngIf="condicao.tipoCondicao">{{ condicao.tipoCondicao }}</div>
+      <div class="ja-mc-meta">
+        <span *ngIf="condicao.parcelas"><span class="label">Parcelas</span> {{ condicao.parcelas }}</span>
+        <span *ngIf="condicao.qtdDias"><span class="label">Dias</span> {{ condicao.qtdDias }}</span>
+        <span><span class="label">Entrada</span> {{ condicao.comEntrada === 'S' ? 'Sim' : 'Não' }}</span>
+      </div>
+      <div class="ja-mc-actions">
+        <button *ngIf="auth.hasPermission('CONDICOES', 'EDITAR')"
+                cButton color="info" size="sm" variant="ghost"
+                (click)="abrirDrawerEditar(condicao.id!)">
+          <fa-icon [icon]="faPencil" class="me-1"></fa-icon> Editar
+        </button>
+        <button *ngIf="auth.hasPermission('CONDICOES', 'DELETAR')"
+                cButton color="danger" size="sm" variant="ghost"
+                (click)="deletar(condicao.id!)">
+          <fa-icon [icon]="faTrash" class="me-1"></fa-icon> Remover
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- ─── Drawer: Cadastrar / Editar Condição ─────────────────────────── -->
+@if (drawerAberto) {
+  <div class="ja-form-drawer-backdrop" (click)="fecharDrawer()"></div>
+  <aside class="ja-form-drawer" role="dialog" aria-modal="true"
+         aria-label="{{ drawerCondicaoId ? 'Editar Condição' : 'Cadastrar Condição' }}">
+
+    <div class="ja-form-drawer-header">
+      <div class="ja-form-drawer-meta">
+        <div class="ja-form-drawer-overline">{{ drawerCondicaoId ? 'Editar' : 'Nova Condição' }}</div>
+        <h2 class="ja-form-drawer-title">{{ drawerCondicaoId ? 'Editar Condição' : 'Cadastrar Condição' }}</h2>
+      </div>
+      <button type="button" class="ja-form-drawer-close"
+              (click)="fecharDrawer()" aria-label="Fechar">
+        <fa-icon [icon]="faXmark"></fa-icon>
+      </button>
+    </div>
+
+    <div class="ja-form-drawer-body">
+      <app-condicoes-details
+        [modoDrawer]="true"
+        [drawerEntityId]="drawerCondicaoId"
+        (aoSalvar)="onCondicaoSalva()">
+      </app-condicoes-details>
+    </div>
+
+    <div class="ja-form-drawer-footer">
+      <button type="button" cButton color="secondary" variant="ghost"
+              (click)="fecharDrawer()">
+        Cancelar
+      </button>
+    </div>
+
+  </aside>
+}

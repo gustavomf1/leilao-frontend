@@ -1,11 +1,14 @@
+/* Evento Público — paleta migrada pro bordô warm. Estrutura/animações intactas. */
+
 .evento-publico {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 30rem),
-    #0f1117;
-  color: #e2e8f0;
+    radial-gradient(900px 500px at 15% 0%, rgba(138, 59, 44, .14), transparent 60%),
+    radial-gradient(800px 600px at 100% 100%, rgba(74, 20, 12, .28), transparent 70%),
+    #150b07;
+  color: rgba(245, 235, 226, .92);
   padding: 24px clamp(12px, 2vw, 28px) 40px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
 }
 
 /* Header */
@@ -24,11 +27,12 @@
   font-size: clamp(1.35rem, 2vw, 1.8rem);
   line-height: 1.15;
   font-weight: 700;
+  font-family: var(--ja-font-display, 'Playfair Display', serif);
   color: #fff;
 }
 .ep-subtitle {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: rgba(245, 235, 226, .60);
   margin-top: 4px;
 }
 .ep-badge {
@@ -37,13 +41,16 @@
   gap: 12px;
   flex-wrap: wrap;
 }
+/* AO VIVO continua verde — único uso operacional de verde */
 .badge-ao-vivo {
-  background: #16a34a;
+  background: #15803d;
   color: #fff;
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
   animation: pulse 2s infinite;
 }
 @keyframes pulse {
@@ -52,7 +59,7 @@
 }
 .ep-count {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: rgba(245, 235, 226, .60);
 }
 
 /* Alertas */
@@ -63,21 +70,21 @@
   font-size: 0.9rem;
   max-width: 1280px;
 }
-.ep-alert-erro    { background: #450a0a; border: 1px solid #dc2626; color: #fca5a5; }
-.ep-alert-sucesso { background: #052e16; border: 1px solid #16a34a; color: #86efac; }
+.ep-alert-erro    { background: #2a0c10; border: 1px solid #be123c; color: #fb7185; }
+.ep-alert-sucesso { background: #052e16; border: 1px solid #15803d; color: #86efac; }
 
 /* Loading */
 .ep-loading {
   text-align: center;
   padding: 48px;
-  color: #64748b;
+  color: rgba(245, 235, 226, .50);
 }
 
 /* Grid */
 .ep-vazio {
   text-align: center;
   padding: 48px;
-  color: #475569;
+  color: rgba(245, 235, 226, .42);
 }
 .ep-grid {
   display: grid;
@@ -87,19 +94,19 @@
   max-width: 1280px;
 }
 
-/* Cards */
+/* Cards — warm-charcoal */
 .ep-card {
-  background: linear-gradient(180deg, #202c40 0%, #1b2638 100%);
+  background: linear-gradient(180deg, #2a1d15 0%, #1f140e 100%);
   border-radius: 12px;
   padding: 16px;
-  border: 1px solid #334155;
+  border: 1px solid rgba(255, 240, 230, .08);
   display: flex;
   flex-direction: column;
   gap: 12px;
   min-width: 0;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
 }
-.ep-card-aguardando { border-color: #2563eb; }
+.ep-card-aguardando { border-color: rgba(138, 59, 44, .42); }
 
 .ep-card-header {
   display: flex;
@@ -108,24 +115,27 @@
   gap: 12px;
 }
 .ep-cod {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 0.95rem;
-  color: #f1f5f9;
+  color: #f5ebe2;
   line-height: 1.35;
+  letter-spacing: .02em;
   overflow-wrap: anywhere;
 }
 .ep-status {
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 800;
   padding: 5px 10px;
   border-radius: 999px;
   text-transform: uppercase;
+  letter-spacing: .04em;
   line-height: 1.2;
   max-width: 145px;
   text-align: center;
   flex: 0 0 auto;
 }
-.status-aguardando { background: #1e3a8a; color: #93c5fd; }
+/* Status "Aguardando lance" — amber per design system */
+.status-aguardando { background: rgba(245, 158, 11, .18); color: #fbbf24; }
 
 .ep-card-body { display: flex; flex-direction: column; gap: 6px; }
 .ep-info-row {
@@ -133,30 +143,31 @@
   align-items: center;
   gap: 8px;
   font-size: 0.85rem;
-  color: #cbd5e1;
+  color: rgba(245, 235, 226, .80);
   min-width: 0;
 }
 .ep-info-row span:last-child {
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.ep-icon { color: #64748b; font-size: 0.8rem; }
-.ep-label { color: #64748b; font-size: 0.8rem; }
+.ep-icon { color: rgba(245, 235, 226, .45); font-size: 0.8rem; }
+.ep-label { color: rgba(245, 235, 226, .45); font-size: 0.8rem; }
 
-/* Preço */
+/* Preço — bordô-tinted peach (signature do design) */
 .ep-preco-atual {
   display: flex;
   align-items: center;
   gap: 8px;
   min-height: 38px;
   padding: 8px 12px;
-  background: #0f172a;
-  border-radius: 8px;
+  background: rgba(138, 59, 44, .12);
+  border-left: 3px solid #8a3b2c;
+  border-radius: 0 8px 8px 0;
   min-width: 0;
 }
-.ep-icon-preco { color: #22c55e; font-size: 0.85rem; }
-.ep-preco-valor  { font-weight: 700; font-size: 1.05rem; color: #22c55e; overflow-wrap: anywhere; }
-.ep-preco-pendente { font-size: 0.85rem; color: #475569; font-style: italic; }
+.ep-icon-preco   { color: #f5b8a4; font-size: 0.85rem; }
+.ep-preco-valor  { font-weight: 800; font-size: 1.05rem; color: #f5b8a4; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.ep-preco-pendente { font-size: 0.85rem; color: rgba(245, 235, 226, .42); font-style: italic; }
 
 /* Input de lance */
 .ep-lance-form {
@@ -174,42 +185,44 @@
   margin: 0;
 }
 .ep-field-label {
-  color: #94a3b8;
+  color: rgba(245, 235, 226, .60);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
   text-transform: uppercase;
+  letter-spacing: .04em;
 }
 .ep-money-input {
   display: flex;
   align-items: center;
   min-width: 0;
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: #1f140e;
+  border: 1px solid rgba(255, 240, 230, .12);
   border-radius: 8px;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .ep-money-input:focus-within {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  border-color: #8a3b2c;
+  box-shadow: 0 0 0 3px rgba(151, 60, 42, .30);
 }
 .ep-money-prefix {
   flex: 0 0 auto;
   padding-left: 12px;
-  color: #22c55e;
+  color: #f5b8a4;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 .ep-input {
   width: 100%;
   min-width: 0;
   min-height: 40px;
-  background: #0f172a;
-  border: 1px solid #334155;
+  background: #1f140e;
+  border: 1px solid rgba(255, 240, 230, .12);
   border-radius: 8px;
-  color: #e2e8f0;
+  color: rgba(245, 235, 226, .92);
   padding: 8px 12px;
   font-size: 0.9rem;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   outline: none;
 }
 .ep-money-input .ep-input {
@@ -217,10 +230,10 @@
   background: transparent;
   padding-left: 7px;
 }
-.ep-input::placeholder { color: #64748b; opacity: 1; }
+.ep-input::placeholder { color: rgba(245, 235, 226, .42); opacity: 1; }
 .ep-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  border-color: #8a3b2c;
+  box-shadow: 0 0 0 3px rgba(151, 60, 42, .30);
 }
 .ep-money-input .ep-input:focus {
   box-shadow: none;
@@ -234,8 +247,9 @@
   -webkit-appearance: none;
   margin: 0;
 }
+/* Confirmar Lance — verde (success operacional, igual "Validar") */
 .ep-btn-confirmar {
-  background: #16a34a;
+  background: #15803d;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -249,8 +263,8 @@
   transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 .ep-btn-confirmar:hover {
-  background: #15803d;
-  box-shadow: 0 10px 20px rgba(22, 163, 74, 0.24);
+  background: #166534;
+  box-shadow: 0 10px 20px rgba(21, 128, 61, .28);
   transform: translateY(-1px);
 }
 .ep-btn-confirmar:active {
@@ -265,18 +279,18 @@
   display: grid;
   place-items: center;
   padding: 18px;
-  background: rgba(2, 6, 23, 0.72);
+  background: rgba(21, 11, 7, .72);
   backdrop-filter: blur(8px);
   animation: ep-backdrop-in 0.18s ease-out;
 }
 .ep-modal {
   width: min(100%, 420px);
-  background: #111827;
-  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: #2a1d15;
+  border: 1px solid rgba(255, 240, 230, .10);
   border-radius: 16px;
-  color: #e2e8f0;
+  color: rgba(245, 235, 226, .92);
   padding: 24px;
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.42);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.50);
   animation: ep-modal-in 0.24s cubic-bezier(0.2, 0.9, 0.25, 1.2);
 }
 .ep-modal-icon,
@@ -288,22 +302,24 @@
   margin: 0 auto 16px;
   border-radius: 999px;
 }
+/* Ícone do modal de alerta — bordô (era azul) */
 .ep-modal-icon-alerta {
-  background: rgba(37, 99, 235, 0.14);
-  border: 1px solid rgba(96, 165, 250, 0.35);
-  color: #93c5fd;
+  background: rgba(138, 59, 44, .18);
+  border: 1px solid rgba(138, 59, 44, .45);
+  color: #f5b8a4;
   animation: ep-icon-pop 0.38s ease-out;
 }
 .ep-modal-title {
   margin: 0;
-  color: #f8fafc;
+  font-family: var(--ja-font-display, 'Playfair Display', serif);
+  color: #f5ebe2;
   font-size: 1.25rem;
   line-height: 1.2;
   text-align: center;
 }
 .ep-modal-text {
   margin: 8px 0 0;
-  color: #94a3b8;
+  color: rgba(245, 235, 226, .60);
   font-size: 0.92rem;
   line-height: 1.45;
   text-align: center;
@@ -313,8 +329,8 @@
   gap: 10px;
   margin: 20px 0;
   padding: 14px;
-  background: #0f172a;
-  border: 1px solid rgba(51, 65, 85, 0.9);
+  background: #1f140e;
+  border: 1px solid rgba(255, 240, 230, .08);
   border-radius: 10px;
 }
 .ep-modal-resumo div {
@@ -324,13 +340,14 @@
   min-width: 0;
 }
 .ep-modal-resumo span {
-  color: #64748b;
+  color: rgba(245, 235, 226, .45);
   font-size: 0.8rem;
 }
 .ep-modal-resumo strong {
-  color: #e2e8f0;
+  color: rgba(245, 235, 226, .92);
   font-size: 0.9rem;
   text-align: right;
+  font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
 .ep-modal-actions {
@@ -346,6 +363,7 @@
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   transition: transform 0.15s, background 0.15s, opacity 0.15s, box-shadow 0.15s;
 }
 .ep-modal-btn:hover:not(:disabled) {
@@ -356,26 +374,31 @@
   opacity: 0.72;
 }
 .ep-modal-btn-secundario {
-  background: #1e293b;
-  color: #cbd5e1;
+  background: rgba(255, 240, 230, .08);
+  color: rgba(245, 235, 226, .80);
+  border: 1px solid rgba(255, 240, 230, .12);
 }
+.ep-modal-btn-secundario:hover:not(:disabled) {
+  background: rgba(255, 240, 230, .12);
+}
+/* Botão principal do modal — verde (confirma lance = success) */
 .ep-modal-btn-principal {
-  background: #16a34a;
+  background: #15803d;
   color: #fff;
-  box-shadow: 0 10px 20px rgba(22, 163, 74, 0.2);
+  box-shadow: 0 10px 20px rgba(21, 128, 61, .22);
 }
 .ep-modal-btn-principal:hover:not(:disabled) {
-  background: #15803d;
+  background: #166534;
 }
 .ep-modal-sucesso {
   text-align: center;
   animation: ep-success-card 0.28s cubic-bezier(0.2, 0.9, 0.25, 1.2);
 }
 .ep-success-ring {
-  background: #16a34a;
+  background: #15803d;
   color: #fff;
   font-size: 1.45rem;
-  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.38);
+  box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.38);
   animation: ep-success-ring 0.65s ease-out both;
 }
 .ep-success-ring fa-icon {
@@ -399,9 +422,9 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes ep-success-ring {
-  0% { transform: scale(0.72); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.42); }
-  55% { transform: scale(1.08); box-shadow: 0 0 0 16px rgba(34, 197, 94, 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  0% { transform: scale(0.72); box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.42); }
+  55% { transform: scale(1.08); box-shadow: 0 0 0 16px rgba(21, 128, 61, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(21, 128, 61, 0); }
 }
 @keyframes ep-success-check {
   from { opacity: 0; transform: scale(0.45) rotate(-18deg); }

@@ -30,42 +30,33 @@
 
 <ng-template #userDropdown>
   <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
-    <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
-      <c-avatar
-        shape="rounded-1"
-        size="md"
-        src="./assets/images/avatars/8.jpg"
-        status="success"
-        textColor="primary"
-        alt="User avatar"
-      />
+    <button [caret]="false" cDropdownToggle class="py-0 pe-0 d-flex align-items-center gap-2"
+            aria-label="Abrir menu do usuário">
+      <!-- Iniciais do usuário como avatar -->
+      <span class="ja-header-avatar">{{ iniciaisUsuario }}</span>
+      <span class="d-none d-md-block" style="font-size:13px; font-weight:600; color:var(--ja-fg-2);">
+        {{ nomeUsuario }}
+      </span>
     </button>
-    <ul cDropdownMenu class="pt-0 w-auto">
+    <ul cDropdownMenu class="pt-0 w-auto" style="min-width:180px;">
       <li>
-        <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2">
-          Settings
+        <h6 cDropdownHeader class="py-2" style="font-size:11px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--ja-fg-3);">
+          {{ nomeUsuario }}
         </h6>
       </li>
-      <li></li>
       <li>
-        <a cDropdownItem routerLink="">
-          <svg cIcon class="me-2" name="cilUser"></svg>
-          Profile
-        </a>
-      </li>
-      <li>
-        <a cDropdownItem routerLink="">
+        <a cDropdownItem routerLink="/configuracoes">
           <svg cIcon class="me-2" name="cilSettings"></svg>
-          Settings
+          Configurações
         </a>
       </li>
       <li>
         <hr cDropdownDivider />
       </li>
       <li>
-        <a cDropdownItem (click)="logout()">
+        <a cDropdownItem (click)="logout()" style="color:var(--ja-red);">
           <svg cIcon class="me-2" name="cilAccountLogout"></svg>
-          Logout
+          Sair
         </a>
       </li>
     </ul>

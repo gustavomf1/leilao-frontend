@@ -32,6 +32,7 @@ export class LoginComponent {
   showPassword: boolean = false;
   faEye = faEye;
   faEyeSlash = faEyeSlash;
+  anoAtual = new Date().getFullYear();
 
   constructor(private alert: AlertService,
     private router: Router

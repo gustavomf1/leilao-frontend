@@ -228,19 +228,19 @@ export const routes: Routes = [
             path: 'lista',
             runGuardsAndResolvers: 'always',
             loadComponent: () =>
-              import('./components/raca/raca-list/raca-list.component').then(
+              import('./components/racas/raca-list/raca-list.component').then(
                 (m) => m.RacaListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
-              import('./components/raca/raca-details/raca-details.component').then(
+              import('./components/racas/raca-details/raca-details.component').then(
                 (m) => m.RacaDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
-              import('./components/raca/raca-details/raca-details.component').then(
+              import('./components/racas/raca-details/raca-details.component').then(
                 (m) => m.RacaDetailsComponent),
           },
         ],
@@ -369,6 +369,26 @@ export const routes: Routes = [
           import('./components/admin/admin-roles.component').then(
             (m) => m.AdminRolesComponent,
           ),
+      },
+      {
+        path: 'configuracoes',
+        loadComponent: () =>
+          import('./components/configuracoes/configuracoes.component').then(
+            (m) => m.ConfiguracoesComponent,
+          ),
+      },
+      {
+        path: 'catalogos',
+        children: [
+          {
+            path: 'catalogo',
+            loadComponent: () =>
+              import('./components/catalogos/catalogo.component').then(
+                (m) => m.CatalogoComponent,
+              ),
+          },
+          { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
+        ],
       },
     ],
   },

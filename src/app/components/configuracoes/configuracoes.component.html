@@ -1,0 +1,61 @@
+<div class="container-lg px-4 ja-anim-fade-in">
+
+  <div class="ja-form-page-header">
+    <div>
+      <div class="ja-breadcrumb-overline"><span class="current">Sistema</span></div>
+      <h1 class="ja-page-title">Configurações</h1>
+    </div>
+  </div>
+
+  <!-- Informações da conta -->
+  <section class="ja-form-section ja-anim-slide-up">
+    <div class="ja-form-section-title">
+      <fa-icon [icon]="faUser"></fa-icon>
+      Conta
+    </div>
+    <div class="ja-form-section-body">
+      <div class="ja-form-grid">
+        <div class="ja-form-field">
+          <label class="form-label">Nome</label>
+          <div class="ja-readonly-display">{{ nomeUsuario }}</div>
+        </div>
+        <div class="ja-form-field">
+          <label class="form-label">Tipo</label>
+          <div class="ja-readonly-display">{{ tipoUsuario }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Aparência -->
+  <section class="ja-form-section ja-anim-slide-up">
+    <div class="ja-form-section-title">
+      <fa-icon [icon]="faMoon"></fa-icon>
+      Aparência
+    </div>
+    <div class="ja-form-section-body">
+      <div class="ja-form-field">
+        <label class="form-label">Tema da interface</label>
+        <div class="ja-toggle-group" style="max-width: 320px;">
+          <button type="button" class="ja-toggle-pill"
+                  [class.active]="currentMode === 'light'"
+                  (click)="setTheme('light')">
+            <fa-icon [icon]="faSun"></fa-icon> Claro
+          </button>
+          <button type="button" class="ja-toggle-pill"
+                  [class.active]="currentMode === 'dark'"
+                  (click)="setTheme('dark')">
+            <fa-icon [icon]="faMoon"></fa-icon> Escuro
+          </button>
+          <button type="button" class="ja-toggle-pill"
+                  [class.active]="currentMode === 'auto'"
+                  (click)="setTheme('auto')">
+            Auto
+          </button>
+        </div>
+        <span class="form-hint">Sincroniza com a preferência do sistema quando "Auto".</span>
+      </div>
+    </div>
+  </section>
+
+</div>
