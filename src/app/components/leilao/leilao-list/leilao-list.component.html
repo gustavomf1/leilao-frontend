@@ -33,7 +33,7 @@
             <td>{{ leilao.especieNome || '—' }}</td>
             <td>{{ leilao.tipoLeilao ? tipoLabels[leilao.tipoLeilao] : '—' }}</td>
             <td class="text-center">{{ leilao.taxaPor === 'ANIMAL' ? 'Animal' : leilao.taxaPor === 'LOTE' ? 'Lote' : '—' }}</td>
-            <td>{{ leilao.data }}</td>
+            <td>{{ leilao.data | date:'dd/MM/yyyy' }}</td>
             <td class="text-center">
               <a [routerLink]="['/leiloes', leilao.id, 'view']"
                  cButton color="primary" size="sm" variant="ghost" title="Ver detalhes">
@@ -67,7 +67,7 @@
       <div class="ja-mc-title">{{ leilao.descricao }}</div>
       <div class="ja-mc-subtitle">{{ leilao.local }} · {{ leilao.cidade }} / {{ leilao.uf }}</div>
       <div class="ja-mc-meta">
-        <span><span class="label">Data</span> {{ leilao.data }}</span>
+        <span><span class="label">Data</span> {{ leilao.data | date:'dd/MM/yyyy' }}</span>
         <span><span class="label">Espécie</span> {{ leilao.especieNome || '—' }}</span>
         <span><span class="label">Tipo</span> {{ leilao.tipoLeilao ? tipoLabels[leilao.tipoLeilao] : '—' }}</span>
       </div>

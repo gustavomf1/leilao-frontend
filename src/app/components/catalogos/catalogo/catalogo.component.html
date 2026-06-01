@@ -1,81 +1,49 @@
-<c-row>
-  <c-col>
-    <c-card>
-      <c-card-header>
-        <strong>Catálogos</strong>
-      </c-card-header>
+<div class="container-lg px-4 ja-anim-fade-in">
 
-      <c-card-body>
-        <c-row class="mb-3">
+  <div class="ja-form-page-header">
+    <div>
+      <div class="ja-breadcrumb-overline"><span class="current">Catálogos</span></div>
+      <h1 class="ja-page-title">Gerar Catálogo</h1>
+    </div>
+  </div>
 
-          <!-- SELECT -->
-          <c-col [md]="5">
-            <label class="form-label fw-semibold">Leilão</label>
+  <section class="ja-form-section ja-anim-slide-up">
+    <div class="ja-form-section-title">
+      <fa-icon [icon]="faBook"></fa-icon>
+      Selecione o Leilão
+    </div>
+    <div class="ja-form-section-body">
 
-            <select class="form-select"
-                    [(ngModel)]="selectedLeilaoId"
-                    (ngModelChange)="onLeilaoChange()">
+      <div class="ja-form-field" style="max-width: 520px;">
+        <label class="form-label">Leilão *</label>
+        <select class="form-control" [(ngModel)]="selectedLeilaoId">
+          <option [ngValue]="undefined">Selecione um leilão...</option>
+          <option *ngFor="let l of leiloes" [ngValue]="l.id">
+            {{ l.descricao }} — {{ l.data | date:'dd/MM/yyyy' }}
+          </option>
+        </select>
+      </div>
 
-              <option [ngValue]="undefined">
-                Selecione um leilão...
-              </option>
+      <div class="d-flex gap-2 flex-wrap mt-3">
+        <button cButton color="primary" [disabled]="!canGenerate" (click)="gerarCatalogo(1)">
+          <c-spinner *ngIf="loadingCatalogo === 1" size="sm" class="me-1"></c-spinner>
+          <fa-icon *ngIf="loadingCatalogo !== 1" [icon]="faFilePdf" class="me-1"></fa-icon>
+          {{ loadingCatalogo === 1 ? 'Gerando...' : 'Catálogo 1' }}
+        </button>
+        <button cButton color="secondary" variant="ghost" [disabled]="!canGenerate" (click)="gerarCatalogo(2)">
+          <c-spinner *ngIf="loadingCatalogo === 2" size="sm" class="me-1"></c-spinner>
+          <fa-icon *ngIf="loadingCatalogo !== 2" [icon]="faFilePdf" class="me-1"></fa-icon>
+          {{ loadingCatalogo === 2 ? 'Gerando...' : 'Catálogo 2' }}
+        </button>
+        <button cButton color="secondary" variant="ghost" [disabled]="!canGenerate" (click)="gerarCatalogo(3)">
+          <c-spinner *ngIf="loadingCatalogo === 3" size="sm" class="me-1"></c-spinner>
+          <fa-icon *ngIf="loadingCatalogo !== 3" [icon]="faFilePdf" class="me-1"></fa-icon>
+          {{ loadingCatalogo === 3 ? 'Gerando...' : 'Catálogo 3' }}
+        </button>
+      </div>
+      <span class="form-hint mt-2 d-block">Cada tipo de catálogo é gerado como PDF e aberto em nova aba.</span>
 
-              <option *ngFor="let l of leiloes" [ngValue]="l.id">
-                {{ l.descricao }} — {{ l.data }}
-              </option>
+    </div>
+  </section>
 
-            </select>
-          </c-col>
-
-          <!-- BOTÕES -->
-          <c-col [md]="7" class="d-flex align-items-end gap-2 flex-wrap">
-
-            <!-- CATÁLOGO 1 -->
-            <button cButton
-                    color="primary"
-                    [disabled]="!canGenerate || loading"
-                    (click)="gerarCatalogo(1)">
-
-              <c-spinner *ngIf="loadingCatalogo === 1"
-                         size="sm"
-                         class="me-1">
-              </c-spinner>
-
-              {{ loadingCatalogo === 1 ? 'Gerando...' : 'Catálogo 1' }}
-            </button>
-
-            <!-- CATÁLOGO 2 -->
-            <button cButton
-                    color="info"
-                    [disabled]="!canGenerate || loading"
-                    (click)="gerarCatalogo(2)">
-
-              <c-spinner *ngIf="loadingCatalogo === 2"
-                         size="sm"
-                         class="me-1">
-              </c-spinner>
-
-              {{ loadingCatalogo === 2 ? 'Gerando...' : 'Catálogo 2' }}
-            </button>
-
-            <!-- CATÁLOGO 3 -->
-            <button cButton
-                    color="warning"
-                    [disabled]="!canGenerate || loading"
-                    (click)="gerarCatalogo(3)">
-
-              <c-spinner *ngIf="loadingCatalogo === 3"
-                         size="sm"
-                         class="me-1">
-              </c-spinner>
-
-              {{ loadingCatalogo === 3 ? 'Gerando...' : 'Catálogo 3' }}
-            </button>
-
-          </c-col>
-
-        </c-row>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
+</div>
