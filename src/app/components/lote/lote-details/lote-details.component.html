@@ -1,4 +1,4 @@
-<div class="lote-page animate-in">
+<div class="lote-page animate-in ja-anim-fade-in">
 
   <!-- ── Page Header ─────────────────────────────────────── -->
   <div class="page-header">
@@ -339,6 +339,11 @@
             placeholder="Observações adicionais sobre o lote..." rows="3"></textarea>
         </div>
       </div>
+    </div>
+
+    <!-- ══ SEÇÃO 5: Fotos do Lote ══════════════════════════ -->
+    <div class="form-section" *ngIf="isEdicao" style="margin-top: 2rem;">
+      <app-lote-fotos [loteId]="loteIdAtual!"></app-lote-fotos>
     </div>
 
     <!-- ══ Actions ══════════════════════════════════════════ -->

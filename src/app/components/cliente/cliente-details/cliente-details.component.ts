@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faUser, faMapMarkerAlt, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -12,6 +12,7 @@ import { SubformService } from '../../../shared/services/subform.service';
 import { SubformComponent } from '../../../shared/components/subform/subform.component';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { NgxMaskDirective } from 'ngx-mask';
+import { UF_LIST } from '../../../core/constants/uf.constant';
 
 @Component({
   selector: 'app-clientes-details',
@@ -28,11 +29,17 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   @Input() modoSubform = false;
+  @Input() modoDrawer = false;
+  @Input() drawerEntityId?: number;
   @Output() aoSalvar = new EventEmitter<any>();
   @ViewChild('pickerFazenda') pickerFazenda!: SubformComponent;
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
+  faUser = faUser;
+  faMapMarker = faMapMarkerAlt;
+  faBullhorn = faBullhorn;
+  ufs = UF_LIST;
   form!: FormGroup;
   isEdicao = false;
 
@@ -75,7 +82,8 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
       cidade:    ['', Validators.required],
       uf:        ['', [Validators.required, Validators.maxLength(2)]],
       rg:        ['', Validators.required],
-      fazendaId: [null]
+      fazendaId: [null],
+      usu_aceita_remarketing: [false]
     });
 
     this.sub = this.subformService.resultado$.subscribe(({ chave, dados }) => {
@@ -87,10 +95,11 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
     });
 
     if (!this.modoSubform) {
-      const id = this.route.snapshot.paramMap.get('id');
+      const routeId = this.route.snapshot.paramMap.get('id');
+      const id = this.drawerEntityId ?? (routeId ? +routeId : null);
       if (id) {
         this.isEdicao = true;
-        this.entityId = +id;
+        this.entityId = id;
         this.form.get('cpf')?.disable();
         this.service.buscarPorId(this.entityId).subscribe({
           next: (data) => {
@@ -140,11 +149,10 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
           this.alert.success(this.isEdicao ? 'Cliente atualizado!' : 'Cliente cadastrado!');
           if (this.modoSubform) {
             this.subformService.emitir('titular', res);
-          } else {
+          } else if (this.modoDrawer || this.aoSalvar.observed) {
             this.aoSalvar.emit(res);
-            if (!this.aoSalvar.observed) {
-              this.router.navigate(['/clientes/lista']);
-            }
+          } else {
+            this.router.navigate(['/clientes/lista']);
           }
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar cliente')

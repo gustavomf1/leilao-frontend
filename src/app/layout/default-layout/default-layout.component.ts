@@ -1,7 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
-import { IconDirective } from '@coreui/icons-angular';
 import { INavData } from '@coreui/angular';
 import {
   ContainerComponent,
@@ -33,7 +32,6 @@ import { AuthService } from '../../core/services/auth.service';
     SidebarTogglerDirective,
     ContainerComponent,
     DefaultHeaderComponent,
-    IconDirective,
     NgScrollbar,
     RouterOutlet,
     RouterLink,

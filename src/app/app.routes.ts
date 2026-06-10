@@ -16,50 +16,6 @@ export const routes: Routes = [
           import('./views/dashboard/routes').then((m) => m.routes),
       },
       {
-        path: 'theme',
-        loadChildren: () =>
-          import('./views/theme/routes').then((m) => m.routes),
-      },
-      {
-        path: 'base',
-        loadChildren: () => import('./views/base/routes').then((m) => m.routes),
-      },
-      {
-        path: 'buttons',
-        loadChildren: () =>
-          import('./views/buttons/routes').then((m) => m.routes),
-      },
-      {
-        path: 'forms',
-        loadChildren: () =>
-          import('./views/forms/routes').then((m) => m.routes),
-      },
-      {
-        path: 'icons',
-        loadChildren: () =>
-          import('./views/icons/routes').then((m) => m.routes),
-      },
-      {
-        path: 'notifications',
-        loadChildren: () =>
-          import('./views/notifications/routes').then((m) => m.routes),
-      },
-      {
-        path: 'widgets',
-        loadChildren: () =>
-          import('./views/widgets/routes').then((m) => m.routes),
-      },
-      {
-        path: 'charts',
-        loadChildren: () =>
-          import('./views/charts/routes').then((m) => m.routes),
-      },
-      {
-        path: 'pages',
-        loadChildren: () =>
-          import('./views/pages/routes').then((m) => m.routes),
-      },
-      {
         path: 'usuarios',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
@@ -228,19 +184,19 @@ export const routes: Routes = [
             path: 'lista',
             runGuardsAndResolvers: 'always',
             loadComponent: () =>
-              import('./components/raca/raca-list/raca-list.component').then(
+              import('./components/racas/raca-list/raca-list.component').then(
                 (m) => m.RacaListComponent),
           },
           {
             path: 'cadastrar',
             loadComponent: () =>
-              import('./components/raca/raca-details/raca-details.component').then(
+              import('./components/racas/raca-details/raca-details.component').then(
                 (m) => m.RacaDetailsComponent),
           },
           {
             path: ':id',
             loadComponent: () =>
-              import('./components/raca/raca-details/raca-details.component').then(
+              import('./components/racas/raca-details/raca-details.component').then(
                 (m) => m.RacaDetailsComponent),
           },
         ],
@@ -385,6 +341,26 @@ export const routes: Routes = [
           import('./components/admin/admin-roles.component').then(
             (m) => m.AdminRolesComponent,
           ),
+      },
+      {
+        path: 'configuracoes',
+        loadComponent: () =>
+          import('./components/configuracoes/configuracoes.component').then(
+            (m) => m.ConfiguracoesComponent,
+          ),
+      },
+      {
+        path: 'catalogos',
+        children: [
+          {
+            path: 'catalogo',
+            loadComponent: () =>
+              import('./components/catalogos/catalogo/catalogo.component').then(
+                (m) => m.CatalogoComponent,
+              ),
+          },
+          { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
+        ],
       },
     ],
   },

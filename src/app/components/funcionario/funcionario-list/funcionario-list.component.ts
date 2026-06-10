@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, NgZone, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -7,13 +7,14 @@ import {
   ButtonDirective, ModalModule, FormModule, BadgeComponent
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faPlus, faPencil, faTrash, faKey } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faPencil, faTrash, faKey, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
 import { Funcionario, Pix } from '../../../core/models/entities.model';
 import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { PixService } from '../../../core/services/pix.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { FuncionariosDetailsComponent } from '../funcionario-details/funcionario-details.component';
 
 @Component({
   selector: 'app-funcionarios-list',
@@ -22,7 +23,8 @@ import { AuthService } from '../../../core/services/auth.service';
     CommonModule, FormsModule, RouterModule,
     TableModule, TableDirective, ButtonDirective,
     CardBodyComponent, CardComponent, ModalModule,
-    FormModule, BadgeComponent, FontAwesomeModule
+    FormModule, BadgeComponent, FontAwesomeModule,
+    FuncionariosDetailsComponent
   ],
   templateUrl: './funcionario-list.component.html'
 })
@@ -38,8 +40,13 @@ export class FuncionariosListComponent implements OnInit {
   faPencil = faPencil;
   faTrash = faTrash;
   faKey = faKey;
+  faXmark = faXmark;
 
   funcionarios$ = new BehaviorSubject<Funcionario[]>([]);
+
+  // Drawer
+  drawerAberto = false;
+  drawerFuncionarioId?: number;
 
   // Modal Pix
   modalPixVisivel = false;
@@ -57,6 +64,33 @@ export class FuncionariosListComponent implements OnInit {
       next: (data) => this.zone.run(() => this.funcionarios$.next(data)),
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar funcionários')
     });
+  }
+
+  abrirDrawerNovo() {
+    this.drawerFuncionarioId = undefined;
+    this.drawerAberto = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  abrirDrawerEditar(id: number) {
+    this.drawerFuncionarioId = id;
+    this.drawerAberto = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  fecharDrawer() {
+    this.drawerAberto = false;
+    document.body.style.overflow = '';
+  }
+
+  onFuncionarioSalvo() {
+    this.fecharDrawer();
+    this.carregar();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEsc() {
+    if (this.drawerAberto) this.fecharDrawer();
   }
 
   deletar(id: number) {

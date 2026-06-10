@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faHome, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -13,6 +13,7 @@ import { SubformComponent } from '../../../shared/components/subform/subform.com
 import { ClientePickerComponent } from '../../../shared/components/cliente-picker/cliente-picker.component';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { NgxMaskDirective } from 'ngx-mask';
+import { UF_LIST } from '../../../core/constants/uf.constant';
 
 @Component({
   selector: 'app-fazendas-details',
@@ -29,12 +30,17 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   @Input() modoSubform = false;
+  @Input() modoDrawer = false;
+  @Input() drawerEntityId?: number;
   @Input() ocultarTitular = false;
   @Output() aoSalvar = new EventEmitter<any>();
   @ViewChild('pickerTitular') pickerTitular!: SubformComponent;
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
+  faHome = faHome;
+  faMapMarker = faMapMarkerAlt;
+  ufs = UF_LIST;
   form!: FormGroup;
   isEdicao = false;
   private entityId?: number;
@@ -65,10 +71,11 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
       }
     });
 
-    const id = this.route.snapshot.paramMap.get('id');
+    const routeId = this.route.snapshot.paramMap.get('id');
+    const id = this.drawerEntityId ?? (routeId ? +routeId : null);
     if (id) {
       this.isEdicao = true;
-      this.entityId = +id;
+      this.entityId = id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => {
           this.form.patchValue(data);
@@ -102,11 +109,10 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
           this.alert.success(this.isEdicao ? 'Fazenda atualizada!' : 'Fazenda cadastrada!');
           if (this.modoSubform) {
             this.subformService.emitir('fazenda', res);
-          } else {
+          } else if (this.modoDrawer || this.aoSalvar.observed) {
             this.aoSalvar.emit(res);
-            if (!this.aoSalvar.observed) {
-              this.router.navigate(['/fazendas/lista']);
-            }
+          } else {
+            this.router.navigate(['/fazendas/lista']);
           }
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar fazenda')

@@ -1,13 +1,13 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   CardModule, ButtonDirective, FormModule, GridModule,
-  ModalModule, TableModule, TableDirective
+  ModalModule
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft, faSearch, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faSearch, faCheck, faTimes, faGavel, faPercent, faFileLines, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { CondicoesService } from '../../../core/services/condicoes.service';
@@ -21,9 +21,9 @@ import { Taxas, Condicoes, Especie, Funcionario, TipoLeilao, TIPO_LEILAO_LABELS 
   selector: 'app-leiloes-details',
   standalone: true,
   imports: [
-    CommonModule, RouterModule, ReactiveFormsModule,
+    CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
-    ModalModule, TableModule, TableDirective,
+    ModalModule,
     FontAwesomeModule
   ],
   templateUrl: './leilao-details.component.html',
@@ -43,6 +43,10 @@ export class LeiloesDetailsComponent implements OnInit {
   faSearch   = faSearch;
   faCheck    = faCheck;
   faTimes    = faTimes;
+  faGavel    = faGavel;
+  faPercent  = faPercent;
+  faFileLines = faFileLines;
+  faMapMarker = faMapMarkerAlt;
 
   form!: FormGroup;
   isEdicao = false;
@@ -55,12 +59,24 @@ export class LeiloesDetailsComponent implements OnInit {
   especies: Especie[] = [];
   leiloeiros: Funcionario[] = [];
   tiposLeilao = Object.entries(TIPO_LEILAO_LABELS).map(([value, label]) => ({ value: value as TipoLeilao, label }));
+  ufs = UF_LIST;
 
   // Selecionados
   condicaoSelecionada?: Condicoes;
 
-  // Modais
+  // Drawer (era modal)
   modalCondicaoAberto = false;
+  condicaoFiltro = '';
+
+  get condicoesFiltradas(): Condicoes[] {
+    const termo = this.condicaoFiltro.trim().toLowerCase();
+    if (!termo) return this.condicoes;
+    return this.condicoes.filter(c =>
+      c.descricao?.toLowerCase().includes(termo) ||
+      c.tipoCondicao?.toLowerCase().includes(termo) ||
+      String(c.id).includes(termo)
+    );
+  }
 
   constructor(
     private fb: FormBuilder,
