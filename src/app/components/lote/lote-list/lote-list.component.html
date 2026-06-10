@@ -121,6 +121,14 @@
                 <a *ngIf="auth.hasPermission('LOTES', 'EDITAR')" [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
                   <fa-icon [icon]="faPencil"></fa-icon>
                 </a>
+                <button
+                  *ngIf="auth.hasPermission('LOTES', 'EDITAR') && lote.status === 'FINALIZADO' && lote.precoCompra != null && lote.compradorId"
+                  cButton color="primary" size="sm" variant="ghost"
+                  title="Gerar nota de leilão"
+                  (click)="gerarNotaLeilao(lote)"
+                >
+                  <fa-icon [icon]="faFileInvoice"></fa-icon>
+                </button>
                 <button *ngIf="auth.hasPermission('LOTES', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(lote.id!)">
                   <fa-icon [icon]="faTrash"></fa-icon>
                 </button>

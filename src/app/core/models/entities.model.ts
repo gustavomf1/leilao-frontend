@@ -40,6 +40,8 @@ export interface Leilao {
   taxaPadraoId?: number;
   especieId?: number;
   especieNome?: string;
+  leiloeiroId?: number;
+  leiloeiroNome?: string;
   tipoLeilao?: TipoLeilao;
   taxaPor?: TaxaPor;
   status?: StatusLeilao;
@@ -75,6 +77,9 @@ export interface LeilaoDetalhes {
   especie?: Especie;
   especieId?: number;
   especieNome?: string;
+  leiloeiro?: Funcionario;
+  leiloeiroId?: number;
+  leiloeiroNome?: string;
   tipoLeilao?: TipoLeilao;
   taxaPor?: TaxaPor;
   taxa?: number;

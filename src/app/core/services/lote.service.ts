@@ -31,6 +31,12 @@ export class LoteService extends ApiService<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/validar-final`, dados);
   }
 
+  gerarNotaLeilao(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/nota-leilao/${id}`, {
+      responseType: 'blob',
+    });
+  }
+
   recolocarLance(id: number, dados: { comissaoVenda?: number | null; comissaoCompra?: number | null; naoVendidoNoLeilao?: string }): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/recolocar-lance`, dados);
   }

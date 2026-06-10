@@ -378,6 +378,21 @@ export const navItemsLeilao: INavData[] = [
         url: '/relatorios/fatura-venda',
         icon: 'nav-icon-bullet',
       },
+      {
+        name: 'Liberação',
+        url: '/relatorios/liberacao',
+        icon: 'nav-icon-bullet',
+      },
+      {
+        name: 'Mapa do Leilao',
+        url: '/relatorios/mapa-leilao',
+        icon: 'nav-icon-bullet',
+      },
+      {
+        name: 'Fechamento do Leilao',
+        url: '/relatorios/fechamento-leilao',
+        icon: 'nav-icon-bullet',
+      },
     ],
   },
   // ─── Catalogos ───────────────────────────────────────────────

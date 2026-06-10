@@ -1,0 +1,80 @@
+<c-row>
+  <c-col>
+    <c-card>
+      <c-card-header>
+        <strong>Relatório — Liberação</strong>
+      </c-card-header>
+      <c-card-body>
+        <c-row class="mb-3">
+          <c-col [md]="4">
+            <label class="form-label fw-semibold">Leilão</label>
+            <select class="form-select"
+                    [(ngModel)]="selectedLeilaoId"
+                    (ngModelChange)="onLeilaoChange()">
+              <option [ngValue]="undefined">Selecione um leilão...</option>
+              <option *ngFor="let l of leiloes" [ngValue]="l.id">
+                {{ l.descricao }} — {{ l.data }}
+              </option>
+            </select>
+          </c-col>
+
+          <c-col [md]="4">
+            <label class="form-label fw-semibold">Vendedor</label>
+            <select class="form-select"
+                    [(ngModel)]="selectedVendedorId"
+                    [disabled]="!selectedLeilaoId || vendedores.length === 0">
+              <option [ngValue]="undefined">
+                {{ selectedLeilaoId && vendedores.length === 0
+                   ? 'Nenhum vendedor encontrado'
+                   : 'Selecione um vendedor...' }}
+              </option>
+              <option *ngFor="let v of vendedores" [ngValue]="v.id">
+                {{ v.nome }}
+              </option>
+            </select>
+          </c-col>
+
+          <c-col [md]="4" class="d-flex align-items-end">
+            <button cButton color="warning"
+                    class="w-100"
+                    [disabled]="!canGenerateRetorno"
+                    (click)="gerarRetorno()">
+              <c-spinner *ngIf="loading === 'retorno'" size="sm" class="me-1"></c-spinner>
+              {{ loading === 'retorno' ? 'Gerando...' : 'Liberação Retorno' }}
+            </button>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col [md]="4"></c-col>
+
+          <c-col [md]="4">
+            <label class="form-label fw-semibold">Comprador</label>
+            <select class="form-select"
+                    [(ngModel)]="selectedCompradorId"
+                    [disabled]="!selectedLeilaoId || compradores.length === 0">
+              <option [ngValue]="undefined">
+                {{ selectedLeilaoId && compradores.length === 0
+                   ? 'Nenhum comprador encontrado'
+                   : 'Selecione um comprador...' }}
+              </option>
+              <option *ngFor="let c of compradores" [ngValue]="c.id">
+                {{ c.nome }}
+              </option>
+            </select>
+          </c-col>
+
+          <c-col [md]="4" class="d-flex align-items-end">
+            <button cButton color="success"
+                    class="w-100"
+                    [disabled]="!canGenerateCompra"
+                    (click)="gerarCompra()">
+              <c-spinner *ngIf="loading === 'compra'" size="sm" class="me-1"></c-spinner>
+              {{ loading === 'compra' ? 'Gerando...' : 'Liberação Compra' }}
+            </button>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

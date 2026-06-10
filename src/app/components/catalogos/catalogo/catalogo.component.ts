@@ -7,6 +7,7 @@ import { LeilaoService } from '../../../core/services/leilao.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { Leilao } from '../../../core/models/entities.model';
 import { CatalogoService } from '../../../core/services/catalogo.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-catalogo',
@@ -63,23 +64,25 @@ export class CatalogoComponent implements OnInit {
 
     this.catalogoService
       .gerarCatalogo(tipo, this.selectedLeilaoId)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.loadingCatalogo = null;
+          this.cdr.detectChanges();
+        })
+      )
       .subscribe({
 
         next: (blob: Blob) => {
 
           const url = window.URL.createObjectURL(blob);
           window.open(url);
-
-          this.loading = false;
-          this.loadingCatalogo = null;
         },
 
         error: (err) => {
 
           console.error(err);
-
-          this.loading = false;
-          this.loadingCatalogo = null;
+          this.alert.error('Erro ao gerar catálogo');
         }
       });
   }

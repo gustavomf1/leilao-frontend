@@ -8,6 +8,11 @@ export interface VendedorResumo {
   nome: string;
 }
 
+export interface CompradorResumo {
+  id: number;
+  nome: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RelatorioService {
   private http = inject(HttpClient);
@@ -20,9 +25,43 @@ export class RelatorioService {
     });
   }
 
+  gerarMapaLeilao(leilaoId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/mapa-leilao`, {
+      params: { leilaoId },
+      responseType: 'blob',
+    });
+  }
+
+  gerarFechamentoLeilao(leilaoId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/fechamento-leilao`, {
+      params: { leilaoId },
+      responseType: 'blob',
+    });
+  }
+
+  gerarLiberacaoRetorno(leilaoId: number, vendedorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/liberacao-retorno`, {
+      params: { leilaoId, vendedorId },
+      responseType: 'blob',
+    });
+  }
+
+  gerarLiberacaoCompra(leilaoId: number, compradorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/liberacao-compra`, {
+      params: { leilaoId, compradorId },
+      responseType: 'blob',
+    });
+  }
+
   getVendedoresDoLeilao(leilaoId: number): Observable<VendedorResumo[]> {
     return this.http.get<VendedorResumo[]>(
       `${this.baseUrl}/api/leiloes/${leilaoId}/vendedores`
+    );
+  }
+
+  getCompradoresDoLeilao(leilaoId: number): Observable<CompradorResumo[]> {
+    return this.http.get<CompradorResumo[]>(
+      `${this.baseUrl}/api/leiloes/${leilaoId}/compradores`
     );
   }
 }

@@ -89,6 +89,18 @@
 
           <c-col [md]="6">
             <div class="mb-3">
+              <label cLabel for="leiloeiroId">Leiloeiro</label>
+              <select cFormControl id="leiloeiroId" formControlName="leiloeiroId">
+                <option [ngValue]="null">Selecione o leiloeiro</option>
+                <option *ngFor="let leiloeiro of leiloeiros" [ngValue]="leiloeiro.id">
+                  {{ leiloeiro.nome }}
+                </option>
+              </select>
+            </div>
+          </c-col>
+
+          <c-col [md]="6">
+            <div class="mb-3">
               <label class="form-label">Condição de Pagamento *</label>
               <div class="d-flex gap-2 align-items-center">
                 <div class="flex-grow-1 p-2 border rounded bg-body-secondary" style="min-height: 38px;">

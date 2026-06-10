@@ -12,9 +12,10 @@ import { LeilaoService } from '../../../core/services/leilao.service';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { CondicoesService } from '../../../core/services/condicoes.service';
 import { EspecieService } from '../../../core/services/especie.service';
+import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Taxas, Condicoes, Especie, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
+import { Taxas, Condicoes, Especie, Funcionario, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-leiloes-details',
@@ -32,6 +33,7 @@ export class LeiloesDetailsComponent implements OnInit {
   private taxaService  = inject(TaxasService);
   private condicaoService = inject(CondicoesService);
   private especieService  = inject(EspecieService);
+  private funcionarioService = inject(FuncionarioService);
   private alert        = inject(AlertService);
   private cdr          = inject(ChangeDetectorRef);
   auth                 = inject(AuthService);
@@ -51,6 +53,7 @@ export class LeiloesDetailsComponent implements OnInit {
   taxaPadrao?: Taxas;
   condicoes: Condicoes[] = [];
   especies: Especie[] = [];
+  leiloeiros: Funcionario[] = [];
   tiposLeilao = Object.entries(TIPO_LEILAO_LABELS).map(([value, label]) => ({ value: value as TipoLeilao, label }));
 
   // Selecionados
@@ -75,6 +78,7 @@ export class LeiloesDetailsComponent implements OnInit {
       condicoesId: [null, Validators.required],
       taxaPadraoId: [null],
       especieId:         [null, Validators.required],
+      leiloeiroId:       [null],
       tipoLeilao:        ['', Validators.required],
       taxaPor:           ['ANIMAL', Validators.required],
     });
@@ -114,6 +118,10 @@ export class LeiloesDetailsComponent implements OnInit {
     this.especieService.listar().subscribe({
       next: (data) => { this.especies = data; this.cdr.detectChanges(); },
     });
+    this.funcionarioService.listar().subscribe({
+      next: (data) => { this.leiloeiros = data; this.cdr.detectChanges(); },
+      error: () => this.alert.error('Erro ao carregar leiloeiros'),
+    });
   }
 
   tipoLabel(tipo: TipoLeilao): string {
@@ -133,7 +141,8 @@ export class LeiloesDetailsComponent implements OnInit {
     const condicoesId = data.condicoesId ?? data.condicoes_id ?? data.condicao?.id ?? null;
     const especieId = data.especieId ?? data.especie?.id ?? null;
     const taxaPadraoId = data.taxaPadraoId ?? data.taxaPadrao?.id ?? null;
-    return { ...data, condicoesId, especieId, taxaPadraoId };
+    const leiloeiroId = data.leiloeiroId ?? data.leiloeiro?.id ?? data.leiloeiro?.usu_id ?? null;
+    return { ...data, condicoesId, especieId, taxaPadraoId, leiloeiroId };
   }
 
   private atualizarSelecionados() {
