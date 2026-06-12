@@ -168,45 +168,16 @@
               </ng-container>
               <ng-template #semGta>—</ng-template>
             </div>
-          </c-col>
+          </div>
 
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label cLabel for="leiloeiroId">Leiloeiro</label>
-              <select cFormControl id="leiloeiroId" formControlName="leiloeiroId">
-                <option [ngValue]="null">Selecione o leiloeiro</option>
-                <option *ngFor="let leiloeiro of leiloeiros" [ngValue]="leiloeiro.id">
-                  {{ leiloeiro.nome }}
-                </option>
-              </select>
-            </div>
-          </c-col>
-
-          <c-col [md]="6">
-            <div class="mb-3">
-              <label class="form-label">Condição de Pagamento *</label>
-              <div class="d-flex gap-2 align-items-center">
-                <div class="flex-grow-1 p-2 border rounded bg-body-secondary" style="min-height: 38px;">
-                  <ng-container *ngIf="condicaoSelecionada; else semCondicao">
-                    <strong>#{{ condicaoSelecionada.id }}</strong> — {{ condicaoSelecionada.descricao }}
-                    <span *ngIf="condicaoSelecionada.parcelas" class="ms-2 badge bg-secondary">{{ condicaoSelecionada.parcelas }}x</span>
-                  </ng-container>
-                  <ng-template #semCondicao>
-                    <span class="text-muted">Nenhuma condição selecionada</span>
-                  </ng-template>
-                </div>
-                <button type="button" cButton color="primary" size="sm" (click)="modalCondicaoAberto = true" title="Selecionar">
-                  <fa-icon [icon]="faSearch"></fa-icon>
-                </button>
-                <button *ngIf="condicaoSelecionada" type="button" cButton color="danger" size="sm" variant="ghost"
-                        (click)="condicaoSelecionada = undefined; form.patchValue({ condicoesId: null })" title="Remover">
-                  <fa-icon [icon]="faTimes"></fa-icon>
-                </button>
-              </div>
-              <div *ngIf="form.get('condicoesId')?.invalid && form.get('condicoesId')?.touched" class="text-danger small mt-1">
-                Selecione uma condição de pagamento
-              </div>
-            </div>
+          <div class="ja-form-field">
+            <label cLabel for="leiloeiroId">Leiloeiro</label>
+            <select cFormControl id="leiloeiroId" formControlName="leiloeiroId">
+              <option [ngValue]="null">Selecione o leiloeiro</option>
+              <option *ngFor="let leiloeiro of leiloeiros" [ngValue]="leiloeiro.id">
+                {{ leiloeiro.nome }}
+              </option>
+            </select>
           </div>
 
           <div class="ja-form-field">

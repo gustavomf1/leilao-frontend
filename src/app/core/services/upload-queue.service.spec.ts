@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { firstValueFrom } from 'rxjs';
 import { UploadQueueService } from './upload-queue.service';
 
 describe('UploadQueueService', () => {
@@ -17,10 +18,8 @@ describe('UploadQueueService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('queue$ emite array vazio inicialmente', (done) => {
-    service.queue$.subscribe(q => {
-      expect(Array.isArray(q)).toBeTrue();
-      done();
-    });
+  it('queue$ emite array vazio inicialmente', async () => {
+    const q = await firstValueFrom(service.queue$);
+    expect(Array.isArray(q)).toBe(true);
   });
 });

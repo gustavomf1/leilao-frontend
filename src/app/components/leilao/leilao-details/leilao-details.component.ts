@@ -16,6 +16,7 @@ import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Taxas, Condicoes, Especie, Funcionario, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
+import { UF_LIST } from '../../../core/constants/uf.constant';
 
 @Component({
   selector: 'app-leiloes-details',
