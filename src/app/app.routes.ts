@@ -263,11 +263,27 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'fatura-compra',
+            path: 'liberacao',
             runGuardsAndResolvers: 'always',
             loadComponent: () =>
-              import('./components/relatorios/fatura-compra/fatura-compra.component').then(
-                (m) => m.FaturaCompraComponent
+              import('./components/relatorios/liberacao/liberacao.component').then(
+                (m) => m.LiberacaoComponent
+              ),
+          },
+          {
+            path: 'mapa-leilao',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/mapa-leilao/mapa-leilao.component').then(
+                (m) => m.MapaLeilaoComponent
+              ),
+          },
+          {
+            path: 'fechamento-leilao',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/fechamento-leilao/fechamento-leilao.component').then(
+                (m) => m.FechamentoLeilaoComponent
               ),
           },
           { path: '', redirectTo: 'fatura-venda', pathMatch: 'full' },

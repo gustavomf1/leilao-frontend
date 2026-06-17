@@ -25,17 +25,38 @@ export class RelatorioService {
     });
   }
 
+  gerarMapaLeilao(leilaoId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/mapa-leilao`, {
+      params: { leilaoId },
+      responseType: 'blob',
+    });
+  }
+
+  gerarFechamentoLeilao(leilaoId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/fechamento-leilao`, {
+      params: { leilaoId },
+      responseType: 'blob',
+    });
+  }
+
+  gerarLiberacaoRetorno(leilaoId: number, vendedorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/liberacao-retorno`, {
+      params: { leilaoId, vendedorId },
+      responseType: 'blob',
+    });
+  }
+
+  gerarLiberacaoCompra(leilaoId: number, compradorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/liberacao-compra`, {
+      params: { leilaoId, compradorId },
+      responseType: 'blob',
+    });
+  }
+
   getVendedoresDoLeilao(leilaoId: number): Observable<VendedorResumo[]> {
     return this.http.get<VendedorResumo[]>(
       `${this.baseUrl}/api/leiloes/${leilaoId}/vendedores`
     );
-  }
-
-  gerarFaturaCompra(leilaoId: number, compradorId: number): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/api/relatorios/fatura-compra`, {
-      params: { leilaoId, compradorId },
-      responseType: 'blob',
-    });
   }
 
   getCompradoresDoLeilao(leilaoId: number): Observable<CompradorResumo[]> {

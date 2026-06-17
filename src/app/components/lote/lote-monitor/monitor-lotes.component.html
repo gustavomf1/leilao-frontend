@@ -209,6 +209,14 @@
                 <a [routerLink]="['/lotes', lote.id]" [queryParams]="contextoQueryParams" cButton color="info" size="sm" variant="ghost">
                   <fa-icon [icon]="faPencil"></fa-icon>
                 </a>
+                <button
+                  *ngIf="lote.status === 'FINALIZADO' && lote.precoCompra != null && lote.compradorId"
+                  cButton color="primary" size="sm" variant="ghost"
+                  title="Gerar nota de leilão"
+                  (click)="gerarNotaLeilao(lote)"
+                >
+                  <fa-icon [icon]="faFileInvoice"></fa-icon>
+                </button>
               </div>
 
               <!-- Deletar: admin pode excluir em qualquer status -->
@@ -301,6 +309,13 @@
   </c-modal-body>
 
   <c-modal-footer>
+    <button
+      *ngIf="loteDetalhes?.status === 'FINALIZADO' && loteDetalhes?.precoCompra != null && loteDetalhes?.compradorId"
+      cButton color="primary"
+      (click)="gerarNotaLeilao(loteDetalhes)"
+    >
+      <fa-icon [icon]="faFileInvoice" class="me-1"></fa-icon> Nota de Leilão
+    </button>
     <button cButton color="secondary" variant="ghost" (click)="fecharDetalhes()">
       <fa-icon [icon]="faTimes" class="me-1"></fa-icon> Fechar
     </button>

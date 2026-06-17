@@ -13,7 +13,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCircle, faLayerGroup, faHashtag, faTag,
   faPaw, faDollarSign, faUser, faHorse,
-  faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes, faShare
+  faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes, faShare, faFileInvoice
 } from '@fortawesome/free-solid-svg-icons';
 import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
 
@@ -76,6 +76,7 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   readonly faEye        = faEye;
   readonly faTimes      = faTimes;
   readonly faShare      = faShare;
+  readonly faFileInvoice = faFileInvoice;
 
   loteDetalhes: any | null = null;
   modalDetalhesVisivel = false;
@@ -201,6 +202,22 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
         this.fecharModalTransferir();
       },
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao transferir lote')
+    });
+  }
+
+  gerarNotaLeilao(lote: Lote) {
+    if (!lote.id) {
+      this.alert.error('Lote inválido');
+      return;
+    }
+
+    this.loteService.gerarNotaLeilao(lote.id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao gerar nota de leilão')
     });
   }
 

@@ -115,14 +115,31 @@ export const navItemsLeilao: INavData[] = [
     name: 'Relatórios'
   },
   {
-    name: 'Fatura de Venda',
-    url: '/relatorios/fatura-venda',
-    iconComponent: { name: 'cil-spreadsheet' }
-  },
-  {
-    name: 'Fatura de Compra',
-    url: '/relatorios/fatura-compra',
-    iconComponent: { name: 'cil-spreadsheet' }
+    name: 'Relatórios',
+    url: '/relatorios',
+    iconComponent: { name: 'cil-description' },
+    children: [
+      {
+        name: 'Fatura de Venda',
+        url: '/relatorios/fatura-venda',
+        icon: 'nav-icon-bullet',
+      },
+      {
+        name: 'Liberação',
+        url: '/relatorios/liberacao',
+        icon: 'nav-icon-bullet',
+      },
+      {
+        name: 'Mapa do Leilao',
+        url: '/relatorios/mapa-leilao',
+        icon: 'nav-icon-bullet',
+      },
+      {
+        name: 'Fechamento do Leilao',
+        url: '/relatorios/fechamento-leilao',
+        icon: 'nav-icon-bullet',
+      },
+    ],
   },
 
   // ─── Catálogos ────────────────────────────────────────────────

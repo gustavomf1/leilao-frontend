@@ -168,17 +168,16 @@
               </ng-container>
               <ng-template #semGta>—</ng-template>
             </div>
-            <span class="form-hint">Guia de Trânsito Animal</span>
           </div>
 
           <div class="ja-form-field">
-            <label cLabel>Comissão sobre Venda</label>
-            <div class="ja-readonly-display" [class.empty]="!taxaPadrao">
-              <ng-container *ngIf="taxaPadrao; else semCv">
-                {{ taxaPadrao.comissaoVenda | number: '1.2-2':'pt-BR' }}<span class="prefix ms-1">%</span>
-              </ng-container>
-              <ng-template #semCv>—</ng-template>
-            </div>
+            <label cLabel for="leiloeiroId">Leiloeiro</label>
+            <select cFormControl id="leiloeiroId" formControlName="leiloeiroId">
+              <option [ngValue]="null">Selecione o leiloeiro</option>
+              <option *ngFor="let leiloeiro of leiloeiros" [ngValue]="leiloeiro.id">
+                {{ leiloeiro.nome }}
+              </option>
+            </select>
           </div>
 
           <div class="ja-form-field">

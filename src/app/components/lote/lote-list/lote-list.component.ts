@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 import {
   faPlus, faPencil, faTrash,
   faHashtag, faTag, faPaw, faDollarSign,
-  faUser, faHorse, faLayerGroup, faArrowRight
+  faUser, faHorse, faLayerGroup, faArrowRight, faFileInvoice
 } from '@fortawesome/free-solid-svg-icons';
 import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
@@ -47,6 +47,7 @@ export class LotesListComponent implements OnInit {
   readonly faHorse       = faHorse;
   readonly faLayerGroup  = faLayerGroup;
   readonly faArrowRight  = faArrowRight;
+  readonly faFileInvoice = faFileInvoice;
 
   readonly statusDisponiveis: Array<StatusLote | 'TODOS' | 'NAO_VENDIDO'> = [
     'TODOS', 'AGUARDANDO_ESCRITORIO', 'AGUARDANDO_LANCE',
@@ -116,6 +117,22 @@ export class LotesListComponent implements OnInit {
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir lote')
       });
+    });
+  }
+
+  gerarNotaLeilao(lote: any) {
+    if (!lote?.id) {
+      this.alert.error('Lote inválido');
+      return;
+    }
+
+    this.service.gerarNotaLeilao(lote.id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao gerar nota de leilão')
     });
   }
 }
