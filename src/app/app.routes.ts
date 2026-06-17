@@ -263,6 +263,14 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'fatura-compra',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/fatura-compra/fatura-compra.component').then(
+                (m) => m.FaturaCompraComponent
+              ),
+          },
+          {
             path: 'liberacao',
             runGuardsAndResolvers: 'always',
             loadComponent: () =>

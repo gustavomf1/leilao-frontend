@@ -125,6 +125,11 @@ export const navItemsLeilao: INavData[] = [
         icon: 'nav-icon-bullet',
       },
       {
+        name: 'Fatura de Compra',
+        url: '/relatorios/fatura-compra',
+        icon: 'nav-icon-bullet',
+      },
+      {
         name: 'Liberação',
         url: '/relatorios/liberacao',
         icon: 'nav-icon-bullet',
