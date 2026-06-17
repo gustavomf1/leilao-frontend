@@ -191,6 +191,9 @@ export interface Lote {
   compradorNome?: string;
   comissaoVenda?: number;
   comissaoCompra?: number;
+  vendedorPixId?: number;
+  vendedorPixTipo?: 'CPF_CNPJ' | 'TELEFONE' | 'EMAIL' | 'CHAVE_ALEATORIA';
+  vendedorPixChave?: string;
   status?: StatusLote;
   naoVendidoNoLeilao?: string;
 }

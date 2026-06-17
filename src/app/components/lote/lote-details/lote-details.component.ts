@@ -4,10 +4,10 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   CardModule, ButtonDirective, FormModule, GridModule,
-  ModalModule, ModalComponent
+  ModalModule, ModalComponent, DropdownModule
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faCheck, faTimes, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { LoteService } from '../../../core/services/lote.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -15,7 +15,8 @@ import { EspecieService } from '../../../core/services/especie.service';
 import { RacaService } from '../../../core/services/raca.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { ClienteService } from '../../../core/services/cliente.service';
-import { Especie, Raca, LeilaoDetalhes, Cliente } from '../../../core/models/entities.model';
+import { PixService } from '../../../core/services/pix.service';
+import { Especie, Raca, LeilaoDetalhes, Cliente, Pix } from '../../../core/models/entities.model';
 import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
 
 @Component({
@@ -24,7 +25,7 @@ import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
-    ModalModule, FontAwesomeModule, LoteFotosComponent
+    ModalModule, DropdownModule, FontAwesomeModule, LoteFotosComponent
   ],
   templateUrl: './lote-details.component.html',
   styleUrl: './lote-details.component.css'
@@ -39,11 +40,13 @@ export class LotesDetailsComponent implements OnInit {
   private racaService = inject(RacaService);
   private leilaoService = inject(LeilaoService);
   private clienteService = inject(ClienteService);
+  private pixService = inject(PixService);
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
   faCheck = faCheck;
   faTimes = faTimes;
+  faPlus = faPlus;
 
   form!: FormGroup;
   isEdicao = false;
@@ -81,6 +84,13 @@ export class LotesDetailsComponent implements OnInit {
   lanceComissaoComprador: number | null = null;
   recolocacaoComissaoVendedor: number | null = null;
   recolocacaoComissaoComprador: number | null = null;
+
+  pixDoVendedor: Pix[] = [];
+  pixCarregando = false;
+  pixCarregado = false;
+  modalNovoPixVisivel = false;
+  novoPixTipo: '' | Pix['tipo'] = '';
+  novoPixChave = '';
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -415,6 +425,75 @@ export class LotesDetailsComponent implements OnInit {
         this.navegarRetorno();
       },
       error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao validar lote')
+    });
+  }
+
+  carregarPixDoVendedor(): void {
+    if (this.pixCarregado || this.loteCarregado?.vendedorId == null) return;
+    this.pixCarregando = true;
+    this.pixService.listarPorUsuario(this.loteCarregado.vendedorId).subscribe({
+      next: (lista) => {
+        this.pixDoVendedor = lista;
+        this.pixCarregado = true;
+        this.pixCarregando = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.pixCarregando = false;
+        this.alert.error('Erro ao carregar PIX do vendedor');
+      }
+    });
+  }
+
+  selecionarPix(pix: Pix | null): void {
+    if (this.entityId == null) return;
+    this.service.definirPixVendedor(this.entityId, pix?.pixId ?? null).subscribe({
+      next: (loteAtualizado) => {
+        this.loteCarregado = { ...this.loteCarregado, ...loteAtualizado };
+        this.alert.success(pix ? 'PIX anexado ao lote!' : 'PIX removido do lote.');
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao definir PIX do lote')
+    });
+  }
+
+  formatarPix(tipo?: string, chave?: string): string {
+    if (!tipo || !chave) return 'Nenhum selecionado';
+    const labels: Record<string, string> = {
+      CPF_CNPJ: 'CPF/CNPJ',
+      TELEFONE: 'Telefone',
+      EMAIL: 'E-mail',
+      CHAVE_ALEATORIA: 'Chave Aleatória'
+    };
+    return `${labels[tipo] ?? tipo}: ${chave}`;
+  }
+
+  abrirModalNovoPix(): void {
+    this.novoPixTipo = '';
+    this.novoPixChave = '';
+    this.modalNovoPixVisivel = true;
+  }
+
+  fecharModalNovoPix(): void {
+    this.modalNovoPixVisivel = false;
+  }
+
+  confirmarNovoPix(): void {
+    if (!this.novoPixTipo || !this.novoPixChave.trim() || this.loteCarregado?.vendedorId == null) {
+      this.alert.error('Informe o tipo e a chave do PIX.');
+      return;
+    }
+    this.pixService.cadastrar({
+      usuarioId: this.loteCarregado.vendedorId,
+      tipo: this.novoPixTipo,
+      chave: this.novoPixChave.trim()
+    }).subscribe({
+      next: (novoPix) => {
+        this.pixDoVendedor = [...this.pixDoVendedor, novoPix];
+        this.alert.success('PIX cadastrado!');
+        this.fecharModalNovoPix();
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao cadastrar PIX')
     });
   }
 

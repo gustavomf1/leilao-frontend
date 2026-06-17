@@ -44,4 +44,8 @@ export class LoteService extends ApiService<Lote> {
   transferirLote(id: number, leilaoId: number): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/transferir`, { leilaoId });
   }
+
+  definirPixVendedor(id: number, pixId: number | null): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/pix-vendedor`, { pixId });
+  }
 }

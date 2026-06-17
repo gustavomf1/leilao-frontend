@@ -563,6 +563,47 @@
           </div>
         </div>
 
+        <div class="field-wrap field-wrap--full" *ngIf="loteCarregado?.vendedorId">
+          <label class="field-label">PIX do Vendedor</label>
+
+          <div class="pix-contexto">
+            <span class="pix-contexto__item">
+              <strong>Vendedor:</strong> {{ loteCarregado?.vendedorNome || loteCarregado?.vendedorNomeRascunho || '—' }}
+            </span>
+            <span class="pix-contexto__item">
+              <strong>Comprador:</strong> {{ validacaoCompradorSelecionado?.nome || loteCarregado?.compradorNome || loteCarregado?.compradorNomeRascunho || '—' }}
+            </span>
+          </div>
+
+          <c-dropdown [popperOptions]="{ placement: 'bottom-start' }">
+            <button cDropdownToggle type="button" class="pix-toggle" (click)="carregarPixDoVendedor()">
+              {{ formatarPix(loteCarregado?.vendedorPixTipo, loteCarregado?.vendedorPixChave) }}
+            </button>
+            <div cDropdownMenu class="pix-dropdown-menu">
+              <div *ngIf="pixCarregando" class="pix-dropdown-empty">Carregando...</div>
+              <ng-container *ngIf="!pixCarregando">
+                <div *ngIf="pixDoVendedor.length === 0" class="pix-dropdown-empty">
+                  Vendedor não possui PIX cadastrado
+                </div>
+                <button type="button" cDropdownItem *ngFor="let pix of pixDoVendedor"
+                        [active]="loteCarregado?.vendedorPixId === pix.pixId"
+                        (click)="selecionarPix(pix)">
+                  {{ formatarPix(pix.tipo, pix.chave) }}
+                </button>
+                <hr cDropdownDivider *ngIf="loteCarregado?.vendedorPixId != null" />
+                <button type="button" cDropdownItem *ngIf="loteCarregado?.vendedorPixId != null" (click)="selecionarPix(null)">
+                  Nenhum
+                </button>
+              </ng-container>
+              <hr cDropdownDivider />
+              <button type="button" cDropdownItem (click)="abrirModalNovoPix()">
+                <fa-icon [icon]="faPlus" class="me-1"></fa-icon>
+                Cadastrar novo PIX
+              </button>
+            </div>
+          </c-dropdown>
+        </div>
+
         <div class="field-wrap field-wrap--sm">
           <label class="field-label">Comissão Venda (%)</label>
           <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
@@ -735,5 +776,29 @@
     <button cButton color="primary" (click)="confirmarModal()">
       <fa-icon [icon]="faCheck" class="me-1"></fa-icon> Confirmar e enviar
     </button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal *ngIf="modalNovoPixVisivel" [visible]="modalNovoPixVisivel" (visibleChange)="modalNovoPixVisivel = $event" alignment="center">
+  <c-modal-header><h5 cModalTitle>Cadastrar Novo PIX</h5></c-modal-header>
+  <c-modal-body>
+    <div class="mb-3">
+      <label class="form-label">Tipo</label>
+      <select class="form-select" [(ngModel)]="novoPixTipo">
+        <option value="" disabled selected>Selecione o tipo...</option>
+        <option value="CPF_CNPJ">CPF/CNPJ</option>
+        <option value="TELEFONE">Telefone</option>
+        <option value="EMAIL">E-mail</option>
+        <option value="CHAVE_ALEATORIA">Chave Aleatória</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Chave</label>
+      <input type="text" class="form-control" [(ngModel)]="novoPixChave" placeholder="Digite a chave PIX" />
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="fecharModalNovoPix()"><fa-icon [icon]="faTimes" class="me-1"></fa-icon> Cancelar</button>
+    <button cButton color="primary" [disabled]="!novoPixTipo || !novoPixChave.trim()" (click)="confirmarNovoPix()"><fa-icon [icon]="faPlus" class="me-1"></fa-icon> Salvar</button>
   </c-modal-footer>
 </c-modal>

@@ -609,3 +609,49 @@
   .form-actions { flex-direction: column-reverse; }
   .btn-cancel, .btn-submit, .btn-finalize { width: 100%; justify-content: center; }
 }
+
+/* ── PIX do Vendedor (Validar Final) ─────────────────────── */
+.pix-contexto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem 1.25rem;
+  margin-bottom: .5rem;
+  font-size: .82rem;
+  color: var(--text);
+}
+
+.pix-contexto__item strong {
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-right: .25rem;
+}
+
+.pix-toggle {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .6rem .85rem;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text);
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
+}
+
+.pix-toggle--readonly {
+  color: var(--text-muted);
+}
+
+.pix-dropdown-menu {
+  min-width: 260px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.pix-dropdown-empty {
+  padding: .5rem .9rem;
+  font-size: .8rem;
+  color: var(--text-muted);
+}
