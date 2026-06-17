@@ -7,7 +7,7 @@ import { LeilaoService } from '../../../core/services/leilao.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule } from '@coreui/angular';
+import { CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, DropdownModule } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -15,12 +15,13 @@ import {
   faPaw, faDollarSign, faUser, faHorse,
   faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes, faShare
 } from '@fortawesome/free-solid-svg-icons';
-import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
+import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR, Pix } from '../../../core/models/entities.model';
+import { PixService } from '../../../core/services/pix.service';
 
 @Component({
   selector: 'app-monitor-lotes',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, FontAwesomeModule],
+  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, DropdownModule, FontAwesomeModule],
   templateUrl: './monitor-lotes.component.html',
   styleUrl: './monitor-lotes.component.css'
 })
@@ -85,9 +86,13 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   leilaoSelecionadoId: number | null = null;
   leiloesDisponiveis: any[] = [];
 
+  pixPorVendedor = new Map<number, Pix[]>();
+  pixCarregandoVendedorId: number | null = null;
+
   private wsService     = inject(LoteWebsocketService);
   private loteService   = inject(LoteService);
   private leilaoService = inject(LeilaoService);
+  private pixService    = inject(PixService);
   private alert         = inject(AlertService);
   private zone          = inject(NgZone);
   auth                  = inject(AuthService);
@@ -202,6 +207,47 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
       },
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao transferir lote')
     });
+  }
+
+  pixDoVendedor(vendedorId: number): Pix[] {
+    return this.pixPorVendedor.get(vendedorId) ?? [];
+  }
+
+  carregarPixDoVendedor(vendedorId: number): void {
+    if (this.pixPorVendedor.has(vendedorId)) return;
+    this.pixCarregandoVendedorId = vendedorId;
+    this.pixService.listarPorUsuario(vendedorId).subscribe({
+      next: (lista) => {
+        this.pixPorVendedor.set(vendedorId, lista);
+        this.pixCarregandoVendedorId = null;
+      },
+      error: () => {
+        this.pixCarregandoVendedorId = null;
+        this.alert.error('Erro ao carregar PIX do vendedor');
+      }
+    });
+  }
+
+  selecionarPix(lote: Lote, pix: Pix | null): void {
+    if (lote.id == null) return;
+    this.loteService.definirPixVendedor(lote.id, pix?.pixId ?? null).subscribe({
+      next: (loteAtualizado) => {
+        this._substituir(loteAtualizado);
+        this.alert.success(pix ? 'PIX anexado ao lote!' : 'PIX removido do lote.');
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao definir PIX do lote')
+    });
+  }
+
+  formatarPix(tipo?: string, chave?: string): string {
+    if (!tipo || !chave) return 'Nenhum selecionado';
+    const labels: Record<string, string> = {
+      CPF_CNPJ: 'CPF/CNPJ',
+      TELEFONE: 'Telefone',
+      EMAIL: 'E-mail',
+      CHAVE_ALEATORIA: 'Chave Aleatória'
+    };
+    return `${labels[tipo] ?? tipo}: ${chave}`;
   }
 
   confirmarPreco(id?: number) {

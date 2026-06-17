@@ -117,6 +117,38 @@
                   <div class="price-value text-secondary" style="font-size:.85rem">Pendente</div>
                 </ng-template>
               </div>
+
+              <div class="pix-block" *ngIf="lote.vendedorId">
+                <div class="info-label">PIX do Vendedor</div>
+
+                <c-dropdown *ngIf="auth.hasPermission('LOTES', 'EDITAR'); else pixSomenteLeitura" [popperOptions]="{ placement: 'bottom-start' }">
+                  <button cDropdownToggle type="button" class="pix-toggle" (click)="carregarPixDoVendedor(lote.vendedorId!)">
+                    {{ formatarPix(lote.vendedorPixTipo, lote.vendedorPixChave) }}
+                  </button>
+                  <div cDropdownMenu class="pix-dropdown-menu">
+                    <div *ngIf="pixCarregandoVendedorId === lote.vendedorId" class="pix-dropdown-empty">Carregando...</div>
+                    <ng-container *ngIf="pixCarregandoVendedorId !== lote.vendedorId">
+                      <div *ngIf="pixDoVendedor(lote.vendedorId!).length === 0" class="pix-dropdown-empty">
+                        Vendedor não possui PIX cadastrado
+                      </div>
+                      <button type="button" cDropdownItem *ngFor="let pix of pixDoVendedor(lote.vendedorId!)"
+                              [active]="lote.vendedorPixId === pix.pixId"
+                              (click)="selecionarPix(lote, pix)">
+                        {{ formatarPix(pix.tipo, pix.chave) }}
+                      </button>
+                      <hr cDropdownDivider *ngIf="lote.vendedorPixId != null" />
+                      <button type="button" cDropdownItem *ngIf="lote.vendedorPixId != null" (click)="selecionarPix(lote, null)">
+                        Nenhum
+                      </button>
+                    </ng-container>
+                  </div>
+                </c-dropdown>
+                <ng-template #pixSomenteLeitura>
+                  <div class="pix-toggle pix-toggle--readonly">
+                    {{ formatarPix(lote.vendedorPixTipo, lote.vendedorPixChave) }}
+                  </div>
+                </ng-template>
+              </div>
             </c-card-body>
 
             <c-card-footer class="lote-card-footer d-flex justify-content-between align-items-center">
