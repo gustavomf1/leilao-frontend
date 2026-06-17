@@ -575,7 +575,7 @@
             </span>
           </div>
 
-          <c-dropdown *ngIf="auth.hasPermission('LOTES', 'EDITAR'); else pixSomenteLeitura" [popperOptions]="{ placement: 'bottom-start' }">
+          <c-dropdown [popperOptions]="{ placement: 'bottom-start' }">
             <button cDropdownToggle type="button" class="pix-toggle" (click)="carregarPixDoVendedor()">
               {{ formatarPix(loteCarregado?.vendedorPixTipo, loteCarregado?.vendedorPixChave) }}
             </button>
@@ -602,11 +602,6 @@
               </button>
             </div>
           </c-dropdown>
-          <ng-template #pixSomenteLeitura>
-            <div class="pix-toggle pix-toggle--readonly">
-              {{ formatarPix(loteCarregado?.vendedorPixTipo, loteCarregado?.vendedorPixChave) }}
-            </div>
-          </ng-template>
         </div>
 
         <div class="field-wrap field-wrap--sm">
