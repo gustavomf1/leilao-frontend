@@ -784,7 +784,7 @@
   </c-modal-footer>
 </c-modal>
 
-<c-modal [visible]="modalNovoPixVisivel" (visibleChange)="modalNovoPixVisivel = $event" alignment="center">
+<c-modal *ngIf="modalNovoPixVisivel" [visible]="modalNovoPixVisivel" (visibleChange)="modalNovoPixVisivel = $event" alignment="center">
   <c-modal-header><h5 cModalTitle>Cadastrar Novo PIX</h5></c-modal-header>
   <c-modal-body>
     <div class="mb-3">
