@@ -375,39 +375,3 @@
   from { opacity: 0; transform: translateY(16px) scale(.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-
-/* ---------- PIX do Vendedor ---------- */
-.pix-block {
-  display: flex;
-  flex-direction: column;
-  gap: .3rem;
-}
-
-.pix-toggle {
-  width: 100%;
-  text-align: left;
-  background: rgba(255, 255, 255, .04);
-  border: 1px solid rgba(255, 255, 255, .1);
-  border-radius: 6px;
-  padding: .4rem .6rem;
-  font-size: .8rem;
-  font-weight: 600;
-  color: #fff;
-}
-
-.pix-toggle--readonly {
-  color: rgba(255, 255, 255, .65);
-  background: rgba(255, 255, 255, .02);
-}
-
-.pix-dropdown-menu {
-  min-width: 220px;
-  max-height: 240px;
-  overflow-y: auto;
-}
-
-.pix-dropdown-empty {
-  padding: .5rem .9rem;
-  font-size: .75rem;
-  color: rgba(255, 255, 255, .5);
-}
