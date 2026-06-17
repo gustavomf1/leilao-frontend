@@ -563,6 +563,47 @@
           </div>
         </div>
 
+        <div class="field-wrap field-wrap--full" *ngIf="loteCarregado?.vendedorId">
+          <label class="field-label">PIX do Vendedor</label>
+
+          <div class="pix-contexto">
+            <span class="pix-contexto__item">
+              <strong>Vendedor:</strong> {{ loteCarregado?.vendedorNome || loteCarregado?.vendedorNomeRascunho || '—' }}
+            </span>
+            <span class="pix-contexto__item">
+              <strong>Comprador:</strong> {{ validacaoCompradorSelecionado?.nome || loteCarregado?.compradorNome || loteCarregado?.compradorNomeRascunho || '—' }}
+            </span>
+          </div>
+
+          <c-dropdown *ngIf="auth.hasPermission('LOTES', 'EDITAR'); else pixSomenteLeitura" [popperOptions]="{ placement: 'bottom-start' }">
+            <button cDropdownToggle type="button" class="pix-toggle" (click)="carregarPixDoVendedor()">
+              {{ formatarPix(loteCarregado?.vendedorPixTipo, loteCarregado?.vendedorPixChave) }}
+            </button>
+            <div cDropdownMenu class="pix-dropdown-menu">
+              <div *ngIf="pixCarregando" class="pix-dropdown-empty">Carregando...</div>
+              <ng-container *ngIf="!pixCarregando">
+                <div *ngIf="pixDoVendedor.length === 0" class="pix-dropdown-empty">
+                  Vendedor não possui PIX cadastrado
+                </div>
+                <button type="button" cDropdownItem *ngFor="let pix of pixDoVendedor"
+                        [active]="loteCarregado?.vendedorPixId === pix.pixId"
+                        (click)="selecionarPix(pix)">
+                  {{ formatarPix(pix.tipo, pix.chave) }}
+                </button>
+                <hr cDropdownDivider *ngIf="loteCarregado?.vendedorPixId != null" />
+                <button type="button" cDropdownItem *ngIf="loteCarregado?.vendedorPixId != null" (click)="selecionarPix(null)">
+                  Nenhum
+                </button>
+              </ng-container>
+            </div>
+          </c-dropdown>
+          <ng-template #pixSomenteLeitura>
+            <div class="pix-toggle pix-toggle--readonly">
+              {{ formatarPix(loteCarregado?.vendedorPixTipo, loteCarregado?.vendedorPixChave) }}
+            </div>
+          </ng-template>
+        </div>
+
         <div class="field-wrap field-wrap--sm">
           <label class="field-label">Comissão Venda (%)</label>
           <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
