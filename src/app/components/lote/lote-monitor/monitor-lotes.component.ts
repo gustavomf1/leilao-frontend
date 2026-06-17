@@ -89,6 +89,11 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   pixPorVendedor = new Map<number, Pix[]>();
   pixCarregandoVendedorId: number | null = null;
 
+  modalNovoPixVisivel = false;
+  vendedorIdParaNovoPix: number | null = null;
+  novoPixTipo: '' | Pix['tipo'] = '';
+  novoPixChave = '';
+
   private wsService     = inject(LoteWebsocketService);
   private loteService   = inject(LoteService);
   private leilaoService = inject(LeilaoService);
@@ -248,6 +253,39 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
       CHAVE_ALEATORIA: 'Chave Aleatória'
     };
     return `${labels[tipo] ?? tipo}: ${chave}`;
+  }
+
+  abrirModalNovoPix(vendedorId: number): void {
+    this.vendedorIdParaNovoPix = vendedorId;
+    this.novoPixTipo = '';
+    this.novoPixChave = '';
+    this.modalNovoPixVisivel = true;
+  }
+
+  fecharModalNovoPix(): void {
+    this.modalNovoPixVisivel = false;
+    this.vendedorIdParaNovoPix = null;
+  }
+
+  confirmarNovoPix(): void {
+    if (!this.novoPixTipo || !this.novoPixChave.trim() || this.vendedorIdParaNovoPix == null) {
+      this.alert.error('Informe o tipo e a chave do PIX.');
+      return;
+    }
+    const vendedorId = this.vendedorIdParaNovoPix;
+    this.pixService.cadastrar({
+      usuarioId: vendedorId,
+      tipo: this.novoPixTipo,
+      chave: this.novoPixChave.trim()
+    }).subscribe({
+      next: (novoPix) => {
+        const lista = this.pixPorVendedor.get(vendedorId) ?? [];
+        this.pixPorVendedor.set(vendedorId, [...lista, novoPix]);
+        this.alert.success('PIX cadastrado!');
+        this.fecharModalNovoPix();
+      },
+      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao cadastrar PIX')
+    });
   }
 
   confirmarPreco(id?: number) {
