@@ -25,6 +25,13 @@ export class RelatorioService {
     });
   }
 
+  gerarFaturaCompra(leilaoId: number, compradorId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/fatura-compra`, {
+      params: { leilaoId, compradorId },
+      responseType: 'blob',
+    });
+  }
+
   gerarMapaLeilao(leilaoId: number): Observable<Blob> {
     return this.http.get(`${this.baseUrl}/api/relatorios/mapa-leilao`, {
       params: { leilaoId },
