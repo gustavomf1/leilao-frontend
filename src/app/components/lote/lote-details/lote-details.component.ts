@@ -7,7 +7,7 @@ import {
   ModalModule, ModalComponent, DropdownModule
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faCheck, faTimes, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { LoteService } from '../../../core/services/lote.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -46,6 +46,7 @@ export class LotesDetailsComponent implements OnInit {
   faArrowLeft = faArrowLeft;
   faCheck = faCheck;
   faTimes = faTimes;
+  faPlus = faPlus;
 
   form!: FormGroup;
   isEdicao = false;
@@ -87,6 +88,9 @@ export class LotesDetailsComponent implements OnInit {
   pixDoVendedor: Pix[] = [];
   pixCarregando = false;
   pixCarregado = false;
+  modalNovoPixVisivel = false;
+  novoPixTipo: '' | Pix['tipo'] = '';
+  novoPixChave = '';
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -462,6 +466,35 @@ export class LotesDetailsComponent implements OnInit {
       CHAVE_ALEATORIA: 'Chave Aleatória'
     };
     return `${labels[tipo] ?? tipo}: ${chave}`;
+  }
+
+  abrirModalNovoPix(): void {
+    this.novoPixTipo = '';
+    this.novoPixChave = '';
+    this.modalNovoPixVisivel = true;
+  }
+
+  fecharModalNovoPix(): void {
+    this.modalNovoPixVisivel = false;
+  }
+
+  confirmarNovoPix(): void {
+    if (!this.novoPixTipo || !this.novoPixChave.trim() || this.loteCarregado?.vendedorId == null) {
+      this.alert.error('Informe o tipo e a chave do PIX.');
+      return;
+    }
+    this.pixService.cadastrar({
+      usuarioId: this.loteCarregado.vendedorId,
+      tipo: this.novoPixTipo,
+      chave: this.novoPixChave.trim()
+    }).subscribe({
+      next: (novoPix) => {
+        this.pixDoVendedor = [...this.pixDoVendedor, novoPix];
+        this.alert.success('PIX cadastrado!');
+        this.fecharModalNovoPix();
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao cadastrar PIX')
+    });
   }
 
   confirmarRecolocacao() {
