@@ -156,5 +156,10 @@
     font-size: 0.8rem;
     margin-top: 0.5rem;
   }
+  .email-destino {
+    color: var(--ja-brand) !important;
+    font-size: 0.95rem;
+    word-break: break-all;
+  }
   .state-error { color: var(--ja-red); font-weight: 700; }
 }

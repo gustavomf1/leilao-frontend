@@ -13,10 +13,18 @@
         <div class="text-center py-3">
           <p class="state-title">E-mail enviado!</p>
           <p class="state-text">
-            Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.<br>
+            Enviamos o link de redefinição para<br>
+            <strong class="email-destino">{{ emailEnviado() }}</strong>
+          </p>
+          <p class="state-text">
+            Verifique sua caixa de entrada e siga as instruções.
             O link é válido por <strong>30 minutos</strong>.
           </p>
-          <p class="state-hint">Não encontrou? Verifique a pasta de spam.</p>
+          <p class="state-hint">Não encontrou? Verifique a pasta de spam ou reenvie.</p>
+          <button cButton color="primary" class="btn-login w-100 mb-3" type="button"
+                  [disabled]="reenviando()" (click)="reenviar()">
+            {{ reenviando() ? 'Reenviando...' : 'Reenviar e-mail' }}
+          </button>
           <a routerLink="/login" class="auth-link">Voltar ao login</a>
         </div>
       } @else {
