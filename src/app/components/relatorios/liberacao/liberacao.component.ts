@@ -104,7 +104,6 @@ export class LiberacaoComponent implements OnInit {
   private abrirPdf(blob: Blob): void {
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   private finalizarLoading(): void {

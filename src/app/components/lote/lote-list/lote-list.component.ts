@@ -130,7 +130,6 @@ export class LotesListComponent implements OnInit {
       next: (blob) => {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
       },
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao gerar nota de leilão')
     });
