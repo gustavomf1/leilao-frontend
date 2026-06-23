@@ -106,8 +106,8 @@
       </div>
     </section>
 
-  <!-- ─── Botão salvar inline para modoDrawer ── -->
-  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer">
+  <!-- ─── Botão salvar inline para modoDrawer/modoSubform ── -->
+  <div class="d-flex justify-content-end mt-3" *ngIf="modoDrawer || modoSubform">
     <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
       <fa-icon [icon]="faSave" class="me-1"></fa-icon>
       {{ isEdicao ? 'Salvar Alterações' : 'Salvar Fazenda' }}
