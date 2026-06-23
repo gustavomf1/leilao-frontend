@@ -47,6 +47,25 @@
             }
           </div>
 
+          <div class="mb-3">
+            <label class="form-label-modern">Confirmar senha</label>
+            <div class="input-icon-wrapper">
+              <svg cIcon name="cilLockLocked" class="input-icon"></svg>
+              <input
+                formControlName="confirmarSenha"
+                placeholder="•••"
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                class="w-100"
+              />
+              <button type="button" class="password-toggle" (click)="toggleConfirmPasswordVisibility()">
+                <fa-icon [icon]="showConfirmPassword() ? faEye : faEyeSlash" class="input-icon"></fa-icon>
+              </button>
+            </div>
+            @if (form.errors?.['senhasDiferentes'] && form.get('confirmarSenha')?.touched) {
+              <small class="text-danger">As senhas não coincidem</small>
+            }
+          </div>
+
           <button cButton color="primary" class="btn-login w-100 mb-3" type="submit" [disabled]="loading()">
             {{ loading() ? 'Aguarde...' : 'Redefinir senha' }}
           </button>
