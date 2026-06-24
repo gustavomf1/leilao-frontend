@@ -27,6 +27,9 @@
       <c-badge *ngIf="statusLeilao" [color]="statusColor(statusLeilao)" class="fs-6 px-3 py-2">
         {{ statusLabel(statusLeilao) | uppercase }}
       </c-badge>
+      <button *ngIf="podeGerenciarEvento && isFinalizado" cButton color="primary" size="sm" (click)="enviarFaturasParaTodos()">
+        <fa-icon [icon]="faPaperPlane" class="me-1"></fa-icon> Enviar Faturas
+      </button>
       <button *ngIf="podeGerenciarEvento && isAberto" cButton color="success" size="sm" (click)="iniciarLeilao()">
         <fa-icon [icon]="faPlay" class="me-1"></fa-icon> Começar Leilão
       </button>
@@ -240,6 +243,9 @@
     tituloPagina="Lotes do Leilão"
     tituloMonitor="Monitor de Lotes do Leilão"
     [exibirContainer]="false"
+    [exibirBotaoEnviarFatura]="isFinalizado && podeGerenciarEvento"
+    [faturasLog]="faturasLog"
+    (enviarFaturaLote)="onEnviarFaturaLote($event)"
   ></app-monitor-lotes>
 
 </div>
