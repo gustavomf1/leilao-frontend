@@ -13,9 +13,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faCircle, faLayerGroup, faHashtag, faTag,
   faPaw, faDollarSign, faUser, faHorse,
-  faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes, faShare, faFileInvoice
+  faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes, faShare, faFileInvoice,
+  faPaperPlane, faSpinner, faCheckDouble
 } from '@fortawesome/free-solid-svg-icons';
-import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
+import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR, FaturaEnvioLog } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-monitor-lotes',
@@ -36,6 +37,10 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   @Input() exibirBotaoNovo = true;
   @Input() novoLoteQueryParams: Params | null = null;
   @Output() lotesChange = new EventEmitter<Lote[]>();
+
+  @Input() exibirBotaoEnviarFatura: boolean = false;
+  @Input() faturasLog: Record<string, FaturaEnvioLog> = {};
+  @Output() enviarFaturaLote = new EventEmitter<{ lote: Lote; destino: 'VENDEDOR' | 'COMPRADOR' | 'AMBOS' }>();
 
   @Input() set lotesIniciais(value: Lote[] | null | undefined) {
     if (value === undefined) return;
@@ -75,8 +80,49 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   readonly faCheck      = faCheck;
   readonly faEye        = faEye;
   readonly faTimes      = faTimes;
-  readonly faShare      = faShare;
+  readonly faShare       = faShare;
   readonly faFileInvoice = faFileInvoice;
+  readonly faPaperPlane  = faPaperPlane;
+  readonly faSpinner     = faSpinner;
+  readonly faCheckDouble = faCheckDouble;
+
+  dropdownFaturaAberto: Record<number, boolean> = {};
+
+  logFatura(lote: Lote, tipo: 'COMPRA' | 'VENDA'): FaturaEnvioLog | undefined {
+    if (!lote.id) return undefined;
+    return this.faturasLog[`${lote.id}-${tipo}`];
+  }
+
+  statusFatura(lote: Lote): 'SEM_LOG' | 'ENVIANDO' | 'ENVIADO' | 'ENTREGUE' | 'FALHA' {
+    const compra = this.logFatura(lote, 'COMPRA')?.status;
+    const venda  = this.logFatura(lote, 'VENDA')?.status;
+    const piorIndex = (s?: string) => {
+      const ordem = ['FALHA', 'ENVIANDO', 'ENVIADO', 'ENTREGUE'];
+      return s ? ordem.indexOf(s) : -1;
+    };
+    const ia = piorIndex(compra);
+    const ib = piorIndex(venda);
+    if (ia === -1 && ib === -1) return 'SEM_LOG';
+    const pior = ia <= ib ? compra : venda;
+    return (pior as any) ?? 'SEM_LOG';
+  }
+
+  corBotaoFatura(lote: Lote): string {
+    const s = this.statusFatura(lote);
+    if (s === 'ENTREGUE') return 'success';
+    if (s === 'ENVIADO')  return 'info';
+    if (s === 'FALHA')    return 'danger';
+    return 'primary';
+  }
+
+  toggleDropdownFatura(loteId: number) {
+    this.dropdownFaturaAberto[loteId] = !this.dropdownFaturaAberto[loteId];
+  }
+
+  emitirEnviarFatura(lote: Lote, destino: 'VENDEDOR' | 'COMPRADOR' | 'AMBOS') {
+    this.dropdownFaturaAberto[lote.id!] = false;
+    this.enviarFaturaLote.emit({ lote, destino });
+  }
 
   loteDetalhes: any | null = null;
   modalDetalhesVisivel = false;

@@ -10,7 +10,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArrowLeft, faMapMarkerAlt, faCalendarAlt, faGavel,
   faHandshake, faDollarSign, faPaw, faInfoCircle,
-  faPencil, faPlay, faStop, faLink
+  faPencil, faPlay, faStop, faLink, faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { LoteService } from '../../../core/services/lote.service';
@@ -22,8 +22,10 @@ import {
   Lote,
   StatusLeilao,
   STATUS_LEILAO_COLOR,
-  STATUS_LEILAO_LABELS
+  STATUS_LEILAO_LABELS,
+  FaturaEnvioLog
 } from '../../../core/models/entities.model';
+import { FaturaEnvioService } from '../../../core/services/fatura-envio.service';
 import { MonitorLotesComponent } from '../../lote/lote-monitor/monitor-lotes.component';
 
 interface LeilaoResumo {
@@ -89,7 +91,11 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
   faPencil = faPencil;
   faPlay = faPlay;
   faStop = faStop;
-  faLink = faLink;
+  faLink       = faLink;
+  faPaperPlane = faPaperPlane;
+
+  faturasLog: Record<string, FaturaEnvioLog> = {};
+  private faturaEnvioService = inject(FaturaEnvioService);
 
   resumo?: LeilaoResumo;
   detalhes?: LeilaoDetalhes;
@@ -198,12 +204,96 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
         });
         this.atualizarLotesDoMonitor(this.resumo.lotes);
         this.loading$.next(false);
+        if (this.isFinalizado) {
+          this.faturaEnvioService.buscarLogs(this.leilaoId).subscribe({
+            next: (logs) => { this.faturasLog = logs; },
+            error: () => {}
+          });
+        }
       },
       error: (err: any) => {
         this.alert.error(err.error?.mensagem || 'Erro ao carregar resumo do leilão');
         this.loading$.next(false);
       },
     });
+  }
+
+  enviarFaturasParaTodos(): void {
+    const temAlgumEnviado = Object.values(this.faturasLog).some(
+      l => l.status === 'ENVIADO' || l.status === 'ENTREGUE'
+    );
+    if (temAlgumEnviado) {
+      this.alert.confirm(
+        'Algumas faturas já foram enviadas. Deseja reenviar para todos ou apenas para quem ainda não recebeu?',
+        () => this.executarEnvioGeral(false),
+        'Reenviar todos',
+        'warning'
+      );
+      this.alert.confirm(
+        'Enviar somente para quem ainda não recebeu a fatura?',
+        () => this.executarEnvioGeral(true),
+        'Apenas novos',
+        'primary'
+      );
+      return;
+    }
+    this.executarEnvioGeral(false);
+  }
+
+  private executarEnvioGeral(apenasNaoEnviados: boolean): void {
+    this.faturaEnvioService.enviarTodasFaturas(this.leilaoId, apenasNaoEnviados).subscribe({
+      next: (res: any) => {
+        this.alert.success(res?.message || 'Envio de faturas iniciado!');
+        setTimeout(() => {
+          this.faturaEnvioService.buscarLogs(this.leilaoId).subscribe({
+            next: (logs) => { this.faturasLog = logs; },
+            error: () => {}
+          });
+        }, 3000);
+      },
+      error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao iniciar envio de faturas')
+    });
+  }
+
+  onEnviarFaturaLote(event: { lote: Lote; destino: 'VENDEDOR' | 'COMPRADOR' | 'AMBOS' }): void {
+    const { lote, destino } = event;
+    const chaveCompra = `${lote.id}-COMPRA`;
+    const chaveVenda  = `${lote.id}-VENDA`;
+
+    const jaEnviado = (chave: string) => {
+      const s = this.faturasLog[chave]?.status;
+      return s === 'ENVIADO' || s === 'ENTREGUE';
+    };
+
+    const precisaConfirmar =
+      ((destino === 'COMPRADOR' || destino === 'AMBOS') && jaEnviado(chaveCompra)) ||
+      ((destino === 'VENDEDOR'  || destino === 'AMBOS') && jaEnviado(chaveVenda));
+
+    const executar = () => {
+      const obs: any[] = [];
+      if (destino === 'COMPRADOR' || destino === 'AMBOS') {
+        obs.push(this.faturaEnvioService.enviarFaturaCompra(lote.id!));
+      }
+      if (destino === 'VENDEDOR' || destino === 'AMBOS') {
+        obs.push(this.faturaEnvioService.enviarFaturaVenda(lote.id!));
+      }
+      forkJoin(obs).subscribe({
+        next: () => {
+          this.alert.success('Fatura enviada com sucesso!');
+          this.faturaEnvioService.buscarLogs(this.leilaoId).subscribe({
+            next: (logs) => { this.faturasLog = logs; },
+            error: () => {}
+          });
+        },
+        error: (err: any) => this.alert.error(err.error?.mensagem || 'Erro ao enviar fatura')
+      });
+    };
+
+    if (precisaConfirmar) {
+      this.alert.confirm('Esta fatura já foi enviada. Deseja reenviar?', executar, 'Reenviar', 'warning');
+    } else {
+      executar();
+    }
   }
 
   tipoLeilaoLabel(tipo?: string): string {
