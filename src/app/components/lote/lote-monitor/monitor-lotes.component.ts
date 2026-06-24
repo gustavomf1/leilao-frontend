@@ -126,7 +126,7 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
           const atualizado = [...atual];
           atualizado[idx]  = { ...atualizado[idx], ...novoLote };
           this.publicarLotes(atualizado);
-        } else if (this.pertenceAoLeilao(novoLote, false)) {
+        } else if (this.pertenceAoLeilao(novoLote)) {
           this.publicarLotes([novoLote, ...atual]);
         }
       });
@@ -282,12 +282,12 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   }
 
   private get lotesDoContexto(): Lote[] {
-    return (this.lotes$.value ?? []).filter(lote => this.pertenceAoLeilao(lote, this.carregadoPorInput));
+    return (this.lotes$.value ?? []).filter(lote => this.pertenceAoLeilao(lote));
   }
 
-  private pertenceAoLeilao(lote: Lote, aceitarLeilaoAusente = true): boolean {
+  private pertenceAoLeilao(lote: Lote): boolean {
     if (this.leilaoId == null) return true;
-    if (lote.leilaoId == null) return aceitarLeilaoAusente;
+    if (lote.leilaoId == null) return false;
     return Number(lote.leilaoId) === Number(this.leilaoId);
   }
 
