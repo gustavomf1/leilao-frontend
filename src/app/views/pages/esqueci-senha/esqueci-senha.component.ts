@@ -19,6 +19,8 @@ export class EsqueciSenhaComponent {
 
   enviado = signal(false);
   loading = signal(false);
+  reenviando = signal(false);
+  emailEnviado = signal('');
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]]
@@ -33,12 +35,28 @@ export class EsqueciSenhaComponent {
     const email = this.form.getRawValue().email!;
     this.service.solicitar(email).subscribe({
       next: () => {
+        this.emailEnviado.set(email);
         this.enviado.set(true);
         this.loading.set(false);
       },
       error: (err) => {
         this.alert.error(err.error?.mensagem || 'Erro ao solicitar recuperação');
         this.loading.set(false);
+      }
+    });
+  }
+
+  reenviar() {
+    if (this.reenviando()) return;
+    this.reenviando.set(true);
+    this.service.solicitar(this.emailEnviado()).subscribe({
+      next: () => {
+        this.reenviando.set(false);
+        this.alert.success('E-mail reenviado para ' + this.emailEnviado());
+      },
+      error: (err) => {
+        this.alert.error(err.error?.mensagem || 'Erro ao reenviar e-mail');
+        this.reenviando.set(false);
       }
     });
   }

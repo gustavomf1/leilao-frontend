@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { CardBodyComponent, CardComponent, ButtonDirective } from '@coreui/angular';
@@ -29,12 +29,14 @@ export class RedefinirSenhaComponent implements OnInit, OnDestroy {
   tokenErro = signal('');
   loading = signal(false);
   showPassword = signal(false);
+  showConfirmPassword = signal(false);
   faEye = faEye;
   faEyeSlash = faEyeSlash;
 
   form = this.fb.group({
-    novaSenha: ['', [Validators.required, Validators.minLength(3)]]
-  });
+    novaSenha: ['', [Validators.required, Validators.minLength(3)]],
+    confirmarSenha: ['', [Validators.required]]
+  }, { validators: senhasIguaisValidator });
 
   private routeSub?: Subscription;
   private validarSub?: Subscription;
@@ -86,6 +88,10 @@ export class RedefinirSenhaComponent implements OnInit, OnDestroy {
     this.showPassword.update(v => !v);
   }
 
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword.update(v => !v);
+  }
+
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -104,4 +110,11 @@ export class RedefinirSenhaComponent implements OnInit, OnDestroy {
       }
     });
   }
+}
+
+function senhasIguaisValidator(group: AbstractControl): ValidationErrors | null {
+  const novaSenha = group.get('novaSenha')?.value;
+  const confirmarSenha = group.get('confirmarSenha')?.value;
+  if (!confirmarSenha) return null;
+  return novaSenha === confirmarSenha ? null : { senhasDiferentes: true };
 }

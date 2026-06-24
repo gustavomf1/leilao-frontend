@@ -38,12 +38,31 @@
                 [type]="showPassword() ? 'text' : 'password'"
                 class="w-100"
               />
-              <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
-                <fa-icon [icon]="showPassword() ? faEye : faEyeSlash" class="input-icon"></fa-icon>
+              <button type="button" class="password-toggle" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+                <fa-icon [icon]="showPassword() ? faEye : faEyeSlash"></fa-icon>
               </button>
             </div>
             @if (form.get('novaSenha')?.invalid && form.get('novaSenha')?.touched) {
               <small class="text-danger">A senha deve ter no mínimo 3 caracteres</small>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label-modern">Confirmar senha</label>
+            <div class="input-icon-wrapper">
+              <svg cIcon name="cilLockLocked" class="input-icon"></svg>
+              <input
+                formControlName="confirmarSenha"
+                placeholder="•••"
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                class="w-100"
+              />
+              <button type="button" class="password-toggle" (click)="toggleConfirmPasswordVisibility()" [attr.aria-label]="showConfirmPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+                <fa-icon [icon]="showConfirmPassword() ? faEye : faEyeSlash"></fa-icon>
+              </button>
+            </div>
+            @if (form.errors?.['senhasDiferentes'] && form.get('confirmarSenha')?.touched) {
+              <small class="text-danger">As senhas não coincidem</small>
             }
           </div>
 
