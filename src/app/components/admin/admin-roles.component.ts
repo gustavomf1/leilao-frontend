@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   TableModule, TableDirective,
-  CardBodyComponent, CardComponent, CardHeaderComponent,
+  CardBodyComponent, CardComponent,
   ButtonDirective, FormModule, GridModule,
   BadgeComponent, ModalModule
 } from '@coreui/angular';
@@ -23,7 +23,7 @@ import { AlertService } from '../../shared/services/alert.service';
   imports: [
     CommonModule, FormsModule,
     TableModule, TableDirective,
-    CardBodyComponent, CardComponent, CardHeaderComponent,
+    CardBodyComponent, CardComponent,
     ButtonDirective, FormModule, GridModule,
     BadgeComponent, ModalModule,
     FontAwesomeModule

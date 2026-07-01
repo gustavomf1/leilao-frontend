@@ -233,7 +233,7 @@
                     >
                       <fa-icon *ngIf="statusFatura(lote) === 'ENTREGUE'" [icon]="faCheckDouble"></fa-icon>
                       <fa-icon *ngIf="statusFatura(lote) === 'ENVIADO'"  [icon]="faCheck"></fa-icon>
-                      <fa-icon *ngIf="statusFatura(lote) === 'ENVIANDO'" [icon]="faSpinner" [spin]="true"></fa-icon>
+                      <fa-icon *ngIf="statusFatura(lote) === 'ENVIANDO'" [icon]="faSpinner" animation="spin"></fa-icon>
                       <fa-icon *ngIf="statusFatura(lote) === 'SEM_LOG' || statusFatura(lote) === 'FALHA'" [icon]="faPaperPlane"></fa-icon>
                     </button>
                     <button

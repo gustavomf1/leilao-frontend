@@ -1,23 +1,24 @@
 <div class="ja-dashboard">
-  <!-- Page header -->
   <div class="page-title-row">
     <div>
-      <h1 class="page-title">Visão Geral</h1>
+      <h1 class="page-title">Visao Geral</h1>
       <div class="page-subtitle">{{ hoje | date: 'EEEE, dd \'de\' MMMM \'de\' yyyy' }}</div>
     </div>
     <div class="page-actions">
-      <button class="btn btn-outline-secondary">
-        <svg cIcon name="cilCloudDownload" class="me-1"></svg>
-        Exportar
-      </button>
-      <button class="btn btn-primary" routerLink="/leiloes/cadastrar">
-        <svg cIcon name="cilPlus" class="me-1"></svg>
-        Novo Leilão
-      </button>
+      <label class="dashboard-filter">
+        <span>Leilao</span>
+        <select class="form-select form-select-sm" [value]="leilaoSelecionadoId ?? ''" (change)="selecionarLeilao($any($event.target).value)">
+          <option value="">Todos os leiloes</option>
+          @for (leilao of leiloes; track leilao.id) {
+            <option [value]="leilao.id">
+              {{ leilao.descricao }} - {{ leilao.data | date: 'dd/MM/yyyy' }}
+            </option>
+          }
+        </select>
+      </label>
     </div>
   </div>
 
-  <!-- KPIs -->
   <c-row class="g-3 mb-4">
     @for (k of kpis; track k.label) {
       <c-col xs="12" sm="6" lg="3">
@@ -28,44 +29,47 @@
           </div>
           <div class="kpi-value">{{ k.value }}</div>
           <div class="kpi-sub">{{ k.sub }}</div>
-          @if (k.trend != null && k.trend !== 0) {
-            <div class="kpi-trend" [class.up]="k.trend > 0" [class.down]="k.trend < 0">
-              <svg cIcon [name]="k.trend >= 0 ? 'cilArrowTop' : 'cilArrowBottom'"></svg>
-              {{ k.trend > 0 ? '+' : '' }}{{ k.trend }}% vs mês anterior
-            </div>
-          }
         </div>
       </c-col>
     }
   </c-row>
 
-  <!-- Chart semanal + Top fazendas -->
   <c-row class="g-3 mb-4">
     <c-col xs="12" lg="7">
       <c-card class="h-100 chart-card">
         <c-card-header class="card-header-flex">
           <div>
             <svg cIcon name="cilChart" class="me-1 text-brand"></svg>
-            Movimentação Semanal
+            Vendas por Sexo
           </div>
-          <span class="card-header-meta">Lotes</span>
+          <span class="card-header-meta">Valor vendido</span>
         </c-card-header>
         <c-card-body>
-          <div class="bar-chart">
-            @for (d of semanaData; track d.d) {
-              <div class="bar-col">
-                <div class="bar-stack">
-                  <div class="bar bar-ofertas" [style.height]="barHeight(d.ofertas)" [title]="d.ofertas + ' ofertados'"></div>
-                  <div class="bar bar-vendas"  [style.height]="barHeight(d.vendas)"  [title]="d.vendas + ' vendidos'"></div>
+          @if (carregandoVendasSexo) {
+            <div class="dashboard-state">Carregando vendas...</div>
+          } @else if (erroVendasSexo) {
+            <div class="dashboard-state error">{{ erroVendasSexo }}</div>
+          } @else if (vendasPorSexo.length === 0) {
+            <div class="dashboard-state">Nenhuma venda encontrada.</div>
+          } @else {
+            <div class="sexo-chart">
+              @for (item of vendasPorSexo; track item.sexo) {
+                <div class="sexo-bar-row">
+                  <div class="sexo-bar-label">
+                    <strong>{{ item.sexo }}</strong>
+                    <span>{{ item.lotesVendidos }} lotes / {{ item.animaisVendidos }} animais</span>
+                  </div>
+                  <div class="sexo-bar-track">
+                    <div class="sexo-bar-fill" [style.width]="barWidthPercentual(item)"></div>
+                  </div>
+                  <div class="sexo-bar-value">
+                    {{ item.totalVendido | currency: 'BRL':'symbol':'1.0-0':'pt-BR' }}
+                    <span>{{ item.percentualValor | number:'1.0-1':'pt-BR' }}%</span>
+                  </div>
                 </div>
-                <div class="bar-label">{{ d.d }}</div>
-              </div>
-            }
-          </div>
-          <div class="chart-legend">
-            <span><span class="dot ok"></span> Vendidos</span>
-            <span><span class="dot brand"></span> Ofertados</span>
-          </div>
+              }
+            </div>
+          }
         </c-card-body>
       </c-card>
     </c-col>
@@ -74,29 +78,33 @@
       <c-card class="h-100">
         <c-card-header class="card-header-flex">
           <div>
-            <svg cIcon name="cilStar" class="me-1 text-amber"></svg>
-            Top Fazendas
+            <svg cIcon name="cilDollar" class="me-1 text-amber"></svg>
+            Preco Medio
           </div>
-          <span class="card-header-meta">30 dias</span>
+          <span class="card-header-meta">Por sexo</span>
         </c-card-header>
         <c-card-body class="p-0">
           <table cTable class="mb-0 ja-table-tight">
             <thead>
               <tr>
-                <th>Fazenda</th>
-                <th class="text-center">Lotes</th>
-                <th class="text-end">Total</th>
+                <th>Sexo</th>
+                <th class="text-center">Animais</th>
+                <th class="text-end">Media/animal</th>
               </tr>
             </thead>
             <tbody>
-              @for (f of topFazendas; track f.nome) {
+              @for (item of vendasPorSexo; track item.sexo) {
                 <tr>
                   <td>
-                    <div class="fw-semibold">{{ f.nome }}</div>
-                    <div class="small text-secondary">{{ f.uf }}</div>
+                    <div class="fw-semibold">{{ item.sexo }}</div>
+                    <div class="small text-secondary">{{ item.lotesVendidos }} lotes</div>
                   </td>
-                  <td class="text-center num">{{ f.lotes }}</td>
-                  <td class="text-end fw-bold num">{{ f.total | currency: 'BRL':'symbol':'1.0-0':'pt-BR' }}</td>
+                  <td class="text-center num">{{ item.animaisVendidos }}</td>
+                  <td class="text-end fw-bold num">{{ item.precoMedioPorAnimal | currency: 'BRL':'symbol':'1.0-0':'pt-BR' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="3" class="text-center text-secondary py-4">Sem vendas para exibir</td>
                 </tr>
               }
             </tbody>
@@ -106,13 +114,94 @@
     </c-col>
   </c-row>
 
-  <!-- Próximos leilões -->
+  <c-row class="g-3 mb-4">
+    <c-col xs="12">
+      <c-card class="h-100 chart-card">
+        <c-card-header class="card-header-flex">
+          <div>
+            <svg cIcon name="cilChartPie" class="me-1 text-info"></svg>
+            Vendas por Raca
+          </div>
+          <span class="card-header-meta">Valor vendido</span>
+        </c-card-header>
+        <c-card-body>
+          @if (carregandoVendasRaca) {
+            <div class="dashboard-state">Carregando racas...</div>
+          } @else if (erroVendasRaca) {
+            <div class="dashboard-state error">{{ erroVendasRaca }}</div>
+          } @else if (vendasPorRaca.length === 0) {
+            <div class="dashboard-state">Nenhuma venda por raca encontrada.</div>
+          } @else {
+            <div class="raca-chart">
+              @for (item of vendasPorRaca; track item.raca) {
+                <div class="sexo-bar-row raca-bar-row">
+                  <div class="sexo-bar-label">
+                    <strong>{{ item.raca }}</strong>
+                    <span>{{ item.lotesVendidos }} lotes / {{ item.animaisVendidos }} animais</span>
+                  </div>
+                  <div class="sexo-bar-track">
+                    <div class="sexo-bar-fill raca-bar-fill" [style.width]="barWidthPercentual(item)"></div>
+                  </div>
+                  <div class="sexo-bar-value">
+                    {{ item.totalVendido | currency: 'BRL':'symbol':'1.0-0':'pt-BR' }}
+                    <span>{{ item.precoMedioPorAnimal | currency: 'BRL':'symbol':'1.0-0':'pt-BR' }} / animal</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+
+  <c-row class="g-3 mb-4">
+    <c-col xs="12">
+      <c-card class="h-100 chart-card">
+        <c-card-header class="card-header-flex">
+          <div>
+            <svg cIcon name="cilBarChart" class="me-1 text-brand"></svg>
+            Relacao de Vendas
+          </div>
+          <span class="card-header-meta">Ultimos 30 leiloes</span>
+        </c-card-header>
+        <c-card-body>
+          @if (carregandoVendasUltimosLeiloes) {
+            <div class="dashboard-state">Carregando relacao de vendas...</div>
+          } @else if (erroVendasUltimosLeiloes) {
+            <div class="dashboard-state error">{{ erroVendasUltimosLeiloes }}</div>
+          } @else if (vendasUltimosLeiloes.length === 0) {
+            <div class="dashboard-state">Nenhum leilao encontrado para o grafico.</div>
+          } @else {
+            <div class="auction-sales-chart">
+              @for (item of vendasUltimosLeiloes; track item.id) {
+                <div class="auction-sales-col" [title]="item.descricao">
+                  <div class="auction-sales-value">
+                    {{ item.totalVendido | currency: 'BRL':'symbol':'1.0-0':'pt-BR' }}
+                  </div>
+                  <div class="auction-sales-bar-wrap">
+                    <div class="auction-sales-bar" [style.height]="alturaVendaLeilao(item)"></div>
+                  </div>
+                  <div class="auction-sales-label">
+                    <strong>#{{ item.id }}</strong>
+                    <span>{{ item.data | date: 'dd/MM' }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+
   <c-card>
     <c-card-header class="card-header-flex">
       <div>
         <svg cIcon name="cilCalendar" class="me-1 text-info"></svg>
-        Próximos Leilões
+        Ultimos Leiloes
       </div>
+      <span class="card-header-meta">Ultimos 30 dias</span>
       <a routerLink="/leiloes/lista" class="card-header-link">
         Ver todos
         <svg cIcon name="cilArrowRight"></svg>
@@ -123,24 +212,35 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Descrição</th>
+            <th>Descricao</th>
             <th>Local</th>
-            <th>Espécie</th>
+            <th>Especie</th>
             <th>Tipo</th>
             <th class="text-center">Lotes</th>
+            <th class="text-end">Vendido</th>
             <th>Data</th>
-            <th class="text-center">Ações</th>
+            <th class="text-center">Acoes</th>
           </tr>
         </thead>
         <tbody>
-          @for (p of proximos; track p.id) {
+          @if (carregandoUltimosLeiloes) {
+            <tr>
+              <td colspan="9" class="text-center text-secondary py-4">Carregando ultimos leiloes...</td>
+            </tr>
+          } @else if (erroUltimosLeiloes) {
+            <tr>
+              <td colspan="9" class="text-center text-danger py-4">{{ erroUltimosLeiloes }}</td>
+            </tr>
+          } @else {
+          @for (p of ultimosLeiloes; track p.id) {
             <tr [routerLink]="['/leiloes', p.id, 'view']" style="cursor: pointer;">
               <td class="num">{{ p.id }}</td>
               <td class="fw-semibold">{{ p.descricao }}</td>
               <td class="text-secondary">{{ p.local }}</td>
               <td>{{ p.especie }}</td>
-              <td>{{ p.tipo }}</td>
+              <td>{{ formatarTipo(p.tipo) }}</td>
               <td class="text-center num">{{ p.lotes }}</td>
+              <td class="text-end num">{{ p.totalVendido | currency: 'BRL':'symbol':'1.0-0':'pt-BR' }}</td>
               <td class="num">{{ p.data | date: 'dd/MM/yyyy' }}</td>
               <td class="text-center actions-cell">
                 <button class="btn btn-sm btn-ghost-icon" title="Ver">
@@ -154,6 +254,11 @@
                 </button>
               </td>
             </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="text-center text-secondary py-4">Nenhum leilao nos ultimos 30 dias.</td>
+            </tr>
+          }
           }
         </tbody>
       </table>
