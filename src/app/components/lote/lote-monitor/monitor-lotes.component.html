@@ -218,6 +218,47 @@
                 >
                   <fa-icon [icon]="faFileInvoice"></fa-icon>
                 </button>
+
+                <!-- Split button: Enviar Fatura -->
+                <ng-container *ngIf="exibirBotaoEnviarFatura && lote.status === 'FINALIZADO' && lote.compradorId">
+                  <div style="position:relative;display:inline-flex">
+                    <button
+                      cButton
+                      [color]="corBotaoFatura(lote)"
+                      variant="ghost"
+                      size="sm"
+                      [disabled]="statusFatura(lote) === 'ENVIANDO'"
+                      title="Enviar fatura via WhatsApp"
+                      (click)="emitirEnviarFatura(lote, 'AMBOS')"
+                    >
+                      <fa-icon *ngIf="statusFatura(lote) === 'ENTREGUE'" [icon]="faCheckDouble"></fa-icon>
+                      <fa-icon *ngIf="statusFatura(lote) === 'ENVIADO'"  [icon]="faCheck"></fa-icon>
+                      <fa-icon *ngIf="statusFatura(lote) === 'ENVIANDO'" [icon]="faSpinner" [spin]="true"></fa-icon>
+                      <fa-icon *ngIf="statusFatura(lote) === 'SEM_LOG' || statusFatura(lote) === 'FALHA'" [icon]="faPaperPlane"></fa-icon>
+                    </button>
+                    <button
+                      cButton
+                      [color]="corBotaoFatura(lote)"
+                      variant="ghost"
+                      size="sm"
+                      style="padding-left:2px;padding-right:4px"
+                      title="Opções de envio"
+                      (click)="toggleDropdownFatura(lote.id!)"
+                    >▾</button>
+                    <div
+                      *ngIf="dropdownFaturaAberto[lote.id!]"
+                      class="dropdown-menu show"
+                      style="position:absolute;top:100%;right:0;z-index:1050;min-width:180px"
+                    >
+                      <button class="dropdown-item" (click)="emitirEnviarFatura(lote, 'COMPRADOR')">
+                        Enviar para Comprador
+                      </button>
+                      <button class="dropdown-item" (click)="emitirEnviarFatura(lote, 'VENDEDOR')">
+                        Enviar para Vendedor
+                      </button>
+                    </div>
+                  </div>
+                </ng-container>
               </div>
 
               <!-- Deletar: admin pode excluir em qualquer status -->

@@ -299,3 +299,12 @@ export interface WhatsAppBulkMediaMessage {
   delayMinMs?: number;
   delayMaxMs?: number;
 }
+
+export interface FaturaEnvioLog {
+  loteId: number;
+  tipoFatura: 'COMPRA' | 'VENDA';
+  status: 'ENVIANDO' | 'ENVIADO' | 'ENTREGUE' | 'FALHA';
+  enviadoEm?: string;
+  evolutionMessageId?: string;
+}
+
