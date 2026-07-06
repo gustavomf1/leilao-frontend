@@ -50,11 +50,21 @@
           </div>
 
           <div class="ja-form-field">
-            <label cLabel for="cpf">CPF *</label>
-            <input cFormControl id="cpf" formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00" />
-            <span class="form-hint" *ngIf="isEdicao">CPF não pode ser alterado após o cadastro</span>
-            <span class="form-error" *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched">
-              CPF é obrigatório
+            <label cLabel for="pessoa">Tipo de Pessoa *</label>
+            <select cFormControl id="pessoa" formControlName="pessoa">
+              <option value="F">Física</option>
+              <option value="J">Jurídica</option>
+            </select>
+          </div>
+
+          <div class="ja-form-field">
+            <label cLabel for="cpfCnpj">{{ form.get('pessoa')?.value === 'J' ? 'CNPJ' : 'CPF' }} *</label>
+            <input cFormControl id="cpfCnpj" formControlName="cpfCnpj"
+                   [placeholder]="form.get('pessoa')?.value === 'J' ? '00.000.000/0000-00' : '000.000.000-00'"
+                   [mask]="form.get('pessoa')?.value === 'J' ? '00.000.000/0000-00' : '000.000.000-00'" />
+            <span class="form-hint" *ngIf="isEdicao">{{ form.get('pessoa')?.value === 'J' ? 'CNPJ' : 'CPF' }} não pode ser alterado após o cadastro</span>
+            <span class="form-error" *ngIf="form.get('cpfCnpj')?.invalid && form.get('cpfCnpj')?.touched">
+              {{ form.get('pessoa')?.value === 'J' ? 'CNPJ' : 'CPF' }} é obrigatório
             </span>
           </div>
 

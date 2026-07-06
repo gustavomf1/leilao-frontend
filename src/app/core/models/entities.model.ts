@@ -3,13 +3,14 @@ export interface Usuario {
   nome: string;
   email: string;
   senha?: string;
-  cpf: string;
+  cpfCnpj: string;
 }
 
 export interface Cliente {
   id?: number;
   nome: string;
-  cpf: string;
+  pessoa: 'F' | 'J';
+  cpfCnpj: string;
   telefone: string;
   cidade: string;
   uf: string;
@@ -23,7 +24,7 @@ export interface Fazenda {
   nome: string;
   uf: string;
   cidade: string;
-  cnpj: string;
+  cpfCnpj: string;
   titularId?: number;
   titularNome?: string;
 }
@@ -241,7 +242,7 @@ export interface Funcionario {
   id?: number;
   nome: string;
   email: string;
-  cpf: string;
+  cpfCnpj: string;
   senha?: string;
   isAdmin?: boolean;
   roles?: Role[];

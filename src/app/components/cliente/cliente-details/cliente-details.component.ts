@@ -76,7 +76,8 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       nome:      ['', Validators.required],
       email:     ['', [Validators.required, Validators.email]],
-      cpf:       ['', Validators.required],
+      pessoa:    ['F', Validators.required],
+      cpfCnpj:   ['', Validators.required],
       ddi:       ['55', Validators.required],
       telefone:  ['', Validators.required],
       cidade:    ['', Validators.required],
@@ -100,7 +101,7 @@ export class ClientesDetailsComponent implements OnInit, OnDestroy {
       if (id) {
         this.isEdicao = true;
         this.entityId = id;
-        this.form.get('cpf')?.disable();
+        this.form.get('cpfCnpj')?.disable();
         this.service.buscarPorId(this.entityId).subscribe({
           next: (data) => {
             this.form.patchValue(data);
