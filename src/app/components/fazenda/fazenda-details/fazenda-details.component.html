@@ -50,10 +50,10 @@
           </div>
 
           <div class="ja-form-field">
-            <label cLabel for="cnpj">CNPJ *</label>
-            <input cFormControl id="cnpj" formControlName="cnpj"
+            <label cLabel for="cpfCnpj">CNPJ *</label>
+            <input cFormControl id="cpfCnpj" formControlName="cpfCnpj"
                    placeholder="00.000.000/0000-00" mask="00.000.000/0000-00" />
-            <span class="form-error" *ngIf="form.get('cnpj')?.invalid && form.get('cnpj')?.touched">
+            <span class="form-error" *ngIf="form.get('cpfCnpj')?.invalid && form.get('cpfCnpj')?.touched">
               CNPJ é obrigatório
             </span>
           </div>

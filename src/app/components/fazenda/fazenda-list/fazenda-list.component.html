@@ -29,7 +29,7 @@
             <td class="text-muted" style="font-size:.8rem">{{ fazenda.id }}</td>
             <td><strong>{{ fazenda.nome }}</strong></td>
             <td>{{ fazenda.inscricao }}</td>
-            <td>{{ fazenda.cnpj }}</td>
+            <td>{{ fazenda.cpfCnpj }}</td>
             <td>{{ fazenda.cidade }} / {{ fazenda.uf }}</td>
             <td class="text-center">
               <button *ngIf="auth.hasPermission('FAZENDAS', 'EDITAR')"
@@ -55,7 +55,7 @@
          class="ja-mobile-card ja-anim-slide-up ja-stagger"
          [style.--ja-stagger-i]="i">
       <div class="ja-mc-title">{{ fazenda.nome }}</div>
-      <div class="ja-mc-subtitle">{{ fazenda.cnpj }}</div>
+      <div class="ja-mc-subtitle">{{ fazenda.cpfCnpj }}</div>
       <div class="ja-mc-meta">
         <span><span class="label">Insc.</span> {{ fazenda.inscricao }}</span>
         <span><span class="label">Cidade</span> {{ fazenda.cidade }} / {{ fazenda.uf }}</span>

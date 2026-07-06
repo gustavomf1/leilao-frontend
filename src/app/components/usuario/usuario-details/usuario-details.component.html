@@ -47,11 +47,11 @@
           </div>
 
           <div class="ja-form-field">
-            <label cLabel for="cpf">CPF *</label>
-            <input cFormControl id="cpf" formControlName="cpf"
+            <label cLabel for="cpfCnpj">CPF *</label>
+            <input cFormControl id="cpfCnpj" formControlName="cpfCnpj"
                    placeholder="000.000.000-00" mask="000.000.000-00" />
             <span class="form-hint" *ngIf="isEdicao">CPF não pode ser alterado após o cadastro</span>
-            <span class="form-error" *ngIf="form.get('cpf')?.invalid && form.get('cpf')?.touched">
+            <span class="form-error" *ngIf="form.get('cpfCnpj')?.invalid && form.get('cpfCnpj')?.touched">
               CPF é obrigatório
             </span>
           </div>

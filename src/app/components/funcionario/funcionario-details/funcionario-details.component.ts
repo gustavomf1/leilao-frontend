@@ -42,7 +42,7 @@ export class FuncionariosDetailsComponent implements OnInit {
     this.form = this.fb.group({
       nome:     ['', Validators.required],
       email:    ['', [Validators.required, Validators.email]],
-      cpf:      ['', Validators.required],
+      cpfCnpj:  ['', Validators.required],
       senha:    ['', this.isEdicao ? [] : [Validators.required, Validators.minLength(6)]],
       isManejo: [false]
     });

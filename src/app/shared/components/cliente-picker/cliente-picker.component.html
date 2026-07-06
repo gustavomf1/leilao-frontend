@@ -27,7 +27,7 @@
       (click)="selecionar(cliente)">
       <div>
         <div class="fw-semibold">{{ cliente.nome }}</div>
-        <small class="text-secondary">CPF: {{ cliente.cpf }} · {{ cliente.cidade }}/{{ cliente.uf }}</small>
+        <small class="text-secondary">CPF/CNPJ: {{ cliente.cpfCnpj }} · {{ cliente.cidade }}/{{ cliente.uf }}</small>
       </div>
       <fa-icon [icon]="faCheck" class="text-success ms-2"></fa-icon>
     </button>

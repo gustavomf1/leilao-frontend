@@ -59,7 +59,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
       nome:      ['', Validators.required],
       uf:        ['', [Validators.required, Validators.maxLength(2)]],
       cidade:    ['', Validators.required],
-      cnpj:      ['', Validators.required],
+      cpfCnpj:   ['', Validators.required],
       titularId: [null]
     });
 

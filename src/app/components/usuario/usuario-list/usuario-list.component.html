@@ -27,7 +27,7 @@
             <td class="text-muted" style="font-size:.8rem">{{ usuario.id }}</td>
             <td><strong>{{ usuario.nome }}</strong></td>
             <td>{{ usuario.email }}</td>
-            <td>{{ usuario.cpf }}</td>
+            <td>{{ usuario.cpfCnpj }}</td>
             <td class="text-center">
               <button *ngIf="auth.hasPermission('FUNCIONARIOS', 'EDITAR')"
                       cButton color="info" size="sm" variant="ghost"
@@ -52,7 +52,7 @@
       <div class="ja-mc-title">{{ usuario.nome }}</div>
       <div class="ja-mc-subtitle">{{ usuario.email }}</div>
       <div class="ja-mc-meta">
-        <span><span class="label">CPF</span> {{ usuario.cpf }}</span>
+        <span><span class="label">CPF</span> {{ usuario.cpfCnpj }}</span>
       </div>
       <div class="ja-mc-actions">
         <button *ngIf="auth.hasPermission('FUNCIONARIOS', 'EDITAR')"

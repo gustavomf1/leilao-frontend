@@ -27,7 +27,7 @@
             <td class="text-muted" style="font-size:.8rem">{{ funcionario.id }}</td>
             <td><strong>{{ funcionario.nome }}</strong></td>
             <td>{{ funcionario.email }}</td>
-            <td>{{ funcionario.cpf }}</td>
+            <td>{{ funcionario.cpfCnpj }}</td>
             <td class="text-center">
               <button cButton color="success" size="sm" variant="ghost"
                       (click)="abrirModalPix(funcionario)" title="Chaves Pix">
@@ -56,7 +56,7 @@
       <div class="ja-mc-title">{{ funcionario.nome }}</div>
       <div class="ja-mc-subtitle">{{ funcionario.email }}</div>
       <div class="ja-mc-meta">
-        <span><span class="label">CPF</span> {{ funcionario.cpf }}</span>
+        <span><span class="label">CPF</span> {{ funcionario.cpfCnpj }}</span>
       </div>
       <div class="ja-mc-actions">
         <button cButton color="success" size="sm" variant="ghost"

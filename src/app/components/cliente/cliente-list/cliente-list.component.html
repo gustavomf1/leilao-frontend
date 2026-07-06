@@ -30,7 +30,7 @@
               [style.--ja-stagger-i]="i" class="ja-anim-slide-up ja-stagger">
             <td class="text-muted" style="font-size:.8rem">{{ cliente.id }}</td>
             <td><strong>{{ cliente.nome }}</strong></td>
-            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.cpfCnpj }}</td>
             <td>{{ cliente.telefone }}</td>
             <td>{{ cliente.cidade }} / {{ cliente.uf }}</td>
             <td class="text-center">
@@ -61,7 +61,7 @@
          class="ja-mobile-card ja-anim-slide-up ja-stagger"
          [style.--ja-stagger-i]="i">
       <div class="ja-mc-title">{{ cliente.nome }}</div>
-      <div class="ja-mc-subtitle">CPF: {{ cliente.cpf }}</div>
+      <div class="ja-mc-subtitle">CPF: {{ cliente.cpfCnpj }}</div>
       <div class="ja-mc-meta">
         <span><span class="label">Tel</span> {{ cliente.telefone }}</span>
         <span><span class="label">Cidade</span> {{ cliente.cidade }} / {{ cliente.uf }}</span>

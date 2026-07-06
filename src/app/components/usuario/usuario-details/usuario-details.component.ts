@@ -43,7 +43,7 @@ export class UsuariosDetailsComponent implements OnInit {
       nome:  ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]],
-      cpf:   ['', Validators.required]
+      cpfCnpj: ['', Validators.required]
     });
 
     const routeId = this.route.snapshot.paramMap.get('id');
