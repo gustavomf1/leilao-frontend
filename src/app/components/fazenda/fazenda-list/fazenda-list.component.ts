@@ -10,6 +10,7 @@ import { FazendaService } from '../../../core/services/fazenda.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { FazendasDetailsComponent } from '../fazenda-details/fazenda-details.component';
+import { PaginacaoComponent } from '../../../shared/components/paginacao/paginacao.component';
 
 @Component({
   selector: 'app-fazendas-list',
@@ -17,7 +18,7 @@ import { FazendasDetailsComponent } from '../fazenda-details/fazenda-details.com
   imports: [
     CommonModule, RouterModule, TableModule, TableDirective,
     ButtonDirective, CardBodyComponent, CardComponent,
-    FontAwesomeModule, FazendasDetailsComponent
+    FontAwesomeModule, FazendasDetailsComponent, PaginacaoComponent
   ],
   templateUrl: './fazenda-list.component.html'
 })
@@ -34,6 +35,12 @@ export class FazendasListComponent implements OnInit {
 
   fazendas$ = new BehaviorSubject<Fazenda[]>([]);
 
+  paginaAtual = 0;
+  tamanhoPagina = 20;
+  totalPaginas = 0;
+  totalElementos = 0;
+  termoBusca = '';
+
   // Drawer
   drawerAberto = false;
   drawerFazendaId?: number;
@@ -43,10 +50,31 @@ export class FazendasListComponent implements OnInit {
   }
 
   carregar() {
-    this.service.listar().subscribe({
-      next: (data) => this.zone.run(() => this.fazendas$.next(data)),
+    this.service.listarPaginado(this.paginaAtual, this.tamanhoPagina, this.termoBusca || undefined).subscribe({
+      next: (pagina) => this.zone.run(() => {
+        this.fazendas$.next(pagina.content);
+        this.totalPaginas = pagina.totalPages;
+        this.totalElementos = pagina.totalElements;
+      }),
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar fazendas')
     });
+  }
+
+  onBuscaMudou(termo: string) {
+    this.termoBusca = termo;
+    this.paginaAtual = 0;
+    this.carregar();
+  }
+
+  onTamanhoMudou(tamanho: number) {
+    this.tamanhoPagina = tamanho;
+    this.paginaAtual = 0;
+    this.carregar();
+  }
+
+  onPaginaMudou(pagina: number) {
+    this.paginaAtual = pagina;
+    this.carregar();
   }
 
   abrirDrawerNovo() {
@@ -81,7 +109,7 @@ export class FazendasListComponent implements OnInit {
       this.service.deletar(id).subscribe({
         next: () => {
           this.alert.success('Fazenda excluída!');
-          this.fazendas$.next(this.fazendas$.value.filter(f => f.id !== id));
+          this.carregar();
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao excluir fazenda')
       });
