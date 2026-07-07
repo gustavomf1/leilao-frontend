@@ -11,6 +11,15 @@
     </button>
   </div>
 
+  <app-paginacao
+    [paginaAtual]="paginaAtual"
+    [totalPaginas]="totalPaginas"
+    [tamanhoPagina]="tamanhoPagina"
+    (buscaMudou)="onBuscaMudou($event)"
+    (tamanhoMudou)="onTamanhoMudou($event)"
+    (paginaMudou)="onPaginaMudou($event)">
+  </app-paginacao>
+
   <!-- ── DESKTOP: Tabela ── -->
   <c-card class="d-mobile-none">
     <c-card-body class="p-0">
