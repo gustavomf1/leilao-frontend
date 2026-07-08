@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft, faHome, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faHome, faMapMarkerAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { FazendaService } from '../../../core/services/fazenda.service';
 import { AlertService } from '../../../shared/services/alert.service';
@@ -40,6 +40,7 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
   faArrowLeft = faArrowLeft;
   faHome = faHome;
   faMapMarker = faMapMarkerAlt;
+  faPhone = faPhone;
   ufs = UF_LIST;
   form!: FormGroup;
   isEdicao = false;
@@ -60,6 +61,9 @@ export class FazendasDetailsComponent implements OnInit, OnDestroy {
       uf:        ['', [Validators.required, Validators.maxLength(2)]],
       cidade:    ['', Validators.required],
       cpfCnpj:   ['', Validators.required],
+      endereco:  [''],
+      fone:      [''],
+      contato:   [''],
       titularId: [null]
     });
 
