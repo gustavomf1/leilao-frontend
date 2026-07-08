@@ -29,6 +29,9 @@
             <th>Inscrição</th>
             <th>CNPJ</th>
             <th>Cidade / UF</th>
+            <th>Endereço</th>
+            <th>Telefone</th>
+            <th>Contato</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
@@ -40,6 +43,9 @@
             <td>{{ fazenda.inscricao }}</td>
             <td>{{ fazenda.cpfCnpj }}</td>
             <td>{{ fazenda.cidade }} / {{ fazenda.uf }}</td>
+            <td>{{ fazenda.endereco || '-' }}</td>
+            <td>{{ fazenda.fone || '-' }}</td>
+            <td>{{ fazenda.contato || '-' }}</td>
             <td class="text-center">
               <button *ngIf="auth.hasPermission('FAZENDAS', 'EDITAR')"
                       cButton color="info" size="sm" variant="ghost"
@@ -68,6 +74,9 @@
       <div class="ja-mc-meta">
         <span><span class="label">Insc.</span> {{ fazenda.inscricao }}</span>
         <span><span class="label">Cidade</span> {{ fazenda.cidade }} / {{ fazenda.uf }}</span>
+        <span *ngIf="fazenda.endereco"><span class="label">Endereço</span> {{ fazenda.endereco }}</span>
+        <span *ngIf="fazenda.fone"><span class="label">Tel.</span> {{ fazenda.fone }}</span>
+        <span *ngIf="fazenda.contato"><span class="label">Contato</span> {{ fazenda.contato }}</span>
       </div>
       <div class="ja-mc-actions">
         <button *ngIf="auth.hasPermission('FAZENDAS', 'EDITAR')"

@@ -7,4 +7,7 @@ export interface Fazenda {
   cpfCnpj: string;
   titularId?: number;
   titularNome?: string;
+  endereco?: string;
+  fone?: string;
+  contato?: string;
 }
