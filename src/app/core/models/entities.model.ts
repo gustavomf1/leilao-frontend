@@ -25,6 +25,9 @@ export interface Fazenda {
   uf: string;
   cidade: string;
   cpfCnpj: string;
+  endereco?: string;
+  fone?: string;
+  contato?: string;
   titularId?: number;
   titularNome?: string;
 }
