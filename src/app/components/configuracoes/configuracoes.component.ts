@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonDirective } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUser, faShieldAlt, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { ColorModeService } from '@coreui/angular';
@@ -10,7 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-configuracoes',
   standalone: true,
-  imports: [CommonModule, ButtonDirective, FontAwesomeModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './configuracoes.component.html',
 })
 export class ConfiguracoesComponent {
