@@ -1,9 +1,9 @@
-<div class="login-wrapper">
+<div class="login-stage">
   <c-card class="login-card">
     <!-- Header -->
     <div class="login-header">
       <div class="login-logo">
-        <svg cIcon name="cilLockLocked" size="xl"></svg>
+        <img src="assets/brand/logo-mark.png" alt="J.A. Leilões" />
       </div>
       <h1>Bem-vindo</h1>
       <p>Faça login para acessar sua conta</p>
@@ -34,19 +34,20 @@
             <svg cIcon name="cilLockLocked" class="input-icon"></svg>
             <input
               autoComplete="current-password"
-              formControlName="senha" 
+              formControlName="senha"
               placeholder="•••"
               [type]="showPassword ? 'text' : 'password'"
               class="w-100"
             />
-            <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
-              <fa-icon [icon]="showPassword ? faEye : faEyeSlash" class="input-icon"></fa-icon>
+            <button type="button" class="password-toggle" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+              <fa-icon [icon]="showPassword ? faEye : faEyeSlash"></fa-icon>
             </button>
           </div>
         </div>
-        <!-- Lembrar / Esqueceu -->
+
+        <!-- Esqueceu -->
         <div class="remember-row">
-          <a routerLink="/esqueci-senha" class="text-decoration-none" style="color: #321fdb; font-size: 0.85rem; font-weight: 500;">
+          <a routerLink="/esqueci-senha" class="forgot-link">
             Esqueceu a senha?
           </a>
         </div>
@@ -56,6 +57,9 @@
           Entrar
         </button>
 
+        <div class="login-footer-note">
+          &copy; {{ anoAtual }} JA Leilões — Todos os direitos reservados
+        </div>
       </form>
     </c-card-body>
   </c-card>

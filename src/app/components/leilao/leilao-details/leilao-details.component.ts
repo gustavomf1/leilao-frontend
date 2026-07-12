@@ -1,28 +1,30 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   CardModule, ButtonDirective, FormModule, GridModule,
-  ModalModule, TableModule, TableDirective, BadgeComponent
+  ModalModule
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft, faSearch, faPencil, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faSearch, faCheck, faTimes, faGavel, faPercent, faFileLines, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { TaxasService } from '../../../core/services/taxas.service';
 import { CondicoesService } from '../../../core/services/condicoes.service';
 import { EspecieService } from '../../../core/services/especie.service';
+import { FuncionarioService } from '../../../core/services/funcionario.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Taxas, Condicoes, Especie, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
+import { Taxas, Condicoes, Especie, Funcionario, TipoLeilao, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
+import { UF_LIST } from '../../../core/constants/uf.constant';
 
 @Component({
   selector: 'app-leiloes-details',
   standalone: true,
   imports: [
-    CommonModule, RouterModule, ReactiveFormsModule,
+    CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
-    ModalModule, TableModule, TableDirective, BadgeComponent,
+    ModalModule,
     FontAwesomeModule
   ],
   templateUrl: './leilao-details.component.html',
@@ -32,6 +34,7 @@ export class LeiloesDetailsComponent implements OnInit {
   private taxaService  = inject(TaxasService);
   private condicaoService = inject(CondicoesService);
   private especieService  = inject(EspecieService);
+  private funcionarioService = inject(FuncionarioService);
   private alert        = inject(AlertService);
   private cdr          = inject(ChangeDetectorRef);
   auth                 = inject(AuthService);
@@ -39,31 +42,42 @@ export class LeiloesDetailsComponent implements OnInit {
   faSave     = faSave;
   faArrowLeft = faArrowLeft;
   faSearch   = faSearch;
-  faPencil   = faPencil;
   faCheck    = faCheck;
   faTimes    = faTimes;
+  faGavel    = faGavel;
+  faPercent  = faPercent;
+  faFileLines = faFileLines;
+  faMapMarker = faMapMarkerAlt;
 
   form!: FormGroup;
-  formTaxaEdit!: FormGroup;
   isEdicao = false;
   private entityId?: number;
+  private leilaoCarregado?: any;
 
   // Dados carregados
-  taxas: Taxas[]      = [];
+  taxaPadrao?: Taxas;
   condicoes: Condicoes[] = [];
   especies: Especie[] = [];
+  leiloeiros: Funcionario[] = [];
   tiposLeilao = Object.entries(TIPO_LEILAO_LABELS).map(([value, label]) => ({ value: value as TipoLeilao, label }));
+  ufs = UF_LIST;
 
   // Selecionados
-  taxaSelecionada?: Taxas;
   condicaoSelecionada?: Condicoes;
 
-  // Modais
-  modalTaxaAberto    = false;
+  // Drawer (era modal)
   modalCondicaoAberto = false;
+  condicaoFiltro = '';
 
-  // Edição inline de taxa
-  editandoTaxaId: number | null = null;
+  get condicoesFiltradas(): Condicoes[] {
+    const termo = this.condicaoFiltro.trim().toLowerCase();
+    if (!termo) return this.condicoes;
+    return this.condicoes.filter(c =>
+      c.descricao?.toLowerCase().includes(termo) ||
+      c.tipoCondicao?.toLowerCase().includes(termo) ||
+      String(c.id).includes(termo)
+    );
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -79,13 +93,9 @@ export class LeiloesDetailsComponent implements OnInit {
       descricao:   ['', Validators.required],
       data:        ['', Validators.required],
       condicoesId: [null, Validators.required],
-      taxasId:     [null, Validators.required],
-    });
-
-    this.formTaxaEdit = this.fb.group({
-      comissaoVendedor:  [0, [Validators.required, Validators.min(0)]],
-      comissaoComprador: [0, [Validators.required, Validators.min(0)]],
+      taxaPadraoId: [null],
       especieId:         [null, Validators.required],
+      leiloeiroId:       [null],
       tipoLeilao:        ['', Validators.required],
       taxaPor:           ['ANIMAL', Validators.required],
     });
@@ -98,13 +108,9 @@ export class LeiloesDetailsComponent implements OnInit {
       this.entityId = +id;
       this.service.buscarPorId(this.entityId).subscribe({
         next: (data) => {
-          this.form.patchValue(data);
-          if (data.taxas_id) {
-            this.taxaSelecionada = this.taxas.find(t => t.id === data.taxas_id);
-          }
-          if (data.condicoes_id) {
-            this.condicaoSelecionada = this.condicoes.find(c => c.id === data.condicoes_id);
-          }
+          this.leilaoCarregado = this.normalizarLeilao(data);
+          this.form.patchValue(this.leilaoCarregado);
+          this.atualizarSelecionados();
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar leilão'),
       });
@@ -112,62 +118,31 @@ export class LeiloesDetailsComponent implements OnInit {
   }
 
   private carregarDados() {
-    this.taxaService.listar().subscribe({
-      next: (data) => { this.taxas = data; this.cdr.detectChanges(); },
-      error: () => this.alert.error('Erro ao carregar taxas'),
+    this.taxaService.obterAtual().subscribe({
+      next: (data) => {
+        this.taxaPadrao = data;
+        if (!this.isEdicao && data?.id && !this.form.get('taxaPadraoId')?.value) {
+          this.form.patchValue({ taxaPadraoId: data.id });
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => this.alert.error('Erro ao carregar taxa padrão vigente'),
     });
     this.condicaoService.listar().subscribe({
-      next: (data) => { this.condicoes = data; this.cdr.detectChanges(); },
+      next: (data) => { this.condicoes = data; this.atualizarSelecionados(); this.cdr.detectChanges(); },
       error: () => this.alert.error('Erro ao carregar condições'),
     });
     this.especieService.listar().subscribe({
       next: (data) => { this.especies = data; this.cdr.detectChanges(); },
     });
+    this.funcionarioService.listar().subscribe({
+      next: (data) => { this.leiloeiros = data; this.cdr.detectChanges(); },
+      error: () => this.alert.error('Erro ao carregar leiloeiros'),
+    });
   }
 
   tipoLabel(tipo: TipoLeilao): string {
     return TIPO_LEILAO_LABELS[tipo] ?? tipo;
-  }
-
-  // ── Seleção de Taxa ───────────────────────────────────────────
-
-  selecionarTaxa(taxa: Taxas) {
-    this.taxaSelecionada = taxa;
-    this.form.patchValue({ taxasId: taxa.id });
-    this.modalTaxaAberto = false;
-    this.editandoTaxaId = null;
-    this.cdr.detectChanges();
-  }
-
-  editarTaxa(taxa: Taxas) {
-    this.editandoTaxaId = taxa.id!;
-    this.formTaxaEdit.patchValue({
-      comissaoVendedor:  taxa.comissaoVendedor,
-      comissaoComprador: taxa.comissaoComprador,
-      especieId:         taxa.especieId,
-      tipoLeilao:        taxa.tipoLeilao,
-      taxaPor:           taxa.taxaPor,
-    });
-  }
-
-  salvarEdicaoTaxa(taxa: Taxas) {
-    if (this.formTaxaEdit.invalid) return;
-    const dados = this.formTaxaEdit.getRawValue();
-    this.taxaService.atualizar(taxa.id!, dados).subscribe({
-      next: (atualizada) => {
-        const idx = this.taxas.findIndex(t => t.id === taxa.id);
-        if (idx !== -1) this.taxas[idx] = atualizada as unknown as Taxas;
-        if (this.taxaSelecionada?.id === taxa.id) this.taxaSelecionada = atualizada as unknown as Taxas;
-        this.editandoTaxaId = null;
-        this.alert.success('Taxa atualizada!');
-        this.cdr.detectChanges();
-      },
-      error: () => this.alert.error('Erro ao atualizar taxa'),
-    });
-  }
-
-  cancelarEdicaoTaxa() {
-    this.editandoTaxaId = null;
   }
 
   // ── Seleção de Condição ───────────────────────────────────────
@@ -179,21 +154,38 @@ export class LeiloesDetailsComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  private normalizarLeilao(data: any): any {
+    const condicoesId = data.condicoesId ?? data.condicoes_id ?? data.condicao?.id ?? null;
+    const especieId = data.especieId ?? data.especie?.id ?? null;
+    const taxaPadraoId = data.taxaPadraoId ?? data.taxaPadrao?.id ?? null;
+    const leiloeiroId = data.leiloeiroId ?? data.leiloeiro?.id ?? data.leiloeiro?.usu_id ?? null;
+    return { ...data, condicoesId, especieId, taxaPadraoId, leiloeiroId };
+  }
+
+  private atualizarSelecionados() {
+    const condicoesId = this.form?.get('condicoesId')?.value ?? this.leilaoCarregado?.condicoesId;
+    if (condicoesId) {
+      this.condicaoSelecionada = this.condicoes.find(c => c.id === condicoesId);
+    }
+  }
+
   // ── Salvar Leilão ─────────────────────────────────────────────
 
   salvar() {
     if (this.form.valid) {
-      const dados = this.form.getRawValue();
+      const dados = {
+        ...this.form.getRawValue(),
+        uf: String(this.form.get('uf')?.value || '').toUpperCase(),
+      };
       const op = this.isEdicao
         ? this.service.atualizar(this.entityId!, dados)
         : this.service.salvar(dados);
-
       op.subscribe({
         next: () => {
           this.alert.success(this.isEdicao ? 'Leilão atualizado!' : 'Leilão cadastrado!');
           this.router.navigate(['/leiloes/lista']);
         },
-        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar leilão'),
+        error: (err) => this.alert.error(err.error?.mensagem ),
       });
     }
   }

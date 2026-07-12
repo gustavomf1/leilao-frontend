@@ -11,15 +11,21 @@
     <c-card-body class="login-body">
       @if (enviado()) {
         <div class="text-center py-3">
-          <p class="mb-1" style="color: #1b2e4b; font-weight: 600;">Email enviado!</p>
-          <p style="color: #8a93a2; font-size: 0.9rem;">
-            Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.<br>
+          <p class="state-title">E-mail enviado!</p>
+          <p class="state-text">
+            Enviamos o link de redefinição para<br>
+            <strong class="email-destino">{{ emailEnviado() }}</strong>
+          </p>
+          <p class="state-text">
+            Verifique sua caixa de entrada e siga as instruções.
             O link é válido por <strong>30 minutos</strong>.
           </p>
-          <p style="color: #8a93a2; font-size: 0.8rem; margin-top: 8px;">
-            Não encontrou? Verifique a pasta de spam.
-          </p>
-          <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-weight: 500;">Voltar ao login</a>
+          <p class="state-hint">Não encontrou? Verifique a pasta de spam ou reenvie.</p>
+          <button cButton color="primary" class="btn-login w-100 mb-3" type="button"
+                  [disabled]="reenviando()" (click)="reenviar()">
+            {{ reenviando() ? 'Reenviando...' : 'Reenviar e-mail' }}
+          </button>
+          <a routerLink="/login" class="auth-link">Voltar ao login</a>
         </div>
       } @else {
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -44,9 +50,7 @@
           </button>
 
           <div class="text-center">
-            <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-size: 0.85rem; font-weight: 500;">
-              Voltar ao login
-            </a>
+            <a routerLink="/login" class="auth-link">Voltar ao login</a>
           </div>
         </form>
       }

@@ -1,0 +1,31 @@
+<c-row>
+  <c-col>
+    <c-card>
+      <c-card-header>
+        <strong>Relatorio - Fechamento do Leilao</strong>
+      </c-card-header>
+      <c-card-body>
+        <c-row class="mb-3">
+          <c-col [md]="10">
+            <label class="form-label fw-semibold">Leilao</label>
+            <select class="form-select" [(ngModel)]="selectedLeilaoId">
+              <option [ngValue]="undefined">Selecione um leilao...</option>
+              <option *ngFor="let l of leiloes" [ngValue]="l.id">
+                {{ l.descricao }} - {{ l.data }}
+              </option>
+            </select>
+          </c-col>
+          <c-col [md]="2" class="d-flex align-items-end">
+            <button cButton color="primary"
+                    class="w-100"
+                    [disabled]="!canGenerate"
+                    (click)="gerarFechamento()">
+              <c-spinner *ngIf="loading" size="sm" class="me-1"></c-spinner>
+              {{ loading ? 'Gerando...' : 'Gerar PDF' }}
+            </button>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

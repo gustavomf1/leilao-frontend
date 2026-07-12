@@ -3,13 +3,14 @@ export interface Usuario {
   nome: string;
   email: string;
   senha?: string;
-  cpf: string;
+  cpfCnpj: string;
 }
 
 export interface Cliente {
   id?: number;
   nome: string;
-  cpf: string;
+  pessoa: 'F' | 'J';
+  cpfCnpj: string;
   telefone: string;
   cidade: string;
   uf: string;
@@ -23,7 +24,10 @@ export interface Fazenda {
   nome: string;
   uf: string;
   cidade: string;
-  cnpj: string;
+  cpfCnpj: string;
+  endereco?: string;
+  fone?: string;
+  contato?: string;
   titularId?: number;
   titularNome?: string;
 }
@@ -35,8 +39,16 @@ export interface Leilao {
   cidade: string;
   descricao: string;
   data: string;
+  condicoesId?: number;
   condicoes_id?: number;
-  taxas_id?: number;
+  taxaPadraoId?: number;
+  especieId?: number;
+  especieNome?: string;
+  leiloeiroId?: number;
+  leiloeiroNome?: string;
+  tipoLeilao?: TipoLeilao;
+  taxaPor?: TaxaPor;
+  status?: StatusLeilao;
 }
 
 export type StatusLeilao = 'ABERTO' | 'EM_ANDAMENTO' | 'FINALIZADO';
@@ -62,16 +74,22 @@ export interface LeilaoDetalhes {
   data: string;
   inativo: string;
   status: StatusLeilao;
-  condicao: Condicoes;
-  taxa: {
-    id: number;
-    comissaoVendedor: number;
-    comissaoComprador: number;
-    especie: Especie;
-    tipoLeilao: string;
-    taxaPor: string;
-    inativo: string;
-  };
+  condicao?: Condicoes;
+  condicoesId?: number;
+  taxaPadraoId?: number;
+  taxaPadrao?: Taxas;
+  especie?: Especie;
+  especieId?: number;
+  especieNome?: string;
+  leiloeiro?: Funcionario;
+  leiloeiroId?: number;
+  leiloeiroNome?: string;
+  tipoLeilao?: TipoLeilao;
+  taxaPor?: TaxaPor;
+  taxa?: number;
+  comissaoVenda?: number;
+  comissaoCompra?: number;
+  gta?: number;
 }
 
 export interface Condicoes {
@@ -87,11 +105,23 @@ export interface Condicoes {
   aceiteIntegrado?: string;
 }
 
-export type TipoLeilao = 'ELITE' | 'CORTE' | 'LEITE' | 'PRENHEZ' | 'OUTROS' | 'DOACAO';
+export type TipoLeilao =
+  | 'PRESENCIAL'
+  | 'ONLINE'
+  | 'HIBRIDO'
+  | 'ELITE'
+  | 'CORTE'
+  | 'LEITE'
+  | 'PRENHEZ'
+  | 'OUTROS'
+  | 'DOACAO';
 
 export type TaxaPor = 'ANIMAL' | 'LOTE';
 
 export const TIPO_LEILAO_LABELS: Record<TipoLeilao, string> = {
+  PRESENCIAL: 'Presencial',
+  ONLINE: 'Online',
+  HIBRIDO: 'Híbrido',
   ELITE:   'Elite',
   CORTE:   'Corte',
   LEITE:   'Leite',
@@ -106,32 +136,41 @@ export interface Especie {
   inativo?: string;
 }
 
-export interface Taxas {
+export interface Raca {
   id?: number;
-  comissaoVendedor: number;
-  comissaoComprador: number;
+  nome: string;
   especieId: number;
   especieNome?: string;
-  tipoLeilao: TipoLeilao;
-  taxaPor: TaxaPor;
   inativo?: string;
+}
+
+export interface Taxas {
+  id?: number;
+  taxa: number;
+  comissaoVenda: number;
+  comissaoCompra: number;
+  gta: number;
+  atualizadoEm?: string;
 }
 
 export type StatusLote =
   | 'AGUARDANDO_ESCRITORIO'
   | 'AGUARDANDO_LANCE'
+  | 'AGUARDANDO_ULTIMA_VALIDACAO'
   | 'FINALIZADO';
 
 export const STATUS_LOTE_LABELS: Record<StatusLote, string> = {
-  AGUARDANDO_ESCRITORIO: 'Aguardando Escritório',
-  AGUARDANDO_LANCE:      'Aguardando Lance',
-  FINALIZADO:            'Finalizado',
+  AGUARDANDO_ESCRITORIO:       'Aguardando Escritório',
+  AGUARDANDO_LANCE:            'Aguardando Lance',
+  AGUARDANDO_ULTIMA_VALIDACAO: 'Aguardando Ult. Validação',
+  FINALIZADO:                  'Finalizado',
 };
 
 export const STATUS_LOTE_COLOR: Record<StatusLote, string> = {
-  AGUARDANDO_ESCRITORIO: 'warning',
-  AGUARDANDO_LANCE:      'info',
-  FINALIZADO:            'dark',
+  AGUARDANDO_ESCRITORIO:       'warning',
+  AGUARDANDO_LANCE:            'info',
+  AGUARDANDO_ULTIMA_VALIDACAO: 'primary',
+  FINALIZADO:                  'dark',
 };
 
 export interface Lote {
@@ -143,6 +182,7 @@ export interface Lote {
   peso: number;
   raca: string;
   especie: string;
+  especieId?: number;
   categoriaAnimal: string;
   obs: string;
   leilaoId?: number;
@@ -151,6 +191,13 @@ export interface Lote {
   precoCompra?: number;
   vendedorNome?: string;
   vendedorNomeRascunho?: string;
+  compradorNomeRascunho?: string;
+  compradorNome?: string;
+  comissaoVenda?: number;
+  comissaoCompra?: number;
+  vendedorPixId?: number;
+  vendedorPixTipo?: 'CPF_CNPJ' | 'TELEFONE' | 'EMAIL' | 'CHAVE_ALEATORIA';
+  vendedorPixChave?: string;
   status?: StatusLote;
   naoVendidoNoLeilao?: string;
 }
@@ -198,7 +245,7 @@ export interface Funcionario {
   id?: number;
   nome: string;
   email: string;
-  cpf: string;
+  cpfCnpj: string;
   senha?: string;
   isAdmin?: boolean;
   roles?: Role[];
@@ -255,3 +302,12 @@ export interface WhatsAppBulkMediaMessage {
   delayMinMs?: number;
   delayMaxMs?: number;
 }
+
+export interface FaturaEnvioLog {
+  loteId: number;
+  tipoFatura: 'COMPRA' | 'VENDA';
+  status: 'ENVIANDO' | 'ENVIADO' | 'ENTREGUE' | 'FALHA';
+  enviadoEm?: string;
+  evolutionMessageId?: string;
+}
+

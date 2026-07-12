@@ -16,20 +16,78 @@
         </span>
         <span class="ms-3" *ngIf="resumo.tipoLeilao">
           {{ tipoLeilaoLabel(resumo.tipoLeilao) }}
-          <span *ngIf="resumo.especieNome"> — {{ resumo.especieNome }}</span>
+          <span *ngIf="especieNome !== '—'"> — {{ especieNome }}</span>
+        </span>
+        <span class="ms-3" *ngIf="resumo.taxaPor">
+          Taxa por {{ taxaPorLabel }}
         </span>
       </span>
     </div>
-    <div class="d-flex gap-2">
-      <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', resumo.id, 'evento']" cButton color="success" size="sm">
-        <fa-icon [icon]="faGavel" class="me-1"></fa-icon> Evento
-      </a>
+    <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
+      <c-badge *ngIf="statusLeilao" [color]="statusColor(statusLeilao)" class="fs-6 px-3 py-2">
+        {{ statusLabel(statusLeilao) | uppercase }}
+      </c-badge>
+      <button *ngIf="podeGerenciarEvento && isFinalizado" cButton color="primary" size="sm" (click)="enviarFaturasParaTodos()">
+        <fa-icon [icon]="faPaperPlane" class="me-1"></fa-icon> Enviar Faturas
+      </button>
+      <button *ngIf="podeGerenciarEvento && isAberto" cButton color="success" size="sm" (click)="iniciarLeilao()">
+        <fa-icon [icon]="faPlay" class="me-1"></fa-icon> Começar Leilão
+      </button>
+      <button *ngIf="podeGerenciarEvento && emAndamento" cButton color="secondary" size="sm" (click)="gerarLink()">
+        <fa-icon [icon]="faLink" class="me-1"></fa-icon> Gerar Link
+      </button>
+      <button *ngIf="podeGerenciarEvento && emAndamento" cButton color="danger" size="sm" (click)="encerrarLeilao()">
+        <fa-icon [icon]="faStop" class="me-1"></fa-icon> Encerrar Leilão
+      </button>
       <a *ngIf="auth.hasPermission('LEILOES', 'EDITAR')" [routerLink]="['/leiloes', resumo.id]" cButton color="info" size="sm" variant="ghost">
         <fa-icon [icon]="faPencil" class="me-1"></fa-icon> Editar
       </a>
       <a routerLink="/leiloes/lista" cButton color="secondary" size="sm" variant="ghost">
         <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Voltar
       </a>
+    </div>
+  </div>
+
+  <div class="auction-facts mb-4">
+    <div class="auction-fact">
+      <span>Status</span>
+      <strong>
+        <c-badge [color]="statusColor(statusLeilao)">
+          {{ statusLabel(statusLeilao) }}
+        </c-badge>
+      </strong>
+    </div>
+    <div class="auction-fact">
+      <span>Espécie</span>
+      <strong>{{ especieNome }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Tipo</span>
+      <strong>{{ tipoLeilaoLabel(resumo.tipoLeilao) }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Taxa por</span>
+      <strong>{{ taxaPorLabel }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Taxa</span>
+      <strong>{{ resumo.taxa != null ? (resumo.taxa | currency:'BRL':'symbol':'1.2-2') : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Comissão Venda</span>
+      <strong>{{ resumo.comissaoVenda != null ? (resumo.comissaoVenda | number:'1.2-2') + '%' : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Comissão Compra</span>
+      <strong>{{ resumo.comissaoCompra != null ? (resumo.comissaoCompra | number:'1.2-2') + '%' : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>GTA</span>
+      <strong>{{ resumo.gta != null ? (resumo.gta | currency:'BRL':'symbol':'1.2-2') : '—' }}</strong>
+    </div>
+    <div class="auction-fact">
+      <span>Condição</span>
+      <strong>{{ condicaoDescricao }}</strong>
     </div>
   </div>
 
@@ -67,7 +125,7 @@
         <c-card-body class="d-flex flex-column">
           <div class="text-uppercase small fw-semibold opacity-75">Movimentação Bruta</div>
           <div class="fs-2 fw-bold mt-auto">{{ resumo.movimentacaoBruta | currency:'BRL':'symbol':'1.2-2' }}</div>
-          <div class="small opacity-75">Receita comissão: {{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</div>
+          <div class="small opacity-75">Receita taxas: {{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</div>
         </c-card-body>
       </c-card>
     </c-col>
@@ -77,51 +135,59 @@
   <c-card class="mb-4" *ngIf="resumo.totalLotes > 0">
     <c-card-body>
       <div class="d-flex justify-content-between mb-2">
-        <span class="fw-semibold">Progresso de Vendas</span>
-        <span class="text-body-secondary">{{ percentualVendido }}%</span>
+        <span class="fw-semibold">{{ emAndamento ? 'Progresso de Lances' : 'Progresso de Vendas' }}</span>
+        <span class="text-body-secondary">{{ emAndamento ? percentualLances : percentualVendido }}%</span>
       </div>
       <div class="progress mb-1">
-        <div class="progress-bar bg-success" role="progressbar" [style.width.%]="percentualVendido"></div>
+        <div class="progress-bar bg-success" role="progressbar" [style.width.%]="emAndamento ? percentualLances : percentualVendido"></div>
       </div>
       <div class="d-flex justify-content-between small text-body-secondary mt-1">
-        <span>{{ resumo.lotesVendidos }} vendidos</span>
-        <span>{{ resumo.lotesRestantes }} restantes</span>
+        <span>{{ emAndamento ? totalFinalizados : resumo.lotesVendidos }} {{ emAndamento ? 'finalizados' : 'vendidos' }}</span>
+        <span>{{ emAndamento ? totalAguardando : resumo.lotesRestantes }} restantes</span>
       </div>
     </c-card-body>
   </c-card>
 
-  <!-- Comissão e Resumo -->
+  <!-- Taxas e Resumo -->
   <c-row class="mb-4">
     <c-col [md]="6" class="mb-3 mb-md-0">
       <c-card class="h-100">
         <c-card-header>
           <fa-icon [icon]="faPercent" class="me-2 text-success"></fa-icon>
-          <strong>Comissão</strong>
+          <strong>Taxas</strong>
         </c-card-header>
         <c-card-body>
           <table class="table table-borderless table-sm mb-0">
             <tbody>
-              <tr *ngIf="resumo.especieNome">
+              <tr>
                 <td class="text-body-secondary" style="width: 45%">Espécie</td>
-                <td class="fw-semibold"><fa-icon [icon]="faPaw" class="me-1 text-body-secondary"></fa-icon>{{ resumo.especieNome }}</td>
+                <td class="fw-semibold"><fa-icon [icon]="faPaw" class="me-1 text-body-secondary"></fa-icon>{{ especieNome }}</td>
               </tr>
-              <tr *ngIf="resumo.tipoLeilao">
+              <tr>
                 <td class="text-body-secondary">Tipo de Leilão</td>
                 <td>{{ tipoLeilaoLabel(resumo.tipoLeilao) }}</td>
               </tr>
-              <tr *ngIf="resumo.comissaoVendedor != null">
-                <td class="text-body-secondary">Comissão Vendedor</td>
-                <td class="fw-semibold text-danger">{{ resumo.comissaoVendedor }}%</td>
+              <tr *ngIf="resumo.taxa != null">
+                <td class="text-body-secondary">Taxa</td>
+                <td class="fw-semibold text-danger">{{ resumo.taxa | currency:'BRL':'symbol':'1.2-2' }}</td>
               </tr>
-              <tr *ngIf="resumo.comissaoComprador != null">
-                <td class="text-body-secondary">Comissão Comprador</td>
-                <td class="fw-semibold text-danger">{{ resumo.comissaoComprador }}%</td>
+              <tr *ngIf="resumo.comissaoVenda != null">
+                <td class="text-body-secondary">Comissão Venda</td>
+                <td class="fw-semibold text-danger">{{ resumo.comissaoVenda | number:'1.2-2' }}%</td>
               </tr>
-              <tr *ngIf="resumo.taxaPor">
+              <tr *ngIf="resumo.comissaoCompra != null">
+                <td class="text-body-secondary">Comissão Compra</td>
+                <td class="fw-semibold text-danger">{{ resumo.comissaoCompra | number:'1.2-2' }}%</td>
+              </tr>
+              <tr *ngIf="resumo.gta != null">
+                <td class="text-body-secondary">GTA</td>
+                <td class="fw-semibold text-danger">{{ resumo.gta | currency:'BRL':'symbol':'1.2-2' }}</td>
+              </tr>
+              <tr>
                 <td class="text-body-secondary">Cobrado por</td>
                 <td>
                   <c-badge [color]="resumo.taxaPor === 'ANIMAL' ? 'info' : 'warning'">
-                    {{ resumo.taxaPor === 'ANIMAL' ? 'Animal' : 'Lote' }}
+                    {{ taxaPorLabel }}
                   </c-badge>
                 </td>
               </tr>
@@ -141,7 +207,7 @@
             <tbody>
               <tr>
                 <td class="text-body-secondary" style="width: 45%">Condição</td>
-                <td class="fw-semibold">{{ resumo.condicaoDescricao ?? '—' }}</td>
+                <td class="fw-semibold">{{ condicaoDescricao }}</td>
               </tr>
               <tr>
                 <td class="text-body-secondary">Total de Animais</td>
@@ -156,7 +222,7 @@
                 <td>{{ resumo.ticketMedio | currency:'BRL':'symbol':'1.2-2' }}</td>
               </tr>
               <tr>
-                <td class="text-body-secondary">Receita Comissão</td>
+                <td class="text-body-secondary">Receita Taxas</td>
                 <td class="fw-semibold text-success">{{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</td>
               </tr>
               <tr>
@@ -170,93 +236,17 @@
     </c-col>
   </c-row>
 
-  <!-- Lotes Vendidos -->
-  <c-card class="mb-4">
-    <c-card-header>
-      <fa-icon [icon]="faCheckCircle" class="me-2 text-success"></fa-icon>
-      <strong>Lotes Vendidos</strong>
-      <c-badge color="success" class="ms-2">{{ lotesVendidos.length }}</c-badge>
-    </c-card-header>
-    <c-card-body>
-      <div *ngIf="lotesVendidos.length === 0" class="text-body-secondary text-center py-3">
-        Nenhum lote vendido ainda.
-      </div>
-      <table *ngIf="lotesVendidos.length > 0" cTable hover responsive>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Espécie</th>
-            <th>Raça</th>
-            <th class="text-center">Animais</th>
-            <th>Sexo</th>
-            <th class="text-end">Peso (kg)</th>
-            <th>Vendedor</th>
-            <th class="text-end">Preço</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let lote of lotesVendidos" [routerLink]="['/lotes', lote.id]" style="cursor: pointer">
-            <td><strong>{{ lote.codigo }}</strong></td>
-            <td>{{ lote.especie }}</td>
-            <td>{{ lote.raca }}</td>
-            <td class="text-center">{{ lote.qntdAnimais }}</td>
-            <td>{{ lote.sexo }}</td>
-            <td class="text-end">{{ lote.peso | number:'1.1-1' }}</td>
-            <td>{{ lote.vendedorNome }}</td>
-            <td class="text-end fw-semibold text-success">{{ lote.precoCompra | currency:'BRL':'symbol':'1.2-2' }}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr class="fw-bold">
-            <td colspan="3">Total</td>
-            <td class="text-center">{{ resumo.animaisVendidos }}</td>
-            <td colspan="3"></td>
-            <td class="text-end text-success">{{ resumo.movimentacaoBruta | currency:'BRL':'symbol':'1.2-2' }}</td>
-          </tr>
-        </tfoot>
-      </table>
-    </c-card-body>
-  </c-card>
-
-  <!-- Lotes Restantes -->
-  <c-card class="mb-4">
-    <c-card-header>
-      <fa-icon [icon]="faClock" class="me-2 text-warning"></fa-icon>
-      <strong>Lotes Disponíveis</strong>
-      <c-badge color="warning" class="ms-2">{{ lotesRestantes.length }}</c-badge>
-    </c-card-header>
-    <c-card-body>
-      <div *ngIf="lotesRestantes.length === 0" class="text-body-secondary text-center py-3">
-        Todos os lotes foram vendidos!
-      </div>
-      <table *ngIf="lotesRestantes.length > 0" cTable hover responsive>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Espécie</th>
-            <th>Raça</th>
-            <th class="text-center">Animais</th>
-            <th>Sexo</th>
-            <th class="text-end">Peso (kg)</th>
-            <th>Vendedor</th>
-            <th>Categoria</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let lote of lotesRestantes" [routerLink]="['/lotes', lote.id]" style="cursor: pointer">
-            <td><strong>{{ lote.codigo }}</strong></td>
-            <td>{{ lote.especie }}</td>
-            <td>{{ lote.raca }}</td>
-            <td class="text-center">{{ lote.qntdAnimais }}</td>
-            <td>{{ lote.sexo }}</td>
-            <td class="text-end">{{ lote.peso | number:'1.1-1' }}</td>
-            <td>{{ lote.vendedorNome }}</td>
-            <td>{{ lote.categoriaAnimal || '—' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </c-card-body>
-  </c-card>
+  <app-monitor-lotes
+    [leilaoId]="resumo.id"
+    [lotesIniciais]="resumo.lotes"
+    (lotesChange)="atualizarLotesDoMonitor($event)"
+    tituloPagina="Lotes do Leilão"
+    tituloMonitor="Monitor de Lotes do Leilão"
+    [exibirContainer]="false"
+    [exibirBotaoEnviarFatura]="isFinalizado && podeGerenciarEvento"
+    [faturasLog]="faturasLog"
+    (enviarFaturaLote)="onEnviarFaturaLote($event)"
+  ></app-monitor-lotes>
 
 </div>
 

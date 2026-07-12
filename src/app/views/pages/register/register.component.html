@@ -1,41 +1,57 @@
-<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
-  <c-container>
-    <c-row class="justify-content-center">
-      <c-col lg="7" md="9" xl="6">
-        <c-card class="mx-4">
-          <c-card-body class="p-4">
-            <form cForm>
-              <h1>Register</h1>
-              <p class="text-body-secondary">Create your account</p>
-              <c-input-group class="mb-3">
-                <span cInputGroupText>
-                  <svg cIcon name="cilUser"></svg>
-                </span>
-                <input autoComplete="name" cFormControl placeholder="Username" />
-              </c-input-group>
-              <c-input-group class="mb-3">
-                <span cInputGroupText>&#64;</span>
-                <input autoComplete="email" cFormControl placeholder="Email" />
-              </c-input-group>
-              <c-input-group class="mb-3">
-                <span cInputGroupText>
-                  <svg cIcon name="cilLockLocked"></svg>
-                </span>
-                <input autoComplete="new-password" cFormControl placeholder="Password" type="password" />
-              </c-input-group>
-              <c-input-group class="mb-4">
-                <span cInputGroupText>
-                  <svg cIcon name="cilLockLocked"></svg>
-                </span>
-                <input autoComplete="new-password" cFormControl placeholder="Repeat password" type="password" />
-              </c-input-group>
-              <div class="d-grid">
-                <button cButton color="success">Create Account</button>
-              </div>
-            </form>
-          </c-card-body>
-        </c-card>
-      </c-col>
-    </c-row>
-  </c-container>
+<div class="login-wrapper">
+  <c-card class="login-card">
+
+    <div class="login-header">
+      <div class="login-logo">
+        <img src="assets/brand/logo-mark.png" alt="J.A. Leilões" />
+      </div>
+      <h1>Criar Conta</h1>
+      <p>Preencha os dados para criar sua conta</p>
+    </div>
+
+    <c-card-body class="login-body">
+      <form cForm>
+
+        <div class="mb-3">
+          <label class="form-label-modern">Nome</label>
+          <div class="input-icon-wrapper">
+            <svg cIcon name="cilUser" class="input-icon"></svg>
+            <input autoComplete="name" cFormControl placeholder="Nome completo" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label-modern">E-mail</label>
+          <div class="input-icon-wrapper">
+            <svg cIcon name="cilEnvelopeClosed" class="input-icon"></svg>
+            <input autoComplete="email" cFormControl placeholder="seu@email.com" type="email" />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label-modern">Senha</label>
+          <div class="input-icon-wrapper">
+            <svg cIcon name="cilLockLocked" class="input-icon"></svg>
+            <input autoComplete="new-password" cFormControl placeholder="Mínimo 6 caracteres" type="password" />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label-modern">Confirmar Senha</label>
+          <div class="input-icon-wrapper">
+            <svg cIcon name="cilLockLocked" class="input-icon"></svg>
+            <input autoComplete="new-password" cFormControl placeholder="Repita a senha" type="password" />
+          </div>
+        </div>
+
+        <button cButton class="btn-login mb-3" type="submit">Criar Conta</button>
+
+        <div class="text-center">
+          <a routerLink="/login" class="auth-link">Já tem conta? Entrar</a>
+        </div>
+
+      </form>
+    </c-card-body>
+
+  </c-card>
 </div>

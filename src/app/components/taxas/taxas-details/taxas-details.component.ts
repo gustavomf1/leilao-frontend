@@ -1,14 +1,12 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardModule, ButtonDirective, FormModule, GridModule } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSave, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faArrowLeft, faDollarSign, faPercent } from '@fortawesome/free-solid-svg-icons';
 import { TaxasService } from '../../../core/services/taxas.service';
-import { EspecieService } from '../../../core/services/especie.service';
 import { AlertService } from '../../../shared/services/alert.service';
-import { Especie, TipoLeilao, TIPO_LEILAO_LABELS, TaxaPor } from '../../../core/models/entities.model';
 
 @Component({
   selector: 'app-taxas-details',
@@ -18,21 +16,18 @@ import { Especie, TipoLeilao, TIPO_LEILAO_LABELS, TaxaPor } from '../../../core/
 })
 export class TaxasDetailsComponent implements OnInit {
   private service = inject(TaxasService);
-  private especieService = inject(EspecieService);
   private alert = inject(AlertService);
-  private cdr = inject(ChangeDetectorRef);
+
+  @Input() modoDrawer = false;
+  @Output() aoSalvar = new EventEmitter<any>();
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
+  faDollarSign = faDollarSign;
+  faPercent = faPercent;
 
   form!: FormGroup;
   isEdicao = false;
-  private entityId?: number;
-
-  especies: Especie[] = [];
-  tiposLeilao: { value: TipoLeilao; label: string }[] = Object.entries(TIPO_LEILAO_LABELS).map(
-    ([value, label]) => ({ value: value as TipoLeilao, label })
-  );
 
   constructor(
     private fb: FormBuilder,
@@ -42,25 +37,18 @@ export class TaxasDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      comissaoVendedor:  [0, [Validators.required, Validators.min(0)]],
-      comissaoComprador: [0, [Validators.required, Validators.min(0)]],
-      especieId:         [null, Validators.required],
-      tipoLeilao:        ['', Validators.required],
-      taxaPor:           ['ANIMAL', Validators.required],
-    });
-
-    this.especieService.listar().subscribe({
-      next: (data) => { this.especies = data; this.cdr.detectChanges(); },
-      error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar espécies'),
+      taxa:          [0, [Validators.required, Validators.min(0)]],
+      comissaoVenda: [0, [Validators.required, Validators.min(0)]],
+      comissaoCompra:[0, [Validators.required, Validators.min(0)]],
+      gta:           [0, [Validators.required, Validators.min(0)]],
     });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdicao = true;
-      this.entityId = +id;
-      this.service.buscarPorId(this.entityId).subscribe({
+      this.service.obterAtual().subscribe({
         next: (data) => this.form.patchValue(data),
-        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxa'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar taxa padrão'),
       });
     }
   }
@@ -68,16 +56,16 @@ export class TaxasDetailsComponent implements OnInit {
   salvar() {
     if (this.form.valid) {
       const dados = this.form.getRawValue();
-      const op = this.isEdicao
-        ? this.service.atualizar(this.entityId!, dados)
-        : this.service.salvar(dados);
-
-      op.subscribe({
-        next: () => {
-          this.alert.success(this.isEdicao ? 'Taxa atualizada!' : 'Taxa cadastrada!');
-          this.router.navigate(['/taxas/lista']);
+      this.service.salvar(dados).subscribe({
+        next: (res) => {
+          this.alert.success('Nova taxa padrão cadastrada!');
+          if (this.modoDrawer || this.aoSalvar.observed) {
+            this.aoSalvar.emit(res);
+          } else {
+            this.router.navigate(['/taxas/lista']);
+          }
         },
-        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar taxa'),
+        error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao salvar taxa padrão'),
       });
     }
   }

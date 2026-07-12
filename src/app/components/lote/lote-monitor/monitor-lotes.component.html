@@ -1,8 +1,15 @@
-<div class="container-lg px-4">
+<div [class.container-lg]="exibirContainer" [class.px-4]="exibirContainer">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Lotes</h2>
-    <a *ngIf="auth.hasPermission('LOTES', 'CRIAR')" routerLink="/lotes/cadastrar" cButton color="primary" size="sm">
+  <div *ngIf="exibirTituloPagina || exibirBotaoNovo" class="d-flex justify-content-between align-items-center mb-4">
+    <h2 *ngIf="exibirTituloPagina" class="mb-0">{{ tituloPagina }}</h2>
+    <a
+      *ngIf="exibirBotaoNovo && auth.hasPermission('LOTES', 'CRIAR')"
+      routerLink="/lotes/cadastrar"
+      [queryParams]="novoLoteParams"
+      cButton
+      color="primary"
+      size="sm"
+    >
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
       Novo Lote
     </a>
@@ -13,12 +20,15 @@
     <button
       *ngFor="let op of statusOpcoes"
       cButton
+      class="status-filter-button"
+      [class.status-filter-active]="filtroStatus === op.value"
       [color]="filtroStatus === op.value ? 'primary' : 'secondary'"
       [variant]="filtroStatus === op.value ? undefined : 'ghost'"
       size="sm"
       (click)="setFiltro(op.value)"
     >
-      {{ op.label }}
+      <span class="status-filter-count">{{ contadorPorStatus(op.value) }}</span>
+      <span class="status-filter-label">{{ op.label }}</span>
     </button>
   </div>
 
@@ -30,7 +40,7 @@
           <fa-icon [icon]="faCircle" class="live-dot me-1"></fa-icon>
           AO VIVO
         </c-badge>
-        <h5 class="monitor-title mb-0">Monitor de Lotes em Tempo Real</h5>
+        <h5 class="monitor-title mb-0">{{ tituloMonitor }}</h5>
       </div>
       <span class="lotes-count">
         <fa-icon [icon]="faLayerGroup" class="me-1"></fa-icon>
@@ -107,6 +117,7 @@
                   <div class="price-value text-secondary" style="font-size:.85rem">Pendente</div>
                 </ng-template>
               </div>
+
             </c-card-body>
 
             <c-card-footer class="lote-card-footer d-flex justify-content-between align-items-center">
@@ -125,23 +136,69 @@
                 <fa-icon [icon]="faEye"></fa-icon>
               </button>
 
-              <!-- Input inline de preço (só em AGUARDANDO_LANCE) -->
-              <div *ngIf="lote.status === 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')"
-                   class="d-flex gap-1 align-items-center">
-                <input cFormControl type="number" min="0" step="0.01"
-                       placeholder="R$ preço"
-                       style="width: 110px; font-size: .82rem; padding: .25rem .5rem;"
-                       [(ngModel)]="precoInput[lote.id]" />
-                <button cButton color="success" size="sm"
-                        title="Confirmar preço"
-                        (click)="confirmarPreco(lote.id)">
-                  <fa-icon [icon]="faCheck"></fa-icon>
+              <!-- Não vendido: Validar Final + Próximo Leilão -->
+              <ng-container *ngIf="lote.status === 'AGUARDANDO_LANCE' && lote.naoVendidoNoLeilao === 'S' && auth.hasPermission('LOTES', 'EDITAR')">
+                <a
+                  [routerLink]="['/lotes', lote.id]"
+                  [queryParams]="validacaoQueryParams('final')"
+                  cButton color="warning" size="sm" class="btn-validar-lote"
+                  title="Validar final"
+                >
+                  <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                  Validar
+                </a>
+                <button
+                  cButton color="info" size="sm" variant="ghost"
+                  title="Enviar para próximo leilão"
+                  (click)="abrirModalTransferir(lote)"
+                >
+                  <fa-icon [icon]="faShare"></fa-icon>
                 </button>
-              </div>
+              </ng-container>
+
+              <!-- Normal: Validar lance -->
+              <a
+                *ngIf="lote.status === 'AGUARDANDO_LANCE' && lote.naoVendidoNoLeilao !== 'S' && auth.hasPermission('LOTES', 'EDITAR')"
+                [routerLink]="['/lotes', lote.id]"
+                [queryParams]="validacaoQueryParams('lance')"
+                cButton
+                color="success"
+                size="sm"
+                class="btn-validar-lote"
+              >
+                <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                Validar
+              </a>
+
+              <a
+                *ngIf="lote.status === 'AGUARDANDO_ESCRITORIO' && auth.hasPermission('LOTES', 'EDITAR')"
+                [routerLink]="['/lotes', lote.id]"
+                [queryParams]="validacaoQueryParams('escritorio')"
+                cButton
+                color="success"
+                size="sm"
+                class="btn-validar-lote"
+              >
+                <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                Validar
+              </a>
+
+              <a
+                *ngIf="lote.status === 'AGUARDANDO_ULTIMA_VALIDACAO' && auth.hasPermission('LOTES', 'EDITAR')"
+                [routerLink]="['/lotes', lote.id]"
+                [queryParams]="validacaoQueryParams('final')"
+                cButton
+                color="success"
+                size="sm"
+                class="btn-validar-lote"
+              >
+                <fa-icon [icon]="faCheck" class="me-1"></fa-icon>
+                Validar
+              </a>
 
               <!-- Ações normais: apenas escritório/admin em outros status -->
               <div class="d-flex gap-1"
-                   *ngIf="lote.status !== 'AGUARDANDO_LANCE' && auth.hasPermission('LOTES', 'EDITAR')">
+                   *ngIf="lote.status !== 'AGUARDANDO_LANCE' && lote.status !== 'AGUARDANDO_ESCRITORIO' && lote.status !== 'AGUARDANDO_ULTIMA_VALIDACAO' && auth.hasPermission('LOTES', 'EDITAR')">
                 <button
                   *ngIf="lote.status !== 'FINALIZADO'"
                   cButton color="success" size="sm" variant="ghost"
@@ -150,9 +207,58 @@
                 >
                   <fa-icon [icon]="faArrowRight"></fa-icon>
                 </button>
-                <a [routerLink]="['/lotes', lote.id]" cButton color="info" size="sm" variant="ghost">
+                <a [routerLink]="['/lotes', lote.id]" [queryParams]="contextoQueryParams" cButton color="info" size="sm" variant="ghost">
                   <fa-icon [icon]="faPencil"></fa-icon>
                 </a>
+                <button
+                  *ngIf="lote.status === 'FINALIZADO' && lote.precoCompra != null && lote.compradorId"
+                  cButton color="primary" size="sm" variant="ghost"
+                  title="Gerar nota de leilão"
+                  (click)="gerarNotaLeilao(lote)"
+                >
+                  <fa-icon [icon]="faFileInvoice"></fa-icon>
+                </button>
+
+                <!-- Split button: Enviar Fatura -->
+                <ng-container *ngIf="exibirBotaoEnviarFatura && lote.status === 'FINALIZADO' && lote.compradorId">
+                  <div style="position:relative;display:inline-flex">
+                    <button
+                      cButton
+                      [color]="corBotaoFatura(lote)"
+                      variant="ghost"
+                      size="sm"
+                      [disabled]="statusFatura(lote) === 'ENVIANDO'"
+                      title="Enviar fatura via WhatsApp"
+                      (click)="emitirEnviarFatura(lote, 'AMBOS')"
+                    >
+                      <fa-icon *ngIf="statusFatura(lote) === 'ENTREGUE'" [icon]="faCheckDouble"></fa-icon>
+                      <fa-icon *ngIf="statusFatura(lote) === 'ENVIADO'"  [icon]="faCheck"></fa-icon>
+                      <fa-icon *ngIf="statusFatura(lote) === 'ENVIANDO'" [icon]="faSpinner" animation="spin"></fa-icon>
+                      <fa-icon *ngIf="statusFatura(lote) === 'SEM_LOG' || statusFatura(lote) === 'FALHA'" [icon]="faPaperPlane"></fa-icon>
+                    </button>
+                    <button
+                      cButton
+                      [color]="corBotaoFatura(lote)"
+                      variant="ghost"
+                      size="sm"
+                      style="padding-left:2px;padding-right:4px"
+                      title="Opções de envio"
+                      (click)="toggleDropdownFatura(lote.id!)"
+                    >▾</button>
+                    <div
+                      *ngIf="dropdownFaturaAberto[lote.id!]"
+                      class="dropdown-menu show"
+                      style="position:absolute;top:100%;right:0;z-index:1050;min-width:180px"
+                    >
+                      <button class="dropdown-item" (click)="emitirEnviarFatura(lote, 'COMPRADOR')">
+                        Enviar para Comprador
+                      </button>
+                      <button class="dropdown-item" (click)="emitirEnviarFatura(lote, 'VENDEDOR')">
+                        Enviar para Vendedor
+                      </button>
+                    </div>
+                  </div>
+                </ng-container>
               </div>
 
               <!-- Deletar: admin pode excluir em qualquer status -->
@@ -179,7 +285,7 @@
 </div>
 
 <!-- Modal de detalhes do lote -->
-<c-modal [visible]="modalDetalhesVisivel" (visibleChange)="modalDetalhesVisivel = $event" alignment="center" size="lg">
+<c-modal *ngIf="modalDetalhesVisivel" [visible]="modalDetalhesVisivel" (visibleChange)="modalDetalhesVisivel = $event" alignment="center" size="lg">
   <c-modal-header>
     <h5 cModalTitle>Detalhes do Lote — {{ loteDetalhes?.codigo }}</h5>
   </c-modal-header>
@@ -245,8 +351,57 @@
   </c-modal-body>
 
   <c-modal-footer>
+    <button
+      *ngIf="loteDetalhes?.status === 'FINALIZADO' && loteDetalhes?.precoCompra != null && loteDetalhes?.compradorId"
+      cButton color="primary"
+      (click)="gerarNotaLeilao(loteDetalhes)"
+    >
+      <fa-icon [icon]="faFileInvoice" class="me-1"></fa-icon> Nota de Leilão
+    </button>
     <button cButton color="secondary" variant="ghost" (click)="fecharDetalhes()">
       <fa-icon [icon]="faTimes" class="me-1"></fa-icon> Fechar
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- Modal: Enviar para próximo leilão -->
+<c-modal *ngIf="modalTransferirVisivel" [visible]="modalTransferirVisivel" (visibleChange)="modalTransferirVisivel = $event" alignment="center">
+  <c-modal-header>
+    <h5 cModalTitle>Enviar para próximo leilão — {{ loteParaTransferir?.codigo }}</h5>
+  </c-modal-header>
+
+  <c-modal-body>
+    <p class="text-secondary mb-3">Selecione o leilão de destino:</p>
+
+    <div *ngIf="leiloesDisponiveis.length === 0" class="text-center text-secondary py-3">
+      Nenhum leilão disponível (ABERTO ou EM_ANDAMENTO)
+    </div>
+
+    <div class="list-group">
+      <button
+        *ngFor="let l of leiloesDisponiveis"
+        type="button"
+        class="list-group-item list-group-item-action"
+        [class.active]="leilaoSelecionadoId === l.id"
+        (click)="leilaoSelecionadoId = l.id"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <strong>{{ l.descricao }}</strong>
+          <span class="badge" [class.bg-secondary]="l.status === 'ABERTO'" [class.bg-success]="l.status === 'EM_ANDAMENTO'">
+            {{ l.status === 'ABERTO' ? 'Aberto' : 'Em Andamento' }}
+          </span>
+        </div>
+        <small class="text-secondary">{{ l.data | date:'dd/MM/yyyy' }} — {{ l.cidade }}/{{ l.uf }}</small>
+      </button>
+    </div>
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="fecharModalTransferir()">
+      <fa-icon [icon]="faTimes" class="me-1"></fa-icon> Cancelar
+    </button>
+    <button cButton color="primary" [disabled]="!leilaoSelecionadoId" (click)="confirmarTransferir()">
+      <fa-icon [icon]="faShare" class="me-1"></fa-icon> Confirmar
     </button>
   </c-modal-footer>
 </c-modal>

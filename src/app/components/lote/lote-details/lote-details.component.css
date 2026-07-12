@@ -3,22 +3,24 @@
    Tema: Dark industrial com acento verde
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap');
+/* Fontes Outfit/DM Mono removidas — agora usa Nunito/Playfair globais
+   carregados em src/index.html (sistema --ja-font-*). */
 
 :host {
-  --green:      #22c55e;
-  --green-dim:  rgba(34,197,94,.12);
-  --green-glow: rgba(34,197,94,.25);
+  /* Tokens locais — agora alinhados à identidade bordô (não verde) */
+  --green:      #8a3b2c;            /* brand-soft — usado em eyebrow/acentos */
+  --green-dim:  rgba(138,59,44,.12);
+  --green-glow: rgba(151,60,42,.30);
   /* Usa variáveis do CoreUI — trocam automaticamente em light/dark */
-  --surface:    var(--cui-secondary-bg, #f8f9fa);
-  --surface-2:  var(--cui-tertiary-bg, #e9ecef);
-  --border:     var(--cui-border-color, #dee2e6);
-  --border-2:   var(--cui-border-color-translucent, #ced4da);
-  --text:       var(--cui-body-color, #212529);
-  --text-muted: var(--cui-secondary-color, #6c757d);
-  --dropdown-bg: var(--cui-body-bg, #fff);
+  --surface:    var(--ja-surface-3);
+  --surface-2:  var(--ja-surface-2);
+  --border:     var(--ja-border);
+  --border-2:   var(--ja-border-strong);
+  --text:       var(--ja-fg-1);
+  --text-muted: var(--ja-fg-3);
+  --dropdown-bg: var(--ja-surface-3);
   --radius:     10px;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   display: block;
 }
 
@@ -55,16 +57,17 @@
   text-transform: uppercase;
   color: var(--green);
   margin-bottom: .25rem;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 }
 
 .page-header__title {
+  font-family: var(--ja-font-display, 'Playfair Display', serif);
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--ja-fg-1, var(--text));
   margin: 0;
   line-height: 1.15;
-  letter-spacing: -.02em;
+  letter-spacing: -.01em;
 }
 
 .page-header__sub {
@@ -106,8 +109,8 @@
 }
 
 .form-section--finance {
-  border-color: rgba(34,197,94,.3);
-  background: rgba(34,197,94,.05);
+  border-color: rgba(151,60,42,.3);
+  background: rgba(151,60,42,.05);
 }
 
 /* Section label */
@@ -121,7 +124,7 @@
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 1.25rem;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 }
 .section-label--finance {
   color: var(--green);
@@ -162,17 +165,17 @@
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: .45rem;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 }
 .req { color: var(--green); font-size: .75em; }
 .field-unit {
-  color: rgba(255,255,255,.25);
+  color: var(--ja-fg-4);
   font-weight: 400;
   text-transform: lowercase;
   letter-spacing: 0;
 }
 .field-hint {
-  color: rgba(255,255,255,.2);
+  color: var(--ja-fg-4);
   font-weight: 400;
   text-transform: lowercase;
   letter-spacing: 0;
@@ -181,7 +184,7 @@
   display: inline-flex;
   align-items: center;
   gap: .25rem;
-  background: rgba(34,197,94,.15);
+  background: rgba(151,60,42,.15);
   color: var(--green);
   border-radius: 20px;
   padding: .1rem .5rem;
@@ -195,12 +198,12 @@
 .field-input {
   display: block;
   width: 100%;
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
   font-size: .9rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   padding: .6rem .85rem;
   transition: border-color .18s, box-shadow .18s, background .18s;
   outline: none;
@@ -226,12 +229,12 @@
 .field-select {
   display: block;
   width: 100%;
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
   font-size: .9rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   padding: .6rem 2.2rem .6rem .85rem;
   transition: border-color .18s, box-shadow .18s;
   outline: none;
@@ -245,7 +248,7 @@
 }
 .field-select option {
   background: var(--cui-body-bg, #fff);
-  color: var(--cui-body-color, #212529);
+  color: var(--ja-fg-1);
 }
 .select-arrow {
   position: absolute;
@@ -270,7 +273,7 @@
   padding: .6rem .5rem;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   color: var(--text-muted);
   font-size: .85rem;
   font-weight: 500;
@@ -302,10 +305,25 @@
   font-size: .82rem;
   font-weight: 600;
   color: var(--green);
-  font-family: 'DM Mono', monospace;
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
   pointer-events: none;
 }
 .field-input--currency { padding-left: 2.4rem; }
+
+.readonly-money {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  width: 100%;
+  border: 1px solid rgba(151,60,42,.25);
+  border-radius: 8px;
+  background: rgba(151,60,42,.07);
+  color: var(--green);
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: .92rem;
+  font-weight: 700;
+  padding: .6rem .85rem;
+}
 
 /* ── Autocomplete ──────────────────────────────────────────── */
 .autocomplete-wrap { position: relative; }
@@ -314,7 +332,7 @@
   display: flex;
   align-items: center;
   gap: .5rem;
-  background: var(--cui-input-bg, var(--surface-2));
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0 .85rem;
@@ -325,8 +343,8 @@
   box-shadow: 0 0 0 3px var(--green-dim);
 }
 .autocomplete-input-row--confirmed {
-  border-color: rgba(34,197,94,.45);
-  background: rgba(34,197,94,.07);
+  border-color: rgba(151,60,42,.45);
+  background: rgba(151,60,42,.07);
 }
 
 .autocomplete-icon { color: var(--text-muted); flex-shrink: 0; }
@@ -338,7 +356,7 @@
   outline: none;
   color: var(--text);
   font-size: .9rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   padding: .6rem 0;
 }
 .autocomplete-input::placeholder { color: var(--text-muted); }
@@ -386,14 +404,14 @@
   background: var(--dropdown-bg);
 }
 .autocomplete-item:last-of-type { border-bottom: none; }
-.autocomplete-item:hover { background: rgba(34,197,94,.08); }
+.autocomplete-item:hover { background: rgba(151,60,42,.08); }
 
 .autocomplete-item__avatar {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   background: var(--green-dim);
-  border: 1px solid rgba(34,197,94,.25);
+  border: 1px solid rgba(151,60,42,.25);
   color: var(--green);
   font-size: .75rem;
   font-weight: 700;
@@ -421,7 +439,7 @@
 .autocomplete-item__info small {
   font-size: .72rem;
   color: var(--text-muted);
-  font-family: 'DM Mono', monospace;
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 }
 
 .autocomplete-empty {
@@ -437,7 +455,7 @@
   color: var(--text-muted);
   text-align: center;
   background: var(--surface);
-  font-family: 'DM Mono', monospace;
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
   border-top: 1px solid var(--border);
 }
 
@@ -447,7 +465,7 @@
   font-size: .72rem;
   color: #f87171;
   margin-top: .35rem;
-  font-family: 'DM Mono', monospace;
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 }
 .field-caption {
   display: block;
@@ -465,6 +483,11 @@
   padding-top: .5rem;
 }
 
+.form-actions--split {
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
 .btn-cancel {
   display: inline-flex;
   align-items: center;
@@ -475,7 +498,7 @@
   color: var(--text-muted);
   font-size: .88rem;
   font-weight: 500;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   text-decoration: none;
   transition: all .18s;
   cursor: pointer;
@@ -492,24 +515,90 @@
   gap: .5rem;
   padding: .65rem 1.5rem;
   border-radius: 8px;
-  border: 1px solid rgba(34,197,94,.4);
-  background: rgba(34,197,94,.15);
+  border: 1px solid rgba(151,60,42,.4);
+  background: rgba(151,60,42,.15);
   color: var(--green);
   font-size: .88rem;
   font-weight: 600;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
   cursor: pointer;
   transition: all .2s;
   letter-spacing: .01em;
 }
 .btn-submit:hover:not(:disabled) {
-  background: rgba(34,197,94,.25);
-  border-color: rgba(34,197,94,.65);
+  background: rgba(138,59,44,.22);
+  border-color: rgba(138,59,44,.55);
   box-shadow: 0 0 20px var(--green-glow);
 }
 .btn-submit:disabled {
   opacity: .35;
   cursor: not-allowed;
+}
+
+/* Finalizar Lote — ação principal de submit (bordô, identidade da marca) */
+.btn-finalize {
+  min-width: 150px;
+  justify-content: center;
+  background: linear-gradient(135deg, #611b11, #7a2418);
+  border-color: rgba(151,60,42,.55);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(74,20,12,.22);
+}
+.btn-finalize:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7a2418, #8a3b2c);
+  border-color: rgba(151,60,42,.70);
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(151,60,42,.20), 0 14px 32px rgba(74,20,12,.32);
+  transform: translateY(-1px);
+}
+.btn-finalize:disabled {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+/* ── Lote info strip (validação final) ───────────────────── */
+.lote-info-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem 1.25rem;
+  padding: .85rem 1rem;
+  background: var(--surface-2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+}
+
+.info-chip {
+  display: flex;
+  flex-direction: column;
+  gap: .06rem;
+}
+
+.info-chip__label {
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: var(--ja-font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+.info-chip__value {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.validacao-hint {
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.validacao-hint strong {
+  color: var(--text);
 }
 
 /* ── Mobile ────────────────────────────────────────────────── */
@@ -518,5 +607,51 @@
   .page-header__title { font-size: 1.35rem; }
   .form-section { padding: 1.1rem; }
   .form-actions { flex-direction: column-reverse; }
-  .btn-cancel, .btn-submit { width: 100%; justify-content: center; }
+  .btn-cancel, .btn-submit, .btn-finalize { width: 100%; justify-content: center; }
+}
+
+/* ── PIX do Vendedor (Validar Final) ─────────────────────── */
+.pix-contexto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem 1.25rem;
+  margin-bottom: .5rem;
+  font-size: .82rem;
+  color: var(--text);
+}
+
+.pix-contexto__item strong {
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-right: .25rem;
+}
+
+.pix-toggle {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .6rem .85rem;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--text);
+  font-family: var(--ja-font-body, 'Nunito', sans-serif);
+}
+
+.pix-toggle--readonly {
+  color: var(--text-muted);
+}
+
+.pix-dropdown-menu {
+  min-width: 260px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.pix-dropdown-empty {
+  padding: .5rem .9rem;
+  font-size: .8rem;
+  color: var(--text-muted);
 }

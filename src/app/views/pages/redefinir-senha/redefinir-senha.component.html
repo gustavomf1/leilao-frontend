@@ -11,20 +11,20 @@
     <c-card-body class="login-body">
       @if (validando()) {
         <div class="text-center py-4">
-          <div class="spinner-border text-primary mb-3" role="status"></div>
-          <p style="color: #8a93a2; font-size: 0.9rem;">Verificando token...</p>
+          <div class="spinner-border state-spinner mb-3" role="status"></div>
+          <p class="state-text">Verificando token...</p>
         </div>
       } @else if (tokenInvalido()) {
         <div class="text-center py-3">
-          <p class="mb-1" style="color: #c00; font-weight: 600;">{{ tokenErro() }}</p>
-          <p style="color: #8a93a2; font-size: 0.9rem;">Solicite um novo link de recuperação.</p>
-          <a routerLink="/esqueci-senha" class="text-decoration-none" style="color: #321fdb; font-weight: 500;">Solicitar novamente</a>
+          <p class="state-error mb-1">{{ tokenErro() }}</p>
+          <p class="state-text">Solicite um novo link de recuperação.</p>
+          <a routerLink="/esqueci-senha" class="auth-link">Solicitar novamente</a>
         </div>
       } @else if (concluido()) {
         <div class="text-center py-3">
-          <p class="mb-1" style="color: #1b2e4b; font-weight: 600;">Senha redefinida com sucesso!</p>
-          <p style="color: #8a93a2; font-size: 0.9rem;">Você já pode fazer login com sua nova senha.</p>
-          <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-weight: 500;">Ir para o login</a>
+          <p class="state-title">Senha redefinida com sucesso!</p>
+          <p class="state-text">Você já pode fazer login com sua nova senha.</p>
+          <a routerLink="/login" class="auth-link">Ir para o login</a>
         </div>
       } @else {
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -38,12 +38,31 @@
                 [type]="showPassword() ? 'text' : 'password'"
                 class="w-100"
               />
-              <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
-                <fa-icon [icon]="showPassword() ? faEye : faEyeSlash" class="input-icon"></fa-icon>
+              <button type="button" class="password-toggle" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+                <fa-icon [icon]="showPassword() ? faEye : faEyeSlash"></fa-icon>
               </button>
             </div>
             @if (form.get('novaSenha')?.invalid && form.get('novaSenha')?.touched) {
               <small class="text-danger">A senha deve ter no mínimo 3 caracteres</small>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label-modern">Confirmar senha</label>
+            <div class="input-icon-wrapper">
+              <svg cIcon name="cilLockLocked" class="input-icon"></svg>
+              <input
+                formControlName="confirmarSenha"
+                placeholder="•••"
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                class="w-100"
+              />
+              <button type="button" class="password-toggle" (click)="toggleConfirmPasswordVisibility()" [attr.aria-label]="showConfirmPassword() ? 'Ocultar senha' : 'Mostrar senha'">
+                <fa-icon [icon]="showConfirmPassword() ? faEye : faEyeSlash"></fa-icon>
+              </button>
+            </div>
+            @if (form.errors?.['senhasDiferentes'] && form.get('confirmarSenha')?.touched) {
+              <small class="text-danger">As senhas não coincidem</small>
             }
           </div>
 
@@ -52,9 +71,7 @@
           </button>
 
           <div class="text-center">
-            <a routerLink="/login" class="text-decoration-none" style="color: #321fdb; font-size: 0.85rem; font-weight: 500;">
-              Voltar ao login
-            </a>
+            <a routerLink="/login" class="auth-link">Voltar ao login</a>
           </div>
         </form>
       }

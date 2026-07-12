@@ -15,7 +15,7 @@ export class LoteWebsocketService {
     return;
   }
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('auth_token');
 
   this.stompClient = new Client({
     webSocketFactory: () => new SockJS(`http://localhost:8080/ws-leilao`),

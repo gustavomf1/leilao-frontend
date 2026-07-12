@@ -1,21 +1,26 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import {
   ButtonDirective,
   CardBodyComponent,
   CardComponent,
-  ColComponent,
-  ContainerComponent,
   FormControlDirective,
-  FormDirective,
-  InputGroupComponent,
-  InputGroupTextDirective,
-  RowComponent
+  FormDirective
 } from '@coreui/angular';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  imports: [ContainerComponent, RowComponent, ColComponent, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective]
+  styleUrls: ['./register.component.scss'],
+  imports: [
+    CardComponent,
+    CardBodyComponent,
+    FormDirective,
+    IconDirective,
+    FormControlDirective,
+    ButtonDirective,
+    RouterLink
+  ]
 })
 export class RegisterComponent {}

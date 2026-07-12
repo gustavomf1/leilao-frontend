@@ -1,3 +1,57 @@
-:host {
+:host { display: block; }
+
+// ─── Progress bar usa BORDÔ ───
+.progress {
+  height: 8px;
+  background: var(--ja-brand-subtle);
+  border-radius: var(--ja-radius-pill);
+  overflow: hidden;
+}
+.progress-bar {
+  background: var(--ja-brand) !important;
+  transition: width var(--ja-dur-slow) var(--ja-ease-out);
+}
+
+// ─── Auction facts (grid de label/valor) ───
+.auction-facts {
+  display: grid;
+  gap: .625rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.auction-fact {
+  background: var(--cui-card-bg, var(--ja-surface-3));
+  border: 1px solid var(--ja-border);
+  border-radius: 8px;
+  padding: .75rem .875rem;
+  min-width: 0;
+}
+
+.auction-fact span {
   display: block;
+  color: var(--ja-fg-3);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  margin-bottom: .25rem;
+  text-transform: uppercase;
+}
+
+.auction-fact strong {
+  display: block;
+  font-size: .875rem;
+  font-weight: 700;
+  color: var(--cui-body-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1199.98px) {
+  .auction-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 575.98px) {
+  .auction-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

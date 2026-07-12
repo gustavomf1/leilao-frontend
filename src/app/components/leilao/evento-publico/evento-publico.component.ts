@@ -12,7 +12,11 @@ import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { Lote } from '../../../core/models/entities.model';
 
-type FiltroEvento = 'TODOS' | 'AGUARDANDO_LANCE' | 'FINALIZADO';
+type LanceConfirmacao = {
+  lote: Lote;
+  preco: number;
+  compradorNome: string;
+};
 
 @Component({
   selector: 'app-evento-publico',
@@ -31,16 +35,14 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   leilaoId!: number;
   lotes$ = new BehaviorSubject<Lote[]>([]);
   loading = true;
-  filtro: FiltroEvento = 'TODOS';
-  precoInput: Record<number, number | null> = {};
+  precoInput: Record<number, string> = {};
+  compradorNomeInput: Record<number, string> = {};
   erro: string | null = null;
   sucesso: string | null = null;
-
-  readonly filtros: Array<{ value: FiltroEvento; label: string }> = [
-    { value: 'TODOS',            label: 'Todos'            },
-    { value: 'AGUARDANDO_LANCE', label: 'Aguardando Lance' },
-    { value: 'FINALIZADO',       label: 'Finalizado'       },
-  ];
+  lancePendente: LanceConfirmacao | null = null;
+  confirmacaoAberta = false;
+  sucessoModalAberto = false;
+  enviandoLance = false;
 
   readonly faGavel      = faGavel;
   readonly faHashtag    = faHashtag;
@@ -51,17 +53,13 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   readonly faLayerGroup = faLayerGroup;
 
   get lotesFiltrados(): Lote[] {
-    const lotes = this.lotes$.value;
-    if (this.filtro === 'TODOS') return lotes;
-    return lotes.filter(l => l.status === this.filtro);
+    return this.lotes$.value.filter(l => l.status === 'AGUARDANDO_LANCE');
   }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('leilaoId');
-    console.log('[EventoPublico] ngOnInit id:', id);
-    if (!id) { console.warn('[EventoPublico] sem id na rota'); return; }
+    if (!id) { return; }
     this.leilaoId = +id;
-    console.log('[EventoPublico] leilaoId:', this.leilaoId, 'service:', this.loteService);
 
     this.loteService.listarPorLeilaoPublico(this.leilaoId).subscribe({
       next: (dados) => {
@@ -85,21 +83,7 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
       this.zone.run(() => {
         if (novoLote.leilaoId !== this.leilaoId) return;
 
-        const atual = this.lotes$.value;
-        const idx   = atual.findIndex(l => l.id === novoLote.id);
-        const visivel = novoLote.status === 'AGUARDANDO_LANCE' || novoLote.status === 'FINALIZADO';
-
-        if (idx >= 0) {
-          if (visivel) {
-            const atualizado = [...atual];
-            atualizado[idx]  = novoLote;
-            this.lotes$.next(atualizado);
-          } else {
-            this.lotes$.next(atual.filter(l => l.id !== novoLote.id));
-          }
-        } else if (visivel) {
-          this.lotes$.next([...atual, novoLote]);
-        }
+        this.sincronizarFilaDeLances(novoLote);
         this.cdr.detectChanges();
       });
     });
@@ -109,21 +93,61 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
     this.wsService.desconectar();
   }
 
-  confirmarLance(lote: Lote) {
+  abrirConfirmacaoLance(lote: Lote) {
     if (!lote.id) return;
-    const preco = this.precoInput[lote.id];
-    if (!preco || preco <= 0) {
+    const preco = this.normalizarValorLance(this.precoInput[lote.id]);
+    if (!preco) {
       this.mostrarErro('Informe um valor válido para o lance.');
       return;
     }
 
-    this.loteService.registrarPrecoPublico(lote.id, preco).subscribe({
+    this.lancePendente = {
+      lote,
+      preco,
+      compradorNome: (this.compradorNomeInput[lote.id] || '').trim()
+    };
+    this.confirmacaoAberta = true;
+  }
+
+  cancelarConfirmacao() {
+    if (this.enviandoLance) return;
+    this.confirmacaoAberta = false;
+    this.lancePendente = null;
+  }
+
+  confirmarEnvioLance() {
+    const loteId = this.lancePendente?.lote.id;
+    if (!loteId || this.enviandoLance || !this.lancePendente) return;
+
+    const { lote, preco, compradorNome } = this.lancePendente;
+    this.enviandoLance = true;
+    this.cdr.detectChanges();
+
+    this.loteService.registrarPrecoPublico(loteId, preco, compradorNome).subscribe({
       next: (loteAtualizado) => {
-        delete this.precoInput[lote.id!];
-        this.mostrarSucesso(`Lance de R$ ${preco.toFixed(2)} registrado para o lote ${lote.codigo}!`);
+        this.zone.run(() => {
+          delete this.precoInput[lote.id!];
+          delete this.compradorNomeInput[lote.id!];
+          this.removerLoteDaFila(loteId);
+          this.enviandoLance = false;
+          this.confirmacaoAberta = false;
+          this.sucessoModalAberto = true;
+          this.mostrarSucesso(`Lance de ${this.formatarMoeda(preco)} registrado para o lote ${lote.codigo}!`);
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.sucessoModalAberto = false;
+            this.lancePendente = null;
+            this.cdr.detectChanges();
+          }, 2200);
+        });
       },
       error: (err) => {
-        this.mostrarErro(err.error?.mensagem || 'Erro ao registrar lance. Tente novamente.');
+        this.zone.run(() => {
+          this.enviandoLance = false;
+          this.confirmacaoAberta = false;
+          this.mostrarErro(err.error?.mensagem || 'Erro ao registrar lance. Tente novamente.');
+          this.cdr.detectChanges();
+        });
       }
     });
   }
@@ -136,5 +160,49 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   private mostrarSucesso(msg: string) {
     this.sucesso = msg;
     setTimeout(() => this.sucesso = null, 4000);
+  }
+
+  private sincronizarFilaDeLances(loteAtualizado: Lote) {
+    if (!loteAtualizado.id) return;
+
+    const atual = this.lotes$.value;
+    const idx = atual.findIndex(l => l.id === loteAtualizado.id);
+
+    if (loteAtualizado.status !== 'AGUARDANDO_LANCE') {
+      this.removerLoteDaFila(loteAtualizado.id);
+      return;
+    }
+
+    if (idx >= 0) {
+      const atualizado = [...atual];
+      atualizado[idx] = loteAtualizado;
+      this.lotes$.next(atualizado);
+    } else {
+      this.lotes$.next([...atual, loteAtualizado]);
+    }
+  }
+
+  private removerLoteDaFila(loteId: number) {
+    this.lotes$.next(this.lotes$.value.filter(l => l.id !== loteId));
+  }
+
+  private normalizarValorLance(valor: string | null | undefined): number | null {
+    const texto = (valor ?? '').trim();
+    if (!texto) return null;
+
+    const valorLimpo = texto.replace(/[^\d,.-]/g, '');
+    const valorNormalizado = valorLimpo.includes(',')
+      ? valorLimpo.replace(/\./g, '').replace(',', '.')
+      : valorLimpo.replace(/,/g, '');
+    const preco = Number(valorNormalizado);
+
+    return Number.isFinite(preco) && preco > 0 ? preco : null;
+  }
+
+  formatarMoeda(valor: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
   }
 }

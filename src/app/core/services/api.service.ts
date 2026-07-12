@@ -1,7 +1,8 @@
 import { inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
+import { PaginaResponse } from '../models/pagina-response.model';
 
 export abstract class ApiService<T> {
   protected http = inject(HttpClient);
@@ -10,6 +11,14 @@ export abstract class ApiService<T> {
 
   listar(): Observable<T[]> {
     return this.http.get<T[]>(`${this.baseUrl}/api/${this.endpoint}`);
+  }
+
+  listarPaginado(page: number, size: number, busca?: string): Observable<PaginaResponse<T>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (busca) {
+      params = params.set('busca', busca);
+    }
+    return this.http.get<PaginaResponse<T>>(`${this.baseUrl}/api/${this.endpoint}/paginado`, { params });
   }
 
   buscarPorId(id: number): Observable<T> {

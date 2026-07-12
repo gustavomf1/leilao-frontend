@@ -16,50 +16,6 @@ export const routes: Routes = [
           import('./views/dashboard/routes').then((m) => m.routes),
       },
       {
-        path: 'theme',
-        loadChildren: () =>
-          import('./views/theme/routes').then((m) => m.routes),
-      },
-      {
-        path: 'base',
-        loadChildren: () => import('./views/base/routes').then((m) => m.routes),
-      },
-      {
-        path: 'buttons',
-        loadChildren: () =>
-          import('./views/buttons/routes').then((m) => m.routes),
-      },
-      {
-        path: 'forms',
-        loadChildren: () =>
-          import('./views/forms/routes').then((m) => m.routes),
-      },
-      {
-        path: 'icons',
-        loadChildren: () =>
-          import('./views/icons/routes').then((m) => m.routes),
-      },
-      {
-        path: 'notifications',
-        loadChildren: () =>
-          import('./views/notifications/routes').then((m) => m.routes),
-      },
-      {
-        path: 'widgets',
-        loadChildren: () =>
-          import('./views/widgets/routes').then((m) => m.routes),
-      },
-      {
-        path: 'charts',
-        loadChildren: () =>
-          import('./views/charts/routes').then((m) => m.routes),
-      },
-      {
-        path: 'pages',
-        loadChildren: () =>
-          import('./views/pages/routes').then((m) => m.routes),
-      },
-      {
         path: 'usuarios',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
@@ -159,9 +115,8 @@ export const routes: Routes = [
           },
           {
             path: ':id/evento',
-            loadComponent: () =>
-              import('./components/leilao/evento-leilao/evento-leilao.component').then(
-                (m) => m.EventoLeilaoComponent),
+            redirectTo: ':id/view',
+            pathMatch: 'full',
           },
           {
             path: ':id',
@@ -222,6 +177,31 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'racas',
+        children: [
+          { path: '', redirectTo: 'lista', pathMatch: 'full' },
+          {
+            path: 'lista',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/racas/raca-list/raca-list.component').then(
+                (m) => m.RacaListComponent),
+          },
+          {
+            path: 'cadastrar',
+            loadComponent: () =>
+              import('./components/racas/raca-details/raca-details.component').then(
+                (m) => m.RacaDetailsComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./components/racas/raca-details/raca-details.component').then(
+                (m) => m.RacaDetailsComponent),
+          },
+        ],
+      },
+      {
         path: 'taxas',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
@@ -272,6 +252,66 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'relatorios',
+        children: [
+          {
+            path: 'fatura-venda',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/fatura-venda/fatura-venda.component').then(
+                (m) => m.FaturaVendaComponent
+              ),
+          },
+          {
+            path: 'fatura-compra',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/fatura-compra/fatura-compra.component').then(
+                (m) => m.FaturaCompraComponent
+              ),
+          },
+          {
+            path: 'liberacao',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/liberacao/liberacao.component').then(
+                (m) => m.LiberacaoComponent
+              ),
+          },
+          {
+            path: 'mapa-leilao',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/mapa-leilao/mapa-leilao.component').then(
+                (m) => m.MapaLeilaoComponent
+              ),
+          },
+          {
+            path: 'fechamento-leilao',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/relatorios/fechamento-leilao/fechamento-leilao.component').then(
+                (m) => m.FechamentoLeilaoComponent
+              ),
+          },
+          { path: '', redirectTo: 'fatura-venda', pathMatch: 'full' },
+        ],
+      },
+       {
+        path: 'catalogos',
+        children: [
+          {
+            path: 'catalogo',
+            runGuardsAndResolvers: 'always',
+            loadComponent: () =>
+              import('./components/catalogos/catalogo/catalogo.component').then(
+                (m) => m.CatalogoComponent
+              ),
+          },
+          { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
+        ],
+      },
+      {
         path: 'funcionarios',
         children: [
           { path: '', redirectTo: 'lista', pathMatch: 'full' },
@@ -309,6 +349,26 @@ export const routes: Routes = [
           import('./components/admin/admin-roles.component').then(
             (m) => m.AdminRolesComponent,
           ),
+      },
+      {
+        path: 'configuracoes',
+        loadComponent: () =>
+          import('./components/configuracoes/configuracoes.component').then(
+            (m) => m.ConfiguracoesComponent,
+          ),
+      },
+      {
+        path: 'catalogos',
+        children: [
+          {
+            path: 'catalogo',
+            loadComponent: () =>
+              import('./components/catalogos/catalogo/catalogo.component').then(
+                (m) => m.CatalogoComponent,
+              ),
+          },
+          { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
+        ],
       },
     ],
   },

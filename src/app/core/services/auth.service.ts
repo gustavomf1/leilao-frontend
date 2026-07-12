@@ -3,15 +3,15 @@ import { Injectable, inject } from '@angular/core';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { LoteWebsocketService } from '../services/lote-websocket.service';
 import { tap } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 export interface TokenPayload {
   sub: string;
   nome: string;
   tipo: string;
   isAdmin: boolean;
-  isManejo: boolean;
-  roles: string[];
+  isManejo: boolean | string | number;
+  roles: string[] | Array<{ nome?: string; name?: string; authority?: string }>;
   permissoes: string[];
   exp: number;
 }
@@ -52,8 +52,10 @@ export class AuthService {
     if (!token) return null;
 
     try {
-      const payload = token.split('.')[1];
-      return JSON.parse(atob(payload));
+      const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+      const json = new TextDecoder('utf-8').decode(bytes);
+      return JSON.parse(json);
     } catch {
       return null;
     }
@@ -64,12 +66,29 @@ export class AuthService {
   }
 
   isManejo(): boolean {
-    return this.getTokenPayload()?.isManejo === true;
+    const payload = this.getTokenPayload();
+    if (!payload) return false;
+
+    const flag = payload.isManejo;
+    if (flag === true || flag === 1) return true;
+    if (typeof flag === 'string') {
+      const value = flag.trim().toLowerCase();
+      if (['true', 's', 'sim', '1'].includes(value)) return true;
+    }
+
+    const tipo = this.normalizeManejoText(payload.tipo);
+    if (tipo.includes('MANEJO')) return true;
+
+    return this.getUserRoles().some(role => this.normalizeManejoText(role).includes('MANEJO'));
   }
 
   getUserRoles(): string[] {
     const payload = this.getTokenPayload();
-    return payload?.roles ?? [];
+    const roles = payload?.roles ?? [];
+    return roles.map(role => {
+      if (typeof role === 'string') return role;
+      return role.nome ?? role.name ?? role.authority ?? '';
+    });
   }
 
   getUserNome(): string {
@@ -89,5 +108,12 @@ export class AuthService {
   hasPermission(ambiente: string, acao: string): boolean {
     if (this.isAdmin()) return true;
     return this.getPermissoes().includes(`${ambiente}:${acao}`);
+  }
+
+  private normalizeManejoText(value: unknown): string {
+    return String(value ?? '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase();
   }
 }

@@ -1,51 +1,89 @@
-<div class="container-lg px-4">
+<div class="container-lg px-4 ja-anim-fade-in">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Taxas de Comissão</h2>
-    <a *ngIf="auth.hasPermission('TAXAS', 'CRIAR')" routerLink="/taxas/cadastrar" cButton color="primary" size="sm">
+    <h2 class="mb-0">Taxa Padrão</h2>
+    <button *ngIf="auth.hasPermission('TAXAS', 'CRIAR')"
+            type="button" cButton color="primary"
+            (click)="abrirDrawerNovo()">
       <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
-      Nova Taxa
-    </a>
+      Nova Taxa Padrão
+    </button>
   </div>
 
-  <c-card>
-    <c-card-body>
+  <!-- ── DESKTOP: Tabela ── -->
+  <c-card class="d-mobile-none">
+    <c-card-body class="p-0">
       <table cTable hover responsive>
         <thead>
           <tr>
             <th>#</th>
-            <th>Espécie</th>
-            <th>Tipo de Leilão</th>
-            <th class="text-end">Comissão Vendedor</th>
-            <th class="text-end">Comissão Comprador</th>
-            <th class="text-center">Taxas por</th>
-            <th class="text-center">Status</th>
-            <th class="text-center">Ações</th>
+            <th class="text-end">Taxa Base</th>
+            <th class="text-end">Comissão Venda</th>
+            <th class="text-end">Comissão Compra</th>
+            <th class="text-end">GTA</th>
+            <th class="text-center">Atualizada em</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let taxa of taxas$ | async">
-            <td>{{ taxa.id }}</td>
-            <td>{{ taxa.especieNome }}</td>
-            <td>{{ tipoLabels[taxa.tipoLeilao] }}</td>
-            <td class="text-end">{{ taxa.comissaoVendedor | number:'1.2-2' }}%</td>
-            <td class="text-end">{{ taxa.comissaoComprador | number:'1.2-2' }}%</td>
-            <td class="text-center">{{ taxa.taxaPor === 'ANIMAL' ? 'Animal' : 'Lote' }}</td>
-            <td class="text-center">
-              <span [class]="taxa.inativo === 'S' ? 'badge bg-danger' : 'badge bg-success'">
-                {{ taxa.inativo === 'S' ? 'Inativo' : 'Ativo' }}
-              </span>
-            </td>
-            <td class="text-center">
-              <a *ngIf="auth.hasPermission('TAXAS', 'EDITAR')" [routerLink]="['/taxas', taxa.id]" cButton color="info" size="sm" variant="ghost">
-                <fa-icon [icon]="faPencil"></fa-icon>
-              </a>
-              <button *ngIf="auth.hasPermission('TAXAS', 'DELETAR')" cButton color="danger" size="sm" variant="ghost" (click)="deletar(taxa.id!)">
-                <fa-icon [icon]="faTrash"></fa-icon>
-              </button>
-            </td>
+          <tr *ngFor="let taxa of taxas$ | async; let i = index" [style.--ja-stagger-i]="i" class="ja-anim-slide-up ja-stagger">
+            <td class="text-muted" style="font-size:.8rem">{{ taxa.id }}</td>
+            <td class="text-end num">{{ taxa.taxa | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td class="text-end num">{{ taxa.comissaoVenda | number:'1.2-2' }}%</td>
+            <td class="text-end num">{{ taxa.comissaoCompra | number:'1.2-2' }}%</td>
+            <td class="text-end num">{{ taxa.gta | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td class="text-center">{{ taxa.atualizadoEm ? (taxa.atualizadoEm | date:'dd/MM/yyyy') : '—' }}</td>
           </tr>
         </tbody>
       </table>
     </c-card-body>
   </c-card>
+
+  <!-- ── MOBILE: Cards ── -->
+  <div class="d-desktop-none">
+    <div *ngFor="let taxa of taxas$ | async; let i = index" class="ja-mobile-card ja-anim-slide-up ja-stagger" [style.--ja-stagger-i]="i">
+      <div class="ja-mc-title">#{{ taxa.id }}</div>
+      <div class="ja-mc-subtitle" *ngIf="taxa.atualizadoEm">
+        Atualizada em {{ taxa.atualizadoEm | date:'dd/MM/yyyy' }}
+      </div>
+      <div class="ja-mc-meta">
+        <span><span class="label">Taxa Base</span> <span class="value-highlight">{{ taxa.taxa | currency:'BRL':'symbol':'1.2-2' }}</span></span>
+        <span><span class="label">Venda</span> {{ taxa.comissaoVenda | number:'1.2-2' }}%</span>
+        <span><span class="label">Compra</span> {{ taxa.comissaoCompra | number:'1.2-2' }}%</span>
+        <span><span class="label">GTA</span> {{ taxa.gta | currency:'BRL':'symbol':'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- ─── Drawer: Nova Taxa Padrão ─────────────────────────── -->
+@if (drawerAberto) {
+  <div class="ja-form-drawer-backdrop" (click)="fecharDrawer()"></div>
+  <aside class="ja-form-drawer" role="dialog" aria-modal="true"
+         aria-label="Nova Taxa Padrão">
+
+    <div class="ja-form-drawer-header">
+      <div class="ja-form-drawer-meta">
+        <div class="ja-form-drawer-overline">Nova Taxa</div>
+        <h2 class="ja-form-drawer-title">Cadastrar Taxa Padrão</h2>
+      </div>
+      <button type="button" class="ja-form-drawer-close"
+              (click)="fecharDrawer()" aria-label="Fechar">
+        <fa-icon [icon]="faXmark"></fa-icon>
+      </button>
+    </div>
+
+    <div class="ja-form-drawer-body">
+      <app-taxas-details
+        [modoDrawer]="true"
+        (aoSalvar)="onTaxaSalva()">
+      </app-taxas-details>
+    </div>
+
+    <div class="ja-form-drawer-footer">
+      <button type="button" cButton color="secondary" variant="ghost"
+              (click)="fecharDrawer()">
+        Cancelar
+      </button>
+    </div>
+
+  </aside>
+}

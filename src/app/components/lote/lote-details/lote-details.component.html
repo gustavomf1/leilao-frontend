@@ -1,26 +1,33 @@
-<div class="lote-page animate-in">
+<div class="lote-page animate-in ja-anim-fade-in">
 
   <!-- ── Page Header ─────────────────────────────────────── -->
   <div class="page-header">
     <div class="page-header__left">
-      <span class="page-header__eyebrow">{{ isEdicao ? 'Editando' : 'Cadastro' }}</span>
-      <h1 class="page-header__title">{{ isEdicao ? 'Editar Lote' : 'Novo Lote' }}</h1>
+      <span class="page-header__eyebrow">{{ (isValidacaoEscritorio || isValidacaoLance || isValidacaoFinal) ?
+        'Validação' : (isEdicao ? 'Editando' : 'Cadastro') }}</span>
+      <h1 class="page-header__title">{{ tituloPagina }}</h1>
       <p class="page-header__sub" *ngIf="isManejoMode">Modo Manejo — preencha os dados do animal</p>
       <p class="page-header__sub" *ngIf="isEscritorioMode">Modo Escritório — valide e complete os dados</p>
     </div>
-    <a routerLink="/lotes/lista" class="btn-back">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    <a [routerLink]="rotaRetorno" class="btn-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
       Voltar
     </a>
   </div>
 
-  <form [formGroup]="form" (ngSubmit)="tentarSalvar()" autocomplete="off">
+  <form *ngIf="!isAguardandoUltimaValidacao && !isValidacaoLance" [formGroup]="form" (ngSubmit)="tentarSalvar()"
+    autocomplete="off">
 
     <!-- ══ SEÇÃO 1: Identificação do Animal ══════════════════ -->
     <div class="form-section">
       <div class="section-label">
         <span class="section-label__icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
         </span>
         Identificação
       </div>
@@ -51,17 +58,32 @@
           <div class="sex-toggle">
             <label class="sex-option" [class.sex-option--active]="form.get('sexo')?.value === 'Macho'">
               <input type="radio" formControlName="sexo" value="Macho" />
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="14" r="5"/><path d="M19 5l-5.5 5.5M19 5h-4M19 5v4"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="10" cy="14" r="5" />
+                <path d="M19 5l-5.5 5.5M19 5h-4M19 5v4" />
+              </svg>
               Macho
             </label>
             <label class="sex-option" [class.sex-option--active]="form.get('sexo')?.value === 'Fêmea'">
               <input type="radio" formControlName="sexo" value="Fêmea" />
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M12 14v6M9 17h6"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="9" r="5" />
+                <path d="M12 14v6M9 17h6" />
+              </svg>
               Fêmea
             </label>
           </div>
           <span class="field-error" *ngIf="form.get('sexo')?.invalid && form.get('sexo')?.touched">
             Selecione o sexo
+          </span>
+        </div>
+
+        <!-- Idade -->
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Idade <span class="field-unit">(meses)</span> <span class="req">*</span></label>
+          <input class="field-input" type="number" formControlName="idadeEmMeses" min="0" />
+          <span class="field-error" *ngIf="form.get('idadeEmMeses')?.invalid && form.get('idadeEmMeses')?.touched">
+            Campo obrigatório
           </span>
         </div>
 
@@ -73,7 +95,10 @@
               <option [ngValue]="null">Selecione a espécie...</option>
               <option *ngFor="let e of especies" [ngValue]="e.id">{{ e.nome }}</option>
             </select>
-            <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
           </div>
           <span class="field-error" *ngIf="form.get('especieId')?.invalid && form.get('especieId')?.touched">
             Campo obrigatório
@@ -83,7 +108,16 @@
         <!-- Raça -->
         <div class="field-wrap field-wrap--md">
           <label class="field-label">Raça <span class="req">*</span></label>
-          <input class="field-input" formControlName="raca" placeholder="Ex: Nelore, Angus..." />
+          <div class="select-wrap">
+            <select class="field-select" formControlName="raca">
+              <option value="">Selecione a raça...</option>
+              <option *ngFor="let r of racas" [value]="r.nome">{{ r.nome }}</option>
+            </select>
+            <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
           <span class="field-error" *ngIf="form.get('raca')?.invalid && form.get('raca')?.touched">
             Campo obrigatório
           </span>
@@ -93,16 +127,8 @@
         <div class="field-wrap field-wrap--md">
           <label class="field-label">Categoria <span class="req">*</span></label>
           <input class="field-input" formControlName="categoriaAnimal" placeholder="Ex: Bezerro, Novilha..." />
-          <span class="field-error" *ngIf="form.get('categoriaAnimal')?.invalid && form.get('categoriaAnimal')?.touched">
-            Campo obrigatório
-          </span>
-        </div>
-
-        <!-- Idade -->
-        <div class="field-wrap field-wrap--sm">
-          <label class="field-label">Idade <span class="field-unit">(meses)</span> <span class="req">*</span></label>
-          <input class="field-input" type="number" formControlName="idadeEmMeses" min="0" />
-          <span class="field-error" *ngIf="form.get('idadeEmMeses')?.invalid && form.get('idadeEmMeses')?.touched">
+          <span class="field-error"
+            *ngIf="form.get('categoriaAnimal')?.invalid && form.get('categoriaAnimal')?.touched">
             Campo obrigatório
           </span>
         </div>
@@ -120,10 +146,15 @@
     </div>
 
     <!-- ══ SEÇÃO 2: Vendedor & Leilão ════════════════════════ -->
-    <div class="form-section" *ngIf="!isManejoMode">
+    <div class="form-section">
       <div class="section-label">
         <span class="section-label__icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
         </span>
         Vendedor & Leilão
       </div>
@@ -134,7 +165,7 @@
         <div class="field-wrap field-wrap--lg">
           <label class="field-label">Nome do Vendedor <span class="field-hint">(rascunho)</span></label>
           <input class="field-input" formControlName="vendedorNomeRascunho"
-                 placeholder="Como o vendedor é conhecido (ex: Zezin)" />
+            placeholder="Como o vendedor é conhecido (ex: Zezin)" />
         </div>
 
         <!-- Leilão -->
@@ -147,34 +178,42 @@
                 {{ l.descricao }} — {{ l.data | date:'dd/MM/yyyy' }} · {{ l.cidade }}/{{ l.uf }}
               </option>
             </select>
-            <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
           </div>
         </div>
 
         <!-- Vendedor (ID confirmado) — autocomplete -->
-        <div class="field-wrap field-wrap--full">
+        <div class="field-wrap field-wrap--full" *ngIf="!isManejoMode">
           <label class="field-label">
-            Vendedor <span class="field-hint">(ID confirmado)</span>
+            Vendedor <span class="field-hint">(ID confirmado)</span><span class="req"
+              *ngIf="isValidacaoEscritorio">*</span>
             <span class="badge-confirmed" *ngIf="vendedorSelecionado">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
               ID {{ form.get('vendedorId')?.value }}
             </span>
           </label>
 
           <div class="autocomplete-wrap">
             <div class="autocomplete-input-row" [class.autocomplete-input-row--confirmed]="vendedorSelecionado">
-              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-              <input class="autocomplete-input"
-                     [(ngModel)]="vendedorBusca"
-                     [ngModelOptions]="{standalone: true}"
-                     (input)="filtrarVendedor()"
-                     (focus)="abrirDropdownVendedor()"
-                     [placeholder]="vendedorSelecionado ? vendedorSelecionado.nome : 'Pesquisar cliente por nome...'"
-                     autocomplete="off" />
-              <button type="button" class="autocomplete-clear"
-                      *ngIf="vendedorSelecionado"
-                      (click)="vendedorSelecionado=null; vendedorBusca=''; form.get('vendedorId')?.setValue(null)">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input class="autocomplete-input" [(ngModel)]="vendedorBusca" [ngModelOptions]="{standalone: true}"
+                (input)="filtrarVendedor()" (focus)="abrirDropdownVendedor()"
+                [placeholder]="vendedorSelecionado ? vendedorSelecionado.nome : 'Pesquisar cliente por nome...'"
+                autocomplete="off" />
+              <button type="button" class="autocomplete-clear" *ngIf="vendedorSelecionado"
+                (click)="vendedorSelecionado=null; vendedorBusca=''; form.get('vendedorId')?.setValue(null)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
               </button>
             </div>
 
@@ -183,13 +222,12 @@
               <div class="autocomplete-empty" *ngIf="clientesFiltrados.length === 0">
                 Nenhum cliente encontrado
               </div>
-              <div class="autocomplete-item"
-                   *ngFor="let c of clientesFiltrados | slice:0:8"
-                   (mousedown)="selecionarVendedor(c)">
+              <div class="autocomplete-item" *ngFor="let c of clientesFiltrados | slice:0:8"
+                (mousedown)="selecionarVendedor(c)">
                 <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
                 <span class="autocomplete-item__info">
                   <strong>{{ c.nome }}</strong>
-                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpf }}</small>
+                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
                 </span>
               </div>
               <div class="autocomplete-count" *ngIf="clientesFiltrados.length > 8">
@@ -199,34 +237,22 @@
           </div>
 
           <small class="field-caption">Vincule o vendedor real após confirmar o nome no rascunho.</small>
+          <span class="field-error" *ngIf="form.get('vendedorId')?.invalid && form.get('vendedorId')?.touched">
+            Vincule um vendedor para validar o lote
+          </span>
         </div>
 
-      </div>
-    </div>
-
-    <!-- Campo nome vendedor visível no modo manejo -->
-    <div class="form-section" *ngIf="isManejoMode">
-      <div class="section-label">
-        <span class="section-label__icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </span>
-        Vendedor
-      </div>
-      <div class="fields-grid">
-        <div class="field-wrap field-wrap--full">
-          <label class="field-label">Nome do Vendedor</label>
-          <input class="field-input" formControlName="vendedorNomeRascunho"
-                 placeholder="Como o vendedor é conhecido (ex: Zezin)" />
-          <small class="field-caption">Digite o nome como você conhece — o escritório irá confirmar depois.</small>
-        </div>
       </div>
     </div>
 
     <!-- ══ SEÇÃO 3: Financeiro ════════════════════════════════ -->
-    <div class="form-section form-section--finance" *ngIf="!isManejoMode">
+    <div class="form-section form-section--finance" *ngIf="exibirFinanceiro">
       <div class="section-label section-label--finance">
         <span class="section-label__icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
         </span>
         Financeiro
       </div>
@@ -237,8 +263,8 @@
           <label class="field-label">Preço de Compra <span class="field-unit">(R$)</span></label>
           <div class="currency-wrap">
             <span class="currency-prefix">R$</span>
-            <input class="field-input field-input--currency" type="number"
-                   formControlName="precoCompra" step="0.01" min="0" placeholder="0,00" />
+            <input class="field-input field-input--currency" type="number" formControlName="precoCompra" step="0.01"
+              min="0" placeholder="0,00" />
           </div>
         </div>
 
@@ -246,37 +272,40 @@
           <label class="field-label">
             Comprador <span class="field-hint">(ID)</span>
             <span class="badge-confirmed" *ngIf="compradorSelecionado">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
               ID {{ form.get('compradorId')?.value }}
             </span>
           </label>
           <div class="autocomplete-wrap">
             <div class="autocomplete-input-row" [class.autocomplete-input-row--confirmed]="compradorSelecionado">
-              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-              <input class="autocomplete-input"
-                     [(ngModel)]="compradorBusca"
-                     [ngModelOptions]="{standalone: true}"
-                     (input)="filtrarComprador()"
-                     (focus)="abrirDropdownComprador()"
-                     [placeholder]="compradorSelecionado ? compradorSelecionado.nome : 'Pesquisar comprador por nome...'"
-                     autocomplete="off" />
-              <button type="button" class="autocomplete-clear"
-                      *ngIf="compradorSelecionado"
-                      (click)="compradorSelecionado=null; compradorBusca=''; form.get('compradorId')?.setValue(null)">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input class="autocomplete-input" [(ngModel)]="compradorBusca" [ngModelOptions]="{standalone: true}"
+                (input)="filtrarComprador()" (focus)="abrirDropdownComprador()"
+                [placeholder]="compradorSelecionado ? compradorSelecionado.nome : 'Pesquisar comprador por nome...'"
+                autocomplete="off" />
+              <button type="button" class="autocomplete-clear" *ngIf="compradorSelecionado"
+                (click)="compradorSelecionado=null; compradorBusca=''; form.get('compradorId')?.setValue(null)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
               </button>
             </div>
             <div class="autocomplete-dropdown" *ngIf="mostrarDropdownComprador">
               <div class="autocomplete-empty" *ngIf="compradorFiltrados.length === 0">
                 Nenhum cliente encontrado
               </div>
-              <div class="autocomplete-item"
-                   *ngFor="let c of compradorFiltrados | slice:0:8"
-                   (mousedown)="selecionarComprador(c)">
+              <div class="autocomplete-item" *ngFor="let c of compradorFiltrados | slice:0:8"
+                (mousedown)="selecionarComprador(c)">
                 <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
                 <span class="autocomplete-item__info">
                   <strong>{{ c.nome }}</strong>
-                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpf }}</small>
+                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
                 </span>
               </div>
               <div class="autocomplete-count" *ngIf="compradorFiltrados.length > 8">
@@ -294,28 +323,429 @@
     <div class="form-section">
       <div class="section-label">
         <span class="section-label__icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
         </span>
         Observações
       </div>
       <div class="fields-grid">
         <div class="field-wrap field-wrap--full">
           <textarea class="field-input field-input--textarea" formControlName="obs"
-                    placeholder="Observações adicionais sobre o lote..." rows="3"></textarea>
+            placeholder="Observações adicionais sobre o lote..." rows="3"></textarea>
         </div>
       </div>
     </div>
 
+    <!-- ══ SEÇÃO 5: Fotos do Lote ══════════════════════════ -->
+    <div class="form-section" *ngIf="isEdicao" style="margin-top: 2rem;">
+      <app-lote-fotos [loteId]="loteIdAtual!"></app-lote-fotos>
+    </div>
+
     <!-- ══ Actions ══════════════════════════════════════════ -->
     <div class="form-actions">
-      <a routerLink="/lotes/lista" class="btn-cancel">Cancelar</a>
+      <a [routerLink]="rotaRetorno" class="btn-cancel">Cancelar</a>
       <button type="submit" class="btn-submit" [disabled]="form.invalid">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13"/><polyline points="7 3 7 8 15 8"/></svg>
-        {{ isEdicao ? 'Salvar Alterações' : 'Cadastrar Lote' }}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+          <polyline points="17 21 17 13 7 13" />
+          <polyline points="7 3 7 8 15 8" />
+        </svg>
+        {{ acaoPrincipalLabel }}
       </button>
     </div>
 
   </form>
+
+  <!-- ══ PAINEL: Validação do Lance (só em AGUARDANDO_LANCE) ══ -->
+  <ng-container *ngIf="isEdicao && isValidacaoLance">
+    <div class="form-section validacao-panel">
+      <div class="section-label">
+        <span class="section-label__icon">✓</span>
+        Validação do Lance
+      </div>
+      <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
+        Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
+      </p>
+
+      <div class="fields-grid">
+        <div class="field-wrap field-wrap--lg">
+          <label class="field-label">Valor do Lote <span class="field-unit">(R$)</span> <span
+              class="req">*</span></label>
+          <div class="currency-wrap">
+            <span class="currency-prefix">R$</span>
+            <input class="field-input field-input--currency" type="number" step="0.01" min="0" placeholder="0,00"
+              [(ngModel)]="lancePrecoCompra" [ngModelOptions]="{standalone: true}" />
+          </div>
+        </div>
+
+        <div class="field-wrap field-wrap--lg">
+          <label class="field-label">
+            Comprador Oficial <span class="req">*</span>
+            <span class="badge-confirmed" *ngIf="validacaoCompradorSelecionado">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              ID {{ validacaoCompradorId }}
+            </span>
+          </label>
+          <div class="autocomplete-wrap">
+            <div class="autocomplete-input-row"
+              [class.autocomplete-input-row--confirmed]="validacaoCompradorSelecionado">
+              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input class="autocomplete-input" [(ngModel)]="validacaoCompradorBusca"
+                [ngModelOptions]="{standalone: true}" (input)="filtrarValidacaoComprador()"
+                (focus)="abrirDropdownValidacaoComprador()" (blur)="fecharDropdownValidacaoComprador()"
+                [placeholder]="validacaoCompradorSelecionado ? validacaoCompradorSelecionado.nome : 'Pesquisar comprador por nome...'"
+                autocomplete="off" />
+              <button type="button" class="autocomplete-clear" *ngIf="validacaoCompradorSelecionado"
+                (click)="validacaoCompradorSelecionado=null; validacaoCompradorBusca=''; validacaoCompradorId=null">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="autocomplete-dropdown" *ngIf="mostrarDropdownValidacaoComprador">
+              <div class="autocomplete-empty" *ngIf="validacaoCompradorFiltrados.length === 0">
+                Nenhum cliente encontrado
+              </div>
+              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados | slice:0:8"
+                (mousedown)="selecionarValidacaoComprador(c)">
+                <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
+                <span class="autocomplete-item__info">
+                  <strong>{{ c.nome }}</strong>
+                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
+                </span>
+              </div>
+              <div class="autocomplete-count" *ngIf="validacaoCompradorFiltrados.length > 8">
+                +{{ validacaoCompradorFiltrados.length - 8 }} resultados — refine a busca
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Venda (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
+            [(ngModel)]="lanceComissaoVendedor" [ngModelOptions]="{standalone: true}" />
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Compra (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
+            [(ngModel)]="lanceComissaoComprador" [ngModelOptions]="{standalone: true}" />
+        </div>
+      </div>
+
+      <div class="form-actions form-actions--split">
+        <button type="button" class="btn-cancel" (click)="confirmarLoteNaoVendido()">
+          Não vendido
+        </button>
+        <button type="button" class="btn-submit" [disabled]="!podeEnviarParaValidacaoFinal"
+          (click)="confirmarEnvioValidacaoFinal()">
+          Enviar para validação final
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ══ PAINEL: Validação Final (só em AGUARDANDO_ULTIMA_VALIDACAO) ══ -->
+  <ng-container *ngIf="isEdicao && isAguardandoUltimaValidacao">
+
+    <!-- Lote VENDIDO — validar comprador -->
+    <div *ngIf="!loteNaoVendido" class="form-section validacao-panel">
+      <div class="section-label">
+        <span class="section-label__icon">✔</span>
+        Validação Final — Lote Vendido
+      </div>
+
+      <div class="lote-info-strip">
+        <div class="info-chip">
+          <span class="info-chip__label">Código</span>
+          <span class="info-chip__value">{{ loteCarregado?.codigo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Qtd. Animais</span>
+          <span class="info-chip__value">{{ loteCarregado?.qntdAnimais ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Sexo</span>
+          <span class="info-chip__value">{{ loteCarregado?.sexo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Espécie</span>
+          <span class="info-chip__value">{{ especieNome }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Categoria</span>
+          <span class="info-chip__value">{{ loteCarregado?.categoriaAnimal ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Idade</span>
+          <span class="info-chip__value">{{ loteCarregado?.idadeEmMeses ?? '—' }} meses</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Peso</span>
+          <span class="info-chip__value">{{ loteCarregado?.peso ?? '—' }} kg</span>
+        </div>
+        <div class="info-chip" *ngIf="loteCarregado?.vendedorNomeRascunho">
+          <span class="info-chip__label">Vendedor</span>
+          <span class="info-chip__value">{{ loteCarregado.vendedorNomeRascunho }}</span>
+        </div>
+      </div>
+
+      <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
+        Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
+      </p>
+
+      <div class="fields-grid">
+        <div class="field-wrap field-wrap--lg">
+          <label class="field-label">Preço Vinculado ao Lote</label>
+          <div class="readonly-money">
+            {{ loteCarregado?.precoCompra | currency:'BRL':'symbol':'1.2-2' }}
+          </div>
+        </div>
+
+        <div class="field-wrap field-wrap--lg">
+          <label class="field-label">
+            Comprador <span class="req">*</span>
+            <span class="badge-confirmed" *ngIf="validacaoCompradorSelecionado">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              ID {{ validacaoCompradorId }}
+            </span>
+          </label>
+          <div class="autocomplete-wrap">
+            <div class="autocomplete-input-row"
+              [class.autocomplete-input-row--confirmed]="validacaoCompradorSelecionado">
+              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input class="autocomplete-input" [(ngModel)]="validacaoCompradorBusca"
+                [ngModelOptions]="{standalone: true}" (input)="filtrarValidacaoComprador()"
+                (focus)="abrirDropdownValidacaoComprador()" (blur)="fecharDropdownValidacaoComprador()"
+                [placeholder]="validacaoCompradorSelecionado ? validacaoCompradorSelecionado.nome : 'Pesquisar comprador por nome...'"
+                autocomplete="off" />
+              <button type="button" class="autocomplete-clear" *ngIf="validacaoCompradorSelecionado"
+                (click)="validacaoCompradorSelecionado=null; validacaoCompradorBusca=''; validacaoCompradorId=null">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="autocomplete-dropdown" *ngIf="mostrarDropdownValidacaoComprador">
+              <div class="autocomplete-empty" *ngIf="validacaoCompradorFiltrados.length === 0">
+                Nenhum cliente encontrado
+              </div>
+              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados | slice:0:8"
+                (mousedown)="selecionarValidacaoComprador(c)">
+                <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
+                <span class="autocomplete-item__info">
+                  <strong>{{ c.nome }}</strong>
+                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
+                </span>
+              </div>
+              <div class="autocomplete-count" *ngIf="validacaoCompradorFiltrados.length > 8">
+                +{{ validacaoCompradorFiltrados.length - 8 }} resultados — refine a busca
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-wrap field-wrap--full" *ngIf="loteCarregado?.vendedorId">
+          <label class="field-label">PIX do Vendedor</label>
+
+          <div class="pix-contexto">
+            <span class="pix-contexto__item">
+              <strong>Vendedor:</strong> {{ loteCarregado?.vendedorNome || loteCarregado?.vendedorNomeRascunho || '—' }}
+            </span>
+            <span class="pix-contexto__item">
+              <strong>Comprador:</strong> {{ validacaoCompradorSelecionado?.nome || loteCarregado?.compradorNome || loteCarregado?.compradorNomeRascunho || '—' }}
+            </span>
+          </div>
+
+          <c-dropdown [popperOptions]="{ placement: 'bottom-start' }">
+            <button cDropdownToggle type="button" class="pix-toggle" (click)="carregarPixDoVendedor()">
+              {{ formatarPix(loteCarregado?.vendedorPixTipo, loteCarregado?.vendedorPixChave) }}
+            </button>
+            <div cDropdownMenu class="pix-dropdown-menu">
+              <div *ngIf="pixCarregando" class="pix-dropdown-empty">Carregando...</div>
+              <ng-container *ngIf="!pixCarregando">
+                <div *ngIf="pixDoVendedor.length === 0" class="pix-dropdown-empty">
+                  Vendedor não possui PIX cadastrado
+                </div>
+                <button type="button" cDropdownItem *ngFor="let pix of pixDoVendedor"
+                        [active]="loteCarregado?.vendedorPixId === pix.pixId"
+                        (click)="selecionarPix(pix)">
+                  {{ formatarPix(pix.tipo, pix.chave) }}
+                </button>
+                <hr cDropdownDivider *ngIf="loteCarregado?.vendedorPixId != null" />
+                <button type="button" cDropdownItem *ngIf="loteCarregado?.vendedorPixId != null" (click)="selecionarPix(null)">
+                  Nenhum
+                </button>
+              </ng-container>
+              <hr cDropdownDivider />
+              <button type="button" cDropdownItem (click)="abrirModalNovoPix()">
+                <fa-icon [icon]="faPlus" class="me-1"></fa-icon>
+                Cadastrar novo PIX
+              </button>
+            </div>
+          </c-dropdown>
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Venda (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
+            [(ngModel)]="validacaoComissaoVendedor" [ngModelOptions]="{standalone: true}" />
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Compra (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
+            [(ngModel)]="validacaoComissaoComprador" [ngModelOptions]="{standalone: true}" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-submit btn-finalize" [disabled]="!validacaoCompradorId"
+          (click)="confirmarValidacaoFinal()">
+          <fa-icon [icon]="faCheck"></fa-icon>
+          Validar Final
+        </button>
+      </div>
+    </div>
+
+    <!-- Lote NÃO VENDIDO — recolocar em lance -->
+    <div *ngIf="loteNaoVendido" class="form-section validacao-panel validacao-panel--nao-vendido">
+      <div class="section-label">
+        <span class="section-label__icon">↩</span>
+        Recolocar em Lance — Lote Não Vendido
+      </div>
+
+      <div class="lote-info-strip">
+        <div class="info-chip">
+          <span class="info-chip__label">Código</span>
+          <span class="info-chip__value">{{ loteCarregado?.codigo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Qtd. Animais</span>
+          <span class="info-chip__value">{{ loteCarregado?.qntdAnimais ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Sexo</span>
+          <span class="info-chip__value">{{ loteCarregado?.sexo ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Espécie</span>
+          <span class="info-chip__value">{{ especieNome }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Categoria</span>
+          <span class="info-chip__value">{{ loteCarregado?.categoriaAnimal ?? '—' }}</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Idade</span>
+          <span class="info-chip__value">{{ loteCarregado?.idadeEmMeses ?? '—' }} meses</span>
+        </div>
+        <div class="info-chip">
+          <span class="info-chip__label">Peso</span>
+          <span class="info-chip__value">{{ loteCarregado?.peso ?? '—' }} kg</span>
+        </div>
+        <div class="info-chip" *ngIf="loteCarregado?.vendedorNomeRascunho">
+          <span class="info-chip__label">Vendedor</span>
+          <span class="info-chip__value">{{ loteCarregado.vendedorNomeRascunho }}</span>
+        </div>
+      </div>
+
+      <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
+        Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
+      </p>
+
+      <div class="fields-grid">
+
+        <div class="field-wrap field-wrap--lg">
+          <label class="field-label">
+            Comprador Oficial
+            <span class="badge-confirmed" *ngIf="validacaoCompradorSelecionado">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              ID {{ validacaoCompradorId }}
+            </span>
+          </label>
+          <div class="autocomplete-wrap">
+            <div class="autocomplete-input-row"
+              [class.autocomplete-input-row--confirmed]="validacaoCompradorSelecionado">
+              <svg class="autocomplete-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input class="autocomplete-input" [(ngModel)]="validacaoCompradorBusca"
+                [ngModelOptions]="{standalone: true}" (input)="filtrarValidacaoComprador()"
+                (focus)="abrirDropdownValidacaoComprador()" (blur)="fecharDropdownValidacaoComprador()"
+                [placeholder]="validacaoCompradorSelecionado ? validacaoCompradorSelecionado.nome : 'Pesquisar comprador por nome...'"
+                autocomplete="off" />
+              <button type="button" class="autocomplete-clear" *ngIf="validacaoCompradorSelecionado"
+                (click)="validacaoCompradorSelecionado=null; validacaoCompradorBusca=''; validacaoCompradorId=null">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="autocomplete-dropdown" *ngIf="mostrarDropdownValidacaoComprador">
+              <div class="autocomplete-empty" *ngIf="validacaoCompradorFiltrados.length === 0">
+                Nenhum cliente encontrado
+              </div>
+              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados | slice:0:8"
+                (mousedown)="selecionarValidacaoComprador(c)">
+                <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
+                <span class="autocomplete-item__info">
+                  <strong>{{ c.nome }}</strong>
+                  <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
+                </span>
+              </div>
+              <div class="autocomplete-count" *ngIf="validacaoCompradorFiltrados.length > 8">
+                +{{ validacaoCompradorFiltrados.length - 8 }} resultados — refine a busca
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Venda (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
+            [(ngModel)]="recolocacaoComissaoVendedor" [ngModelOptions]="{standalone: true}" />
+        </div>
+
+        <div class="field-wrap field-wrap--sm">
+          <label class="field-label">Comissão Compra (%)</label>
+          <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"
+            [(ngModel)]="recolocacaoComissaoComprador" [ngModelOptions]="{standalone: true}" />
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-save" (click)="confirmarRecolocacao()">
+          Recolocar em Lance
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+
 </div>
 
 <!-- ── Modal de confirmação (Manejo) ─────────────────────── -->
@@ -330,7 +760,8 @@
     <table class="table table-sm table-borderless mb-0">
       <tbody>
         <tr *ngFor="let item of resumoParaConfirmacao">
-          <td class="text-secondary fw-semibold" style="width:40%;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;">
+          <td class="text-secondary fw-semibold"
+            style="width:40%;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;">
             {{ item.label }}
           </td>
           <td class="fw-bold">{{ item.valor }}</td>
@@ -345,5 +776,29 @@
     <button cButton color="primary" (click)="confirmarModal()">
       <fa-icon [icon]="faCheck" class="me-1"></fa-icon> Confirmar e enviar
     </button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal *ngIf="modalNovoPixVisivel" [visible]="modalNovoPixVisivel" (visibleChange)="modalNovoPixVisivel = $event" alignment="center">
+  <c-modal-header><h5 cModalTitle>Cadastrar Novo PIX</h5></c-modal-header>
+  <c-modal-body>
+    <div class="mb-3">
+      <label class="form-label">Tipo</label>
+      <select class="form-select" [(ngModel)]="novoPixTipo">
+        <option value="" disabled selected>Selecione o tipo...</option>
+        <option value="CPF_CNPJ">CPF/CNPJ</option>
+        <option value="TELEFONE">Telefone</option>
+        <option value="EMAIL">E-mail</option>
+        <option value="CHAVE_ALEATORIA">Chave Aleatória</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Chave</label>
+      <input type="text" class="form-control" [(ngModel)]="novoPixChave" placeholder="Digite a chave PIX" />
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" variant="ghost" (click)="fecharModalNovoPix()"><fa-icon [icon]="faTimes" class="me-1"></fa-icon> Cancelar</button>
+    <button cButton color="primary" [disabled]="!novoPixTipo || !novoPixChave.trim()" (click)="confirmarNovoPix()"><fa-icon [icon]="faPlus" class="me-1"></fa-icon> Salvar</button>
   </c-modal-footer>
 </c-modal>

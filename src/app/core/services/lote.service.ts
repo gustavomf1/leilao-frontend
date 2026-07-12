@@ -11,15 +11,41 @@ export class LoteService extends ApiService<Lote> {
     return this.http.get<Lote[]>(`${this.baseUrl}/api/publico/leilao/${leilaoId}/lotes`);
   }
 
-  registrarPrecoPublico(id: number, precoCompra: number): Observable<Lote> {
-    return this.http.patch<Lote>(`${this.baseUrl}/api/publico/lote/${id}/preco`, { precoCompra });
+  registrarPrecoPublico(id: number, precoCompra: number, compradorNomeRascunho: string): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/publico/lote/${id}/preco`, { precoCompra, compradorNomeRascunho });
   }
 
   avancarStatus(id: number): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/status/avancar`, {});
   }
 
-  registrarPreco(id: number, precoCompra: number): Observable<Lote> {
-    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/preco`, { precoCompra });
+  registrarPreco(
+    id: number,
+    precoCompra: number,
+    dadosExtras: { compradorId?: number | null; comissaoVenda?: number | null; comissaoCompra?: number | null } = {}
+  ): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/preco`, { precoCompra, ...dadosExtras });
+  }
+
+  validarFinal(id: number, dados: { compradorId: number; comissaoVenda?: number | null; comissaoCompra?: number | null }): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/validar-final`, dados);
+  }
+
+  gerarNotaLeilao(id: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/relatorios/nota-leilao/${id}`, {
+      responseType: 'blob',
+    });
+  }
+
+  recolocarLance(id: number, dados: { comissaoVenda?: number | null; comissaoCompra?: number | null; naoVendidoNoLeilao?: string }): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/recolocar-lance`, dados);
+  }
+
+  transferirLote(id: number, leilaoId: number): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/transferir`, { leilaoId });
+  }
+
+  definirPixVendedor(id: number, pixId: number | null): Observable<Lote> {
+    return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/pix-vendedor`, { pixId });
   }
 }
