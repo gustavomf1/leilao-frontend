@@ -6,6 +6,8 @@ import { LoteService } from '../../../core/services/lote.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AlertService } from '../../../shared/services/alert.service';
+import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.service';
+import { LoteFotosGaleriaComponent } from '../lote-fotos-galeria/lote-fotos-galeria.component';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +23,7 @@ import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR, FaturaEnvioLog
 @Component({
   selector: 'app-monitor-lotes',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, FontAwesomeModule],
+  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, FontAwesomeModule, LoteFotosGaleriaComponent],
   templateUrl: './monitor-lotes.component.html',
   styleUrl: './monitor-lotes.component.css'
 })
@@ -126,6 +128,7 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
 
   loteDetalhes: any | null = null;
   modalDetalhesVisivel = false;
+  galeriaFotos: LoteFoto[] = [];
 
   modalTransferirVisivel = false;
   loteParaTransferir: Lote | null = null;
@@ -137,6 +140,7 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   private leilaoService = inject(LeilaoService);
   private alert         = inject(AlertService);
   private zone          = inject(NgZone);
+  private loteFotoService = inject(LoteFotoService);
   auth                  = inject(AuthService);
   private carregadoPorInput = false;
   private wsSubscription?: Subscription;
@@ -211,11 +215,19 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   abrirDetalhes(lote: Lote) {
     this.loteDetalhes = lote;
     this.modalDetalhesVisivel = true;
+    this.galeriaFotos = [];
+    if (lote.id != null) {
+      this.loteFotoService.listar(lote.id).subscribe({
+        next: (fotos) => this.galeriaFotos = fotos,
+        error: () => {}
+      });
+    }
   }
 
   fecharDetalhes() {
     this.modalDetalhesVisivel = false;
     this.loteDetalhes = null;
+    this.galeriaFotos = [];
   }
 
   abrirModalTransferir(lote: Lote) {

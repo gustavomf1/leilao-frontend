@@ -347,6 +347,11 @@
         <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Observações</div>
         <div>{{ loteDetalhes.obs }}</div>
       </c-col>
+      <c-col [md]="12">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Fotos</div>
+        <app-lote-fotos-galeria [fotos]="galeriaFotos"></app-lote-fotos-galeria>
+        <p *ngIf="galeriaFotos.length === 0" class="text-body-secondary mb-0">Nenhuma foto cadastrada.</p>
+      </c-col>
     </c-row>
   </c-modal-body>
 
