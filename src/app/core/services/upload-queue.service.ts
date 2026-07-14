@@ -33,8 +33,11 @@ export class UploadQueueService implements OnDestroy {
   private completedSubject = new Subject<LoteFoto>();
   completed$ = this.completedSubject.asObservable();
 
+  /** Resolves once constructor-time initialization (openDB + loadQueue) has completed. */
+  private readonly ready: Promise<void>;
+
   constructor() {
-    this.init();
+    this.ready = this.init();
   }
 
   private async init() {

@@ -12,10 +12,9 @@ describe('UploadQueueService', () => {
       providers: [UploadQueueService, provideHttpClient(), provideHttpClientTesting()]
     });
     service = TestBed.inject(UploadQueueService);
-    // Wait for database initialization
-    await firstValueFrom(service.queue$);
-    // Ensure database is fully ready
-    await new Promise(r => setTimeout(r, 50));
+    // Await the service's own readiness promise (openDB + loadQueue) instead of
+    // guessing with a fixed delay — this is a deterministic barrier, not a timeout.
+    await (service as unknown as { ready: Promise<void> }).ready;
   });
 
   it('should be created', () => {
