@@ -10,6 +10,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
+import { LoteFoto } from '../../../core/services/lote-foto.service';
+import { LoteFotosGaleriaComponent } from '../../lote/lote-fotos-galeria/lote-fotos-galeria.component';
 import { Lote } from '../../../core/models/entities.model';
 
 type LanceConfirmacao = {
@@ -21,7 +23,7 @@ type LanceConfirmacao = {
 @Component({
   selector: 'app-evento-publico',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, FormsModule, FontAwesomeModule],
+  imports: [CommonModule, CurrencyPipe, FormsModule, FontAwesomeModule, LoteFotosGaleriaComponent],
   templateUrl: './evento-publico.component.html',
   styleUrl: './evento-publico.component.css'
 })
@@ -37,6 +39,7 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   loading = true;
   precoInput: Record<number, string> = {};
   compradorNomeInput: Record<number, string> = {};
+  fotosPorLote: Record<number, LoteFoto[]> = {};
   erro: string | null = null;
   sucesso: string | null = null;
   lancePendente: LanceConfirmacao | null = null;
@@ -67,6 +70,7 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
           this.lotes$.next(dados);
           this.loading = false;
           this.cdr.detectChanges();
+          this.carregarFotosDosLotes(dados);
         });
       },
       error: (err) => {
@@ -179,6 +183,22 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
       this.lotes$.next(atualizado);
     } else {
       this.lotes$.next([...atual, loteAtualizado]);
+      this.carregarFotosDosLotes([loteAtualizado]);
+    }
+  }
+
+  private carregarFotosDosLotes(lotes: Lote[]) {
+    for (const lote of lotes) {
+      if (lote.id == null || this.fotosPorLote[lote.id]) continue;
+      this.loteService.listarFotosPublico(lote.id).subscribe({
+        next: (fotos) => {
+          this.zone.run(() => {
+            this.fotosPorLote[lote.id!] = fotos;
+            this.cdr.detectChanges();
+          });
+        },
+        error: () => {}
+      });
     }
   }
 

@@ -87,4 +87,13 @@ describe('LoteFotosComponent — menu mobile', () => {
     component.onFileSelected(event);
     expect(component.uploadMenuAberto).toBe(false);
   });
+
+  it('podeEditar retorna true quando isManejo() é true (mesmo sem isAdmin/hasPermission)', () => {
+    expect(component.podeEditar()).toBe(true);
+  });
+
+  it('podeEditar retorna false quando isManejo, isAdmin e hasPermission são todos false', () => {
+    mockAuth.isManejo.mockReturnValueOnce(false);
+    expect(component.podeEditar()).toBe(false);
+  });
 });

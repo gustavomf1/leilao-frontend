@@ -1,0 +1,13 @@
+<div class="galeria-fotos" *ngIf="fotos.length > 0">
+  <div class="galeria-fotos__grid">
+    <button
+      type="button"
+      class="galeria-fotos__item"
+      *ngFor="let foto of fotos"
+      (click)="abrir(foto)"
+      [title]="'Abrir foto ' + foto.id + ' em nova aba'"
+    >
+      <img [src]="foto.viewUrl" [alt]="'Foto ' + foto.id" class="galeria-fotos__thumb" />
+    </button>
+  </div>
+</div>

@@ -129,6 +129,6 @@ export class LoteFotosComponent implements OnInit, OnChanges {
   }
 
   podeEditar(): boolean {
-    return this.permitirEdicao || this.auth.isAdmin() || this.auth.hasPermission('LOTES', 'EDITAR');
+    return this.permitirEdicao || this.auth.isAdmin() || this.auth.isManejo() || this.auth.hasPermission('LOTES', 'EDITAR');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, HostListener, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, HostListener, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,8 +16,11 @@ import { RacaService } from '../../../core/services/raca.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { PixService } from '../../../core/services/pix.service';
+import { UploadQueueService } from '../../../core/services/upload-queue.service';
+import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.service';
 import { Especie, Raca, LeilaoDetalhes, Cliente, Pix } from '../../../core/models/entities.model';
 import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
+import { LoteFotosGaleriaComponent } from '../lote-fotos-galeria/lote-fotos-galeria.component';
 
 @Component({
   selector: 'app-lotes-details',
@@ -25,16 +28,19 @@ import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
   imports: [
     CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
-    ModalModule, DropdownModule, FontAwesomeModule, LoteFotosComponent
+    ModalModule, DropdownModule, FontAwesomeModule, LoteFotosComponent,
+    LoteFotosGaleriaComponent
   ],
   templateUrl: './lote-details.component.html',
   styleUrl: './lote-details.component.css'
 })
-export class LotesDetailsComponent implements OnInit {
+export class LotesDetailsComponent implements OnInit, OnDestroy {
   private el = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
   private service = inject(LoteService);
   private alert = inject(AlertService);
+  private uploadQueue = inject(UploadQueueService);
+  private loteFotoService = inject(LoteFotoService);
   auth = inject(AuthService);
   private especieService = inject(EspecieService);
   private racaService = inject(RacaService);
@@ -56,6 +62,7 @@ export class LotesDetailsComponent implements OnInit {
   modalVisible = false;
   private entityId?: number;
   origemLeilaoId?: number;
+  private fotosVinculadas = false;
 
   especies: Especie[] = [];
   racas: Raca[] = [];
@@ -72,6 +79,7 @@ export class LotesDetailsComponent implements OnInit {
   compradorFiltrados: Cliente[] = [];
 
   loteCarregado: any = null;
+  galeriaFotos: LoteFoto[] = [];
   validacaoCompradorId: number | null = null;
   validacaoCompradorBusca = '';
   validacaoCompradorSelecionado: Cliente | null = null;
@@ -101,8 +109,8 @@ export class LotesDetailsComponent implements OnInit {
     }
   }
 
-  get loteIdAtual(): number | undefined {
-    return this.entityId;
+  get loteIdAtual(): number | null {
+    return this.entityId ?? null;
   }
 
   get isManejoMode(): boolean {
@@ -248,6 +256,7 @@ export class LotesDetailsComponent implements OnInit {
           }
           this.restaurarSelecoes();
           this.carregarTaxaDoLeilao(data.leilaoId);
+          this.carregarGaleriaFotos();
         },
         error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao carregar lote')
       });
@@ -354,7 +363,7 @@ export class LotesDetailsComponent implements OnInit {
       ? this.service.atualizar(this.entityId!, dados)
       : this.service.salvar(dados);
     op.subscribe({
-      next: () => {
+      next: (loteSalvo: any) => {
         if (this.isValidacaoEscritorio && this.isEdicao) {
           this.service.avancarStatus(this.entityId!).subscribe({
             next: () => {
@@ -364,6 +373,11 @@ export class LotesDetailsComponent implements OnInit {
             error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao validar lote')
           });
           return;
+        }
+        if (!this.isEdicao && loteSalvo?.id != null) {
+          this.entityId = loteSalvo.id;
+          this.fotosVinculadas = true;
+          this.uploadQueue.assignLoteId(loteSalvo.id);
         }
         this.alert.success(this.isEdicao ? 'Lote atualizado!' : 'Lote cadastrado e enviado para preenchimento de preço!');
         this.navegarRetorno();
@@ -626,6 +640,14 @@ export class LotesDetailsComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  private carregarGaleriaFotos() {
+    if (this.entityId == null) return;
+    this.loteFotoService.listar(this.entityId).subscribe({
+      next: (fotos) => { this.galeriaFotos = fotos; this.cdr.markForCheck(); },
+      error: () => {}
+    });
+  }
+
   private carregarTaxaDoLeilao(leilaoId?: number | null) {
     if (!leilaoId) return;
     this.leilaoService.buscarResumo(leilaoId).subscribe({
@@ -683,5 +705,11 @@ export class LotesDetailsComponent implements OnInit {
     if (idadeEmMeses <= 24) return macho ? 'Garrote' : 'Novilha';
     if (idadeEmMeses <= 36) return macho ? 'Novilho' : 'Novilha';
     return macho ? 'Boi' : 'Vaca';
+  }
+
+  ngOnDestroy() {
+    if (!this.isEdicao && !this.fotosVinculadas) {
+      this.uploadQueue.clearOrphans();
+    }
   }
 }

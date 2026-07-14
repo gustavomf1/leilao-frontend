@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { Lote } from '../models/entities.model';
+import { LoteFoto } from './lote-foto.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoteService extends ApiService<Lote> {
@@ -47,5 +48,9 @@ export class LoteService extends ApiService<Lote> {
 
   definirPixVendedor(id: number, pixId: number | null): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/pix-vendedor`, { pixId });
+  }
+
+  listarFotosPublico(loteId: number): Observable<LoteFoto[]> {
+    return this.http.get<LoteFoto[]>(`${this.baseUrl}/api/publico/lote/${loteId}/fotos`);
   }
 }

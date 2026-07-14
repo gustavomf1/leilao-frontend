@@ -342,8 +342,8 @@
     </div>
 
     <!-- ══ SEÇÃO 5: Fotos do Lote ══════════════════════════ -->
-    <div class="form-section" *ngIf="isEdicao" style="margin-top: 2rem;">
-      <app-lote-fotos [loteId]="loteIdAtual!"></app-lote-fotos>
+    <div class="form-section" *ngIf="isEdicao || isManejoMode" style="margin-top: 2rem;">
+      <app-lote-fotos [loteId]="loteIdAtual"></app-lote-fotos>
     </div>
 
     <!-- ══ Actions ══════════════════════════════════════════ -->
@@ -371,6 +371,7 @@
       <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
         Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
       </p>
+      <app-lote-fotos-galeria [fotos]="galeriaFotos"></app-lote-fotos-galeria>
 
       <div class="fields-grid">
         <div class="field-wrap field-wrap--lg">
@@ -505,6 +506,7 @@
       <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
         Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
       </p>
+      <app-lote-fotos-galeria [fotos]="galeriaFotos"></app-lote-fotos-galeria>
 
       <div class="fields-grid">
         <div class="field-wrap field-wrap--lg">
@@ -671,6 +673,7 @@
       <p class="validacao-hint" *ngIf="loteCarregado?.compradorNomeRascunho">
         Comprador Anotado: <strong>{{ loteCarregado.compradorNomeRascunho }}</strong>
       </p>
+      <app-lote-fotos-galeria [fotos]="galeriaFotos"></app-lote-fotos-galeria>
 
       <div class="fields-grid">
 

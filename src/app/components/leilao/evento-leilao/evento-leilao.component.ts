@@ -12,13 +12,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faGavel, faArrowLeft, faPlay, faStop,
   faCheck, faBan, faMapMarkerAlt, faCalendarAlt,
-  faDollarSign, faListOl, faLink
+  faDollarSign, faListOl, faLink, faImages
 } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.service';
+import { LoteFotosGaleriaComponent } from '../../lote/lote-fotos-galeria/lote-fotos-galeria.component';
 import { LeilaoDetalhes, Lote, STATUS_LEILAO_LABELS, STATUS_LEILAO_COLOR, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
 
 @Component({
@@ -29,7 +31,7 @@ import { LeilaoDetalhes, Lote, STATUS_LEILAO_LABELS, STATUS_LEILAO_COLOR, TIPO_L
     CardModule, BadgeComponent, ButtonDirective,
     GridModule, TableModule, TableDirective,
     ModalModule, FormModule,
-    FontAwesomeModule
+    FontAwesomeModule, LoteFotosGaleriaComponent
   ],
   templateUrl: './evento-leilao.component.html',
   styleUrl: './evento-leilao.component.scss'
@@ -42,6 +44,7 @@ export class EventoLeilaoComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private zone = inject(NgZone);
+  private loteFotoService = inject(LoteFotoService);
   auth = inject(AuthService);
 
   faGavel = faGavel;
@@ -55,6 +58,7 @@ export class EventoLeilaoComponent implements OnInit, OnDestroy {
   faDollarSign = faDollarSign;
   faListOl = faListOl;
   faLink = faLink;
+  faImages = faImages;
 
   leilao?: LeilaoDetalhes;
   lotes: Lote[] = [];
@@ -63,6 +67,10 @@ export class EventoLeilaoComponent implements OnInit, OnDestroy {
 
   // Map de valores de lance por loteId
   lancesValues: Record<number, number | null> = {};
+
+  galeriaFotos: LoteFoto[] = [];
+  galeriaVisivel = false;
+  loteGaleriaCodigo = '';
 
   statusLabels = STATUS_LEILAO_LABELS;
   statusColors = STATUS_LEILAO_COLOR;
@@ -190,6 +198,22 @@ export class EventoLeilaoComponent implements OnInit, OnDestroy {
     const url = `${window.location.origin}/#/publico/evento/${this.leilaoId}`;
     navigator.clipboard.writeText(url);
     this.alert.success('Link copiado para a área de transferência!');
+  }
+
+  abrirGaleria(lote: Lote) {
+    if (!lote.id) return;
+    this.loteGaleriaCodigo = lote.codigo ?? '';
+    this.galeriaVisivel = true;
+    this.galeriaFotos = [];
+    this.loteFotoService.listar(lote.id).subscribe({
+      next: (fotos) => this.galeriaFotos = fotos,
+      error: () => this.alert.error('Erro ao carregar fotos do lote')
+    });
+  }
+
+  fecharGaleria() {
+    this.galeriaVisivel = false;
+    this.galeriaFotos = [];
   }
 
   confirmarLance(lote: Lote) {

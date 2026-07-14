@@ -33,8 +33,11 @@ export class UploadQueueService implements OnDestroy {
   private completedSubject = new Subject<LoteFoto>();
   completed$ = this.completedSubject.asObservable();
 
+  /** Resolves once constructor-time initialization (openDB + loadQueue) has completed. */
+  private readonly ready: Promise<void>;
+
   constructor() {
-    this.init();
+    this.ready = this.init();
   }
 
   private async init() {
@@ -77,6 +80,15 @@ export class UploadQueueService implements OnDestroy {
     if (navigator.onLine) {
       for (const item of assigned) this.process(item);
     }
+  }
+
+  async clearOrphans(): Promise<void> {
+    const orphans = this.queueSubject.value.filter(i => i.loteId === null);
+    for (const item of orphans) {
+      if (item.localUrl) URL.revokeObjectURL(item.localUrl);
+      await this.db.delete(STORE, item.uuid);
+    }
+    this.emit(this.queueSubject.value.filter(i => i.loteId !== null));
   }
 
   async retryItem(uuid: string): Promise<void> {
