@@ -7,11 +7,15 @@ import { UploadQueueService } from './upload-queue.service';
 describe('UploadQueueService', () => {
   let service: UploadQueueService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       providers: [UploadQueueService, provideHttpClient(), provideHttpClientTesting()]
     });
     service = TestBed.inject(UploadQueueService);
+    // Wait for database initialization
+    await firstValueFrom(service.queue$);
+    // Ensure database is fully ready
+    await new Promise(r => setTimeout(r, 50));
   });
 
   it('should be created', () => {
@@ -21,5 +25,19 @@ describe('UploadQueueService', () => {
   it('queue$ emite array vazio inicialmente', async () => {
     const q = await firstValueFrom(service.queue$);
     expect(Array.isArray(q)).toBe(true);
+  });
+
+  it('clearOrphans remove da fila apenas os itens com loteId null', async () => {
+    const arquivoOrfao = new File(['a'], 'orfao.jpg', { type: 'image/jpeg' });
+    const arquivoComLote = new File(['b'], 'com-lote.jpg', { type: 'image/jpeg' });
+
+    await service.enqueue(null, arquivoOrfao);
+    await service.enqueue(999999, arquivoComLote);
+
+    await service.clearOrphans();
+
+    const fila = await firstValueFrom(service.queue$);
+    expect(fila.some(i => i.fileName === 'orfao.jpg')).toBe(false);
+    expect(fila.some(i => i.fileName === 'com-lote.jpg')).toBe(true);
   });
 });
