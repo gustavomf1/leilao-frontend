@@ -60,8 +60,8 @@ describe('LotesDetailsComponent — fotos no cadastro (manejo)', () => {
         { provide: AlertService, useValue: mockAlert },
         { provide: UploadQueueService, useValue: mockUploadQueue },
         { provide: LoteFotoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => null }, queryParamMap: { get: () => null } } } },
         provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => null }, queryParamMap: { get: () => null } } } },
       ],
     }).compileComponents();
 
@@ -98,5 +98,56 @@ describe('LotesDetailsComponent — fotos no cadastro (manejo)', () => {
     vi.clearAllMocks();
     component.ngOnDestroy();
     expect(mockUploadQueue.clearOrphans).not.toHaveBeenCalled();
+  });
+});
+
+describe('LotesDetailsComponent — galeria de fotos na edição', () => {
+  let component: LotesDetailsComponent;
+  let fixture: ComponentFixture<LotesDetailsComponent>;
+
+  const fotosMock = [
+    { id: 1, loteId: 7, r2Key: 'lotes/7/a.jpg', ordem: 0, uploadedAt: '2026-01-01', viewUrl: 'https://minio.local/a.jpg' }
+  ];
+
+  const mockLoteService = {
+    salvar: vi.fn().mockReturnValue(of({})),
+    atualizar: vi.fn().mockReturnValue(of({})),
+    buscarPorId: vi.fn().mockReturnValue(of({ id: 7, codigo: 'L-007', especieId: 1 })),
+  };
+
+  const mockLoteFotoService = { listar: vi.fn().mockReturnValue(of(fotosMock)) };
+  const mockAuth = { isManejo: vi.fn().mockReturnValue(false), isAdmin: vi.fn().mockReturnValue(true), hasPermission: vi.fn().mockReturnValue(true) };
+  const listVazio = { listar: vi.fn().mockReturnValue(of([])) };
+  const mockAlert = { error: vi.fn(), success: vi.fn(), confirm: vi.fn() };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LotesDetailsComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LoteService, useValue: mockLoteService },
+        { provide: AuthService, useValue: mockAuth },
+        { provide: EspecieService, useValue: listVazio },
+        { provide: RacaService, useValue: { listarPorEspecie: vi.fn().mockReturnValue(of([])) } },
+        { provide: LeilaoService, useValue: listVazio },
+        { provide: ClienteService, useValue: listVazio },
+        { provide: PixService, useValue: listVazio },
+        { provide: AlertService, useValue: mockAlert },
+        { provide: UploadQueueService, useValue: { assignLoteId: vi.fn(), clearOrphans: vi.fn(), queue$: of([]), completed$: of() } },
+        { provide: LoteFotoService, useValue: mockLoteFotoService },
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '7' }, queryParamMap: { get: () => null } } } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LotesDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('carrega as fotos do lote ao editar', () => {
+    expect(mockLoteFotoService.listar).toHaveBeenCalledWith(7);
+    expect(component.galeriaFotos).toEqual(fotosMock);
   });
 });
