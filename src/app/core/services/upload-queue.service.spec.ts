@@ -26,6 +26,22 @@ describe('UploadQueueService', () => {
     expect(Array.isArray(q)).toBe(true);
   });
 
+  it('enqueue funciona mesmo sem crypto.randomUUID (contexto HTTP não seguro, ex: IP público sem HTTPS)', async () => {
+    const original = crypto.randomUUID;
+    // @ts-expect-error simula ausência do método em contexto não seguro
+    crypto.randomUUID = undefined;
+    try {
+      const arquivo = new File(['x'], 'sem-https.jpg', { type: 'image/jpeg' });
+      await service.enqueue(null, arquivo);
+      const fila = await firstValueFrom(service.queue$);
+      const item = fila.find(i => i.fileName === 'sem-https.jpg');
+      expect(item).toBeTruthy();
+      expect(item!.uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    } finally {
+      crypto.randomUUID = original;
+    }
+  });
+
   it('clearOrphans remove da fila apenas os itens com loteId null', async () => {
     const arquivoOrfao = new File(['a'], 'orfao.jpg', { type: 'image/jpeg' });
     const arquivoComLote = new File(['b'], 'com-lote.jpg', { type: 'image/jpeg' });

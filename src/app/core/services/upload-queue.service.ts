@@ -20,6 +20,17 @@ export interface QueueItem {
 const DB_NAME = 'leilao-upload-queue';
 const STORE = 'queue';
 
+/** crypto.randomUUID() só existe em contexto seguro (HTTPS/localhost) — em produção sem HTTPS
+ * (ex: acesso por IP puro em HTTP) o método não existe, mas crypto.getRandomValues() sim. */
+function gerarUuid(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UploadQueueService implements OnDestroy {
   private fotoService = inject(LoteFotoService);
@@ -59,7 +70,7 @@ export class UploadQueueService implements OnDestroy {
 
   async enqueue(loteId: number | null, file: File): Promise<void> {
     const item: QueueItem = {
-      uuid: crypto.randomUUID(),
+      uuid: gerarUuid(),
       loteId,
       fileBlob: file,
       fileName: file.name,
