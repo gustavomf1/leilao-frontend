@@ -132,7 +132,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let lote of lotesAguardandoLance">
-            <td><strong>{{ lote.codigo }}</strong></td>
+            <td>
+              <strong>{{ lote.codigo }}</strong>
+              <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="abrirGaleria(lote)" title="Ver fotos">
+                <fa-icon [icon]="faImages"></fa-icon>
+              </button>
+            </td>
             <td>{{ lote.especie }}</td>
             <td>{{ lote.raca }}</td>
             <td class="text-center">{{ lote.qntdAnimais }}</td>
@@ -189,7 +194,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let lote of lotes">
-            <td><strong>{{ lote.codigo }}</strong></td>
+            <td>
+              <strong>{{ lote.codigo }}</strong>
+              <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="abrirGaleria(lote)" title="Ver fotos">
+                <fa-icon [icon]="faImages"></fa-icon>
+              </button>
+            </td>
             <td>{{ lote.especie }}</td>
             <td>{{ lote.raca }}</td>
             <td class="text-center">{{ lote.qntdAnimais }}</td>
@@ -234,7 +244,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let lote of lotesFinalizados">
-            <td><strong>{{ lote.codigo }}</strong></td>
+            <td>
+              <strong>{{ lote.codigo }}</strong>
+              <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="abrirGaleria(lote)" title="Ver fotos">
+                <fa-icon [icon]="faImages"></fa-icon>
+              </button>
+            </td>
             <td>{{ lote.especie }}</td>
             <td>{{ lote.raca }}</td>
             <td class="text-center">{{ lote.qntdAnimais }}</td>
@@ -249,6 +264,20 @@
   </c-card>
 
 </div>
+
+<!-- Modal de fotos do lote -->
+<c-modal *ngIf="galeriaVisivel" [visible]="galeriaVisivel" (visibleChange)="galeriaVisivel = $event" alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>Fotos do Lote — {{ loteGaleriaCodigo }}</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <app-lote-fotos-galeria [fotos]="galeriaFotos"></app-lote-fotos-galeria>
+    <p *ngIf="galeriaFotos.length === 0" class="text-body-secondary mb-0">Nenhuma foto cadastrada para este lote.</p>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="fecharGaleria()">Fechar</button>
+  </c-modal-footer>
+</c-modal>
 
 <!-- Loading -->
 <div *ngIf="loading$ | async" class="container-lg px-4 text-center py-5">
