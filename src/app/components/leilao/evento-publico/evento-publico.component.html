@@ -65,6 +65,7 @@
             <span class="ep-label">Peso:</span>
             <span>{{ lote.peso }} kg</span>
           </div>
+          <app-lote-fotos-galeria [fotos]="fotosPorLote[lote.id!] || []"></app-lote-fotos-galeria>
         </div>
 
         <!-- Preço atual -->
