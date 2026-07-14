@@ -342,8 +342,8 @@
     </div>
 
     <!-- ══ SEÇÃO 5: Fotos do Lote ══════════════════════════ -->
-    <div class="form-section" *ngIf="isEdicao" style="margin-top: 2rem;">
-      <app-lote-fotos [loteId]="loteIdAtual!"></app-lote-fotos>
+    <div class="form-section" *ngIf="isEdicao || isManejoMode" style="margin-top: 2rem;">
+      <app-lote-fotos [loteId]="loteIdAtual"></app-lote-fotos>
     </div>
 
     <!-- ══ Actions ══════════════════════════════════════════ -->
