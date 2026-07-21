@@ -1,5 +1,5 @@
 export const environment = { 
     applicationTitle: "JA-Leilões", 
-    backendUrl: "http://localhost:8080", 
-    frontendUrl: "http://localhost:4200", 
+    backendUrl: "https://15-229-6-128.nip.io/api", 
+    frontendUrl: "https://15-229-6-128.nip.io", 
 };
