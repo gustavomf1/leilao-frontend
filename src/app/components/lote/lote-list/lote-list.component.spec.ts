@@ -17,8 +17,8 @@ describe('LotesListComponent', () => {
   let novoLoteSubject: Subject<any>;
 
   const lotesMock = [
-    { id: 1, status: 'AGUARDANDO_ESCRITORIO', naoVendidoNoLeilao: 'N' },
-    { id: 2, status: 'FINALIZADO', naoVendidoNoLeilao: 'S' },
+    { id: 1, status: 'AGUARDANDO_ESCRITORIO', naoVendidoNoLeilao: 'N', codigo: 'L-1' },
+    { id: 2, status: 'FINALIZADO', naoVendidoNoLeilao: 'S', codigo: 'L-2' },
   ] as any;
 
   function setup() {
@@ -40,7 +40,7 @@ describe('LotesListComponent', () => {
   beforeEach(() => {
     novoLoteSubject = new Subject();
     mockLoteService = {
-      listar: vi.fn().mockReturnValue(of(lotesMock)),
+      listar: vi.fn().mockReturnValue(of(lotesMock.map((l: any) => ({ ...l })))),
       avancarStatus: vi.fn().mockReturnValue(of({ id: 1, status: 'AGUARDANDO_LANCE' } as any)),
       deletar: vi.fn().mockReturnValue(of(undefined)),
       gerarNotaLeilao: vi.fn().mockReturnValue(of(new Blob())),
@@ -148,5 +148,15 @@ describe('LotesListComponent', () => {
 
     expect(mockLoteService.gerarNotaLeilao).toHaveBeenCalledWith(5);
     expect(openSpy).toHaveBeenCalledWith('blob:fake-url', '_blank');
+  });
+
+  it('exibe o código do lote com o prefixo fixo LOTE-', () => {
+    setup();
+    fixture.detectChanges();
+
+    const textos = Array.from(fixture.nativeElement.querySelectorAll('.lote-id'))
+      .map((el: any) => el.textContent.trim());
+    expect(textos).toContain('LOTE-L-1');
+    expect(textos).toContain('LOTE-L-2');
   });
 });

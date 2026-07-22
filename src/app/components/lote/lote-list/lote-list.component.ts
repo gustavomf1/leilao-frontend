@@ -14,11 +14,12 @@ import { LoteWebsocketService } from '../../../core/services/lote-websocket.serv
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
+import { LoteCodigoPipe } from '../../../shared/pipes/lote-codigo.pipe';
 
 @Component({
   selector: 'app-lotes-list',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterModule, CardModule, BadgeModule, GridModule, ButtonDirective, FontAwesomeModule],
+  imports: [CommonModule, CurrencyPipe, RouterModule, CardModule, BadgeModule, GridModule, ButtonDirective, FontAwesomeModule, LoteCodigoPipe],
   templateUrl: './lote-list.component.html',
   styleUrl: './lote-list.component.css'
 })
