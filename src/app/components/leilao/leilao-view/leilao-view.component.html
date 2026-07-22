@@ -27,8 +27,14 @@
       <c-badge *ngIf="statusLeilao" [color]="statusColor(statusLeilao)" class="fs-6 px-3 py-2">
         {{ statusLabel(statusLeilao) | uppercase }}
       </c-badge>
+      <button cButton color="secondary" size="sm" variant="outline" (click)="dadosLeilaoVisivel = true">
+        <fa-icon [icon]="faInfoCircle" class="me-1"></fa-icon> Dados do Leilão
+      </button>
       <button *ngIf="podeGerenciarEvento && isFinalizado" cButton color="primary" size="sm" (click)="enviarFaturasParaTodos()">
         <fa-icon [icon]="faPaperPlane" class="me-1"></fa-icon> Enviar Faturas
+      </button>
+      <button *ngIf="podeGerenciarEvento && isFinalizado" cButton color="info" size="sm" (click)="abrirFaturas()">
+        <fa-icon [icon]="faFileInvoiceDollar" class="me-1"></fa-icon> Gerar Faturas
       </button>
       <button *ngIf="podeGerenciarEvento && isAberto" cButton color="success" size="sm" (click)="iniciarLeilao()">
         <fa-icon [icon]="faPlay" class="me-1"></fa-icon> Começar Leilão
@@ -48,193 +54,26 @@
     </div>
   </div>
 
-  <div class="auction-facts mb-4">
-    <div class="auction-fact">
-      <span>Status</span>
-      <strong>
-        <c-badge [color]="statusColor(statusLeilao)">
-          {{ statusLabel(statusLeilao) }}
-        </c-badge>
-      </strong>
-    </div>
-    <div class="auction-fact">
-      <span>Espécie</span>
-      <strong>{{ especieNome }}</strong>
-    </div>
-    <div class="auction-fact">
-      <span>Tipo</span>
-      <strong>{{ tipoLeilaoLabel(resumo.tipoLeilao) }}</strong>
-    </div>
-    <div class="auction-fact">
-      <span>Taxa por</span>
-      <strong>{{ taxaPorLabel }}</strong>
-    </div>
-    <div class="auction-fact">
-      <span>Taxa</span>
-      <strong>{{ resumo.taxa != null ? (resumo.taxa | currency:'BRL':'symbol':'1.2-2') : '—' }}</strong>
-    </div>
-    <div class="auction-fact">
-      <span>Comissão Venda</span>
-      <strong>{{ resumo.comissaoVenda != null ? (resumo.comissaoVenda | number:'1.2-2') + '%' : '—' }}</strong>
-    </div>
-    <div class="auction-fact">
-      <span>Comissão Compra</span>
-      <strong>{{ resumo.comissaoCompra != null ? (resumo.comissaoCompra | number:'1.2-2') + '%' : '—' }}</strong>
-    </div>
-    <div class="auction-fact">
-      <span>GTA</span>
-      <strong>{{ resumo.gta != null ? (resumo.gta | currency:'BRL':'symbol':'1.2-2') : '—' }}</strong>
-    </div>
-    <div class="auction-fact">
-      <span>Condição</span>
-      <strong>{{ condicaoDescricao }}</strong>
-    </div>
-  </div>
-
-  <!-- KPI Cards -->
-  <c-row class="mb-4">
-    <c-col [sm]="6" [lg]="3" class="mb-3 mb-lg-0">
-      <c-card class="text-white bg-primary h-100">
-        <c-card-body class="d-flex flex-column">
-          <div class="text-uppercase small fw-semibold opacity-75">Total de Lotes</div>
-          <div class="fs-2 fw-bold mt-auto">{{ resumo.totalLotes }}</div>
-          <div class="small opacity-75">{{ resumo.totalAnimais }} animais</div>
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col [sm]="6" [lg]="3" class="mb-3 mb-lg-0">
-      <c-card class="text-white bg-success h-100">
-        <c-card-body class="d-flex flex-column">
-          <div class="text-uppercase small fw-semibold opacity-75">Lotes Vendidos</div>
-          <div class="fs-2 fw-bold mt-auto">{{ resumo.lotesVendidos }}</div>
-          <div class="small opacity-75">{{ resumo.animaisVendidos }} animais vendidos</div>
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col [sm]="6" [lg]="3" class="mb-3 mb-lg-0">
-      <c-card class="text-white bg-warning h-100">
-        <c-card-body class="d-flex flex-column">
-          <div class="text-uppercase small fw-semibold opacity-75">Lotes Restantes</div>
-          <div class="fs-2 fw-bold mt-auto">{{ resumo.lotesRestantes }}</div>
-          <div class="small opacity-75">{{ percentualVendido }}% concluído</div>
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col [sm]="6" [lg]="3">
-      <c-card class="text-white bg-info h-100">
-        <c-card-body class="d-flex flex-column">
-          <div class="text-uppercase small fw-semibold opacity-75">Movimentação Bruta</div>
-          <div class="fs-2 fw-bold mt-auto">{{ resumo.movimentacaoBruta | currency:'BRL':'symbol':'1.2-2' }}</div>
-          <div class="small opacity-75">Receita taxas: {{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</div>
-        </c-card-body>
-      </c-card>
-    </c-col>
-  </c-row>
-
-  <!-- Progress bar -->
-  <c-card class="mb-4" *ngIf="resumo.totalLotes > 0">
-    <c-card-body>
-      <div class="d-flex justify-content-between mb-2">
-        <span class="fw-semibold">{{ emAndamento ? 'Progresso de Lances' : 'Progresso de Vendas' }}</span>
-        <span class="text-body-secondary">{{ emAndamento ? percentualLances : percentualVendido }}%</span>
-      </div>
-      <div class="progress mb-1">
-        <div class="progress-bar bg-success" role="progressbar" [style.width.%]="emAndamento ? percentualLances : percentualVendido"></div>
-      </div>
-      <div class="d-flex justify-content-between small text-body-secondary mt-1">
-        <span>{{ emAndamento ? totalFinalizados : resumo.lotesVendidos }} {{ emAndamento ? 'finalizados' : 'vendidos' }}</span>
-        <span>{{ emAndamento ? totalAguardando : resumo.lotesRestantes }} restantes</span>
+  <c-card class="mb-4 resumo-essencial">
+    <c-card-body class="py-2">
+      <div class="row align-items-center g-3">
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="small text-body-secondary">Progresso de vendas</span>
+            <strong>{{ emAndamento ? percentualLances : percentualVendido }}%</strong>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar"
+                 [style.width.%]="emAndamento ? percentualLances : percentualVendido"></div>
+          </div>
+        </div>
+        <div class="col-md-4 ms-md-auto text-end border-start-md pe-3">
+          <span class="small text-body-secondary d-block">Movimentação bruta</span>
+          <strong class="fs-5">{{ resumo.movimentacaoBruta | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        </div>
       </div>
     </c-card-body>
   </c-card>
-
-  <!-- Taxas e Resumo -->
-  <c-row class="mb-4">
-    <c-col [md]="6" class="mb-3 mb-md-0">
-      <c-card class="h-100">
-        <c-card-header>
-          <fa-icon [icon]="faPercent" class="me-2 text-success"></fa-icon>
-          <strong>Taxas</strong>
-        </c-card-header>
-        <c-card-body>
-          <table class="table table-borderless table-sm mb-0">
-            <tbody>
-              <tr>
-                <td class="text-body-secondary" style="width: 45%">Espécie</td>
-                <td class="fw-semibold"><fa-icon [icon]="faPaw" class="me-1 text-body-secondary"></fa-icon>{{ especieNome }}</td>
-              </tr>
-              <tr>
-                <td class="text-body-secondary">Tipo de Leilão</td>
-                <td>{{ tipoLeilaoLabel(resumo.tipoLeilao) }}</td>
-              </tr>
-              <tr *ngIf="resumo.taxa != null">
-                <td class="text-body-secondary">Taxa</td>
-                <td class="fw-semibold text-danger">{{ resumo.taxa | currency:'BRL':'symbol':'1.2-2' }}</td>
-              </tr>
-              <tr *ngIf="resumo.comissaoVenda != null">
-                <td class="text-body-secondary">Comissão Venda</td>
-                <td class="fw-semibold text-danger">{{ resumo.comissaoVenda | number:'1.2-2' }}%</td>
-              </tr>
-              <tr *ngIf="resumo.comissaoCompra != null">
-                <td class="text-body-secondary">Comissão Compra</td>
-                <td class="fw-semibold text-danger">{{ resumo.comissaoCompra | number:'1.2-2' }}%</td>
-              </tr>
-              <tr *ngIf="resumo.gta != null">
-                <td class="text-body-secondary">GTA</td>
-                <td class="fw-semibold text-danger">{{ resumo.gta | currency:'BRL':'symbol':'1.2-2' }}</td>
-              </tr>
-              <tr>
-                <td class="text-body-secondary">Cobrado por</td>
-                <td>
-                  <c-badge [color]="resumo.taxaPor === 'ANIMAL' ? 'info' : 'warning'">
-                    {{ taxaPorLabel }}
-                  </c-badge>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </c-card-body>
-      </c-card>
-    </c-col>
-    <c-col [md]="6">
-      <c-card class="h-100">
-        <c-card-header>
-          <fa-icon [icon]="faInfoCircle" class="me-2 text-info"></fa-icon>
-          <strong>Resumo Geral</strong>
-        </c-card-header>
-        <c-card-body>
-          <table class="table table-borderless table-sm mb-0">
-            <tbody>
-              <tr>
-                <td class="text-body-secondary" style="width: 45%">Condição</td>
-                <td class="fw-semibold">{{ condicaoDescricao }}</td>
-              </tr>
-              <tr>
-                <td class="text-body-secondary">Total de Animais</td>
-                <td>{{ resumo.totalAnimais }}</td>
-              </tr>
-              <tr>
-                <td class="text-body-secondary">Peso Total</td>
-                <td>{{ pesoTotal | number:'1.1-1' }} kg</td>
-              </tr>
-              <tr>
-                <td class="text-body-secondary">Ticket Médio</td>
-                <td>{{ resumo.ticketMedio | currency:'BRL':'symbol':'1.2-2' }}</td>
-              </tr>
-              <tr>
-                <td class="text-body-secondary">Receita Taxas</td>
-                <td class="fw-semibold text-success">{{ resumo.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</td>
-              </tr>
-              <tr>
-                <td class="text-body-secondary">Taxa de Conversão</td>
-                <td>{{ percentualVendido }}%</td>
-              </tr>
-            </tbody>
-          </table>
-        </c-card-body>
-      </c-card>
-    </c-col>
-  </c-row>
 
   <app-monitor-lotes
     [leilaoId]="resumo.id"
@@ -249,6 +88,109 @@
   ></app-monitor-lotes>
 
 </div>
+
+<c-modal *ngIf="dadosLeilaoVisivel" [visible]="dadosLeilaoVisivel"
+         (visibleChange)="dadosLeilaoVisivel = $event" alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>Dados do Leilão — {{ resumo?.descricao }}</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <div class="table-responsive">
+      <table class="table table-sm table-striped align-middle mb-0 dados-leilao-table">
+        <tbody>
+          <tr><th>Status</th><td><c-badge [color]="statusColor(statusLeilao)">{{ statusLabel(statusLeilao) }}</c-badge></td></tr>
+          <tr><th>Espécie</th><td>{{ especieNome }}</td></tr>
+          <tr><th>Tipo</th><td>{{ tipoLeilaoLabel(resumo?.tipoLeilao) }}</td></tr>
+          <tr><th>Condição</th><td>{{ condicaoDescricao }}</td></tr>
+          <tr><th>Taxa por</th><td>{{ taxaPorLabel }}</td></tr>
+          <tr><th>Taxa</th><td>{{ resumo?.taxa != null ? (resumo?.taxa | currency:'BRL':'symbol':'1.2-2') : '—' }}</td></tr>
+          <tr><th>Comissão de venda</th><td>{{ resumo?.comissaoVenda != null ? (resumo?.comissaoVenda | number:'1.2-2') + '%' : '—' }}</td></tr>
+          <tr><th>Comissão de compra</th><td>{{ resumo?.comissaoCompra != null ? (resumo?.comissaoCompra | number:'1.2-2') + '%' : '—' }}</td></tr>
+          <tr><th>GTA</th><td>{{ resumo?.gta != null ? (resumo?.gta | currency:'BRL':'symbol':'1.2-2') : '—' }}</td></tr>
+          <tr><th>Total de lotes</th><td>{{ resumo?.totalLotes }}</td></tr>
+          <tr><th>Lotes vendidos</th><td>{{ resumo?.lotesVendidos }}</td></tr>
+          <tr><th>Lotes restantes</th><td>{{ resumo?.lotesRestantes }}</td></tr>
+          <tr><th>Total de animais</th><td>{{ resumo?.totalAnimais }}</td></tr>
+          <tr><th>Animais vendidos</th><td>{{ resumo?.animaisVendidos }}</td></tr>
+          <tr><th>Peso total</th><td>{{ pesoTotal | number:'1.1-1' }} kg</td></tr>
+          <tr><th>Receita de taxas</th><td>{{ resumo?.receitaComissao | currency:'BRL':'symbol':'1.2-2' }}</td></tr>
+          <tr><th>Ticket médio</th><td>{{ resumo?.ticketMedio | currency:'BRL':'symbol':'1.2-2' }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="dadosLeilaoVisivel = false">Fechar</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal *ngIf="faturasVisivel" [visible]="faturasVisivel"
+         (visibleChange)="faturasVisivel = $event" alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>Faturas — {{ resumo?.descricao }}</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <p class="text-body-secondary">Selecione o tipo de fatura para visualizar as pessoas deste leilão.</p>
+    <div class="d-flex gap-4 mb-4">
+      <div class="form-check">
+        <input id="faturaCompra" class="form-check-input" type="checkbox"
+               [checked]="tipoFatura === 'COMPRA'"
+               (change)="selecionarTipoFatura('COMPRA', $any($event.target).checked)">
+        <label class="form-check-label fw-semibold" for="faturaCompra">Compra</label>
+      </div>
+      <div class="form-check">
+        <input id="faturaVenda" class="form-check-input" type="checkbox"
+               [checked]="tipoFatura === 'VENDA'"
+               (change)="selecionarTipoFatura('VENDA', $any($event.target).checked)">
+        <label class="form-check-label fw-semibold" for="faturaVenda">Venda</label>
+      </div>
+    </div>
+
+    <div *ngIf="carregandoPessoas" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="text-body-secondary mt-2 mb-0">Carregando...</p>
+    </div>
+
+    <ng-container *ngIf="!carregandoPessoas && tipoFatura">
+      <div class="table-responsive" *ngIf="(tipoFatura === 'COMPRA' ? compradores.length : vendedores.length) > 0; else listaVazia">
+        <table class="table table-hover align-middle mb-0">
+          <thead><tr><th>{{ tipoFatura === 'COMPRA' ? 'Comprador' : 'Vendedor' }}</th><th class="text-end">Ação</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let pessoa of (tipoFatura === 'COMPRA' ? compradores : vendedores)">
+              <td>{{ pessoa.nome }}</td>
+              <td class="text-end">
+                <button cButton color="primary" size="sm" class="me-2"
+                        [disabled]="!!gerandoFatura || !!gerandoLiberacao"
+                        (click)="gerarFatura(tipoFatura!, pessoa)">
+                  <span *ngIf="gerandoFatura === tipoFatura + '-' + pessoa.id" class="spinner-border spinner-border-sm me-1"></span>
+                  <fa-icon *ngIf="gerandoFatura !== tipoFatura + '-' + pessoa.id" [icon]="faFileInvoiceDollar" class="me-1"></fa-icon>
+                  Gerar fatura
+                </button>
+                <button cButton color="success" size="sm"
+                        [disabled]="!!gerandoFatura || !!gerandoLiberacao"
+                        (click)="gerarLiberacao(tipoFatura!, pessoa)">
+                  <span *ngIf="gerandoLiberacao === tipoFatura + '-' + pessoa.id"
+                        class="spinner-border spinner-border-sm me-1"></span>
+                  <fa-icon *ngIf="gerandoLiberacao !== tipoFatura + '-' + pessoa.id"
+                           [icon]="faFileCircleCheck" class="me-1"></fa-icon>
+                  Gerar liberação
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #listaVazia>
+        <div class="text-body-secondary text-center py-4">
+          Nenhum {{ tipoFatura === 'COMPRA' ? 'comprador' : 'vendedor' }} encontrado neste leilão.
+        </div>
+      </ng-template>
+    </ng-container>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="fecharFaturas()">Fechar</button>
+  </c-modal-footer>
+</c-modal>
 
 <!-- Loading -->
 <div *ngIf="loading$ | async" class="container-lg px-4 text-center py-5">

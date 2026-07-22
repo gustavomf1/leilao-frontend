@@ -1,16 +1,17 @@
-import { Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subscription, forkJoin } from 'rxjs';
 import {
   CardModule, BadgeComponent, ButtonDirective,
-  GridModule
+  GridModule, ModalModule
 } from '@coreui/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faArrowLeft, faMapMarkerAlt, faCalendarAlt, faGavel,
   faHandshake, faDollarSign, faPaw, faInfoCircle,
-  faPencil, faPlay, faStop, faLink, faPaperPlane
+  faPencil, faPlay, faStop, faLink, faPaperPlane, faFileInvoiceDollar,
+  faFileCircleCheck
 } from '@fortawesome/free-solid-svg-icons';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { LoteService } from '../../../core/services/lote.service';
@@ -27,6 +28,7 @@ import {
 } from '../../../core/models/entities.model';
 import { FaturaEnvioService } from '../../../core/services/fatura-envio.service';
 import { MonitorLotesComponent } from '../../lote/lote-monitor/monitor-lotes.component';
+import { CompradorResumo, RelatorioService, VendedorResumo } from '../../../core/services/relatorio.service';
 
 interface LeilaoResumo {
   id: number;
@@ -64,7 +66,7 @@ interface LeilaoResumo {
   imports: [
     CommonModule, RouterModule,
     CardModule, BadgeComponent, ButtonDirective,
-    GridModule,
+    GridModule, ModalModule,
     FontAwesomeModule,
     MonitorLotesComponent
   ],
@@ -78,6 +80,7 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
   private alert = inject(AlertService);
   private route = inject(ActivatedRoute);
   private zone = inject(NgZone);
+  private cdr = inject(ChangeDetectorRef);
   auth = inject(AuthService);
 
   faArrowLeft = faArrowLeft;
@@ -93,9 +96,22 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
   faStop = faStop;
   faLink       = faLink;
   faPaperPlane = faPaperPlane;
+  faFileInvoiceDollar = faFileInvoiceDollar;
+  faFileCircleCheck = faFileCircleCheck;
 
   faturasLog: Record<string, FaturaEnvioLog> = {};
   private faturaEnvioService = inject(FaturaEnvioService);
+  private relatorioService = inject(RelatorioService);
+
+  faturasVisivel = false;
+  dadosLeilaoVisivel = false;
+  tipoFatura?: 'COMPRA' | 'VENDA';
+  compradores: CompradorResumo[] = [];
+  vendedores: VendedorResumo[] = [];
+  carregandoPessoas = false;
+  gerandoFatura?: string;
+  gerandoLiberacao?: string;
+  pessoasCarregadas = false;
 
   resumo?: LeilaoResumo;
   detalhes?: LeilaoDetalhes;
@@ -205,6 +221,7 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
         this.atualizarLotesDoMonitor(this.resumo.lotes);
         this.loading$.next(false);
         if (this.isFinalizado) {
+          this.carregarPessoasDasFaturas();
           this.faturaEnvioService.buscarLogs(this.leilaoId).subscribe({
             next: (logs) => { this.faturasLog = logs; },
             error: () => {}
@@ -238,6 +255,91 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.executarEnvioGeral(false);
+  }
+
+  abrirFaturas(): void {
+    this.faturasVisivel = true;
+    this.tipoFatura = undefined;
+    this.carregarPessoasDasFaturas();
+  }
+
+  fecharFaturas(): void {
+    this.faturasVisivel = false;
+    this.tipoFatura = undefined;
+  }
+
+  selecionarTipoFatura(tipo: 'COMPRA' | 'VENDA', marcado: boolean): void {
+    this.tipoFatura = marcado ? tipo : undefined;
+    if (marcado) this.carregarPessoasDasFaturas();
+  }
+
+  private carregarPessoasDasFaturas(): void {
+    if (this.pessoasCarregadas || this.carregandoPessoas) return;
+
+    this.carregandoPessoas = true;
+    forkJoin({
+      compradores: this.relatorioService.getCompradoresDoLeilao(this.leilaoId),
+      vendedores: this.relatorioService.getVendedoresDoLeilao(this.leilaoId)
+    }).subscribe({
+      next: ({ compradores, vendedores }) => {
+        this.compradores = compradores;
+        this.vendedores = vendedores;
+        this.pessoasCarregadas = true;
+        this.carregandoPessoas = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoPessoas = false;
+        this.cdr.detectChanges();
+        this.alert.error('Erro ao carregar compradores e vendedores do leilão');
+      }
+    });
+  }
+
+  gerarFatura(tipo: 'COMPRA' | 'VENDA', pessoa: CompradorResumo | VendedorResumo): void {
+    this.gerandoFatura = `${tipo}-${pessoa.id}`;
+    const geracao = tipo === 'COMPRA'
+      ? this.relatorioService.gerarFaturaCompra(this.leilaoId, pessoa.id)
+      : this.relatorioService.gerarFaturaVenda(this.leilaoId, pessoa.id);
+
+    geracao.subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        this.gerandoFatura = undefined;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.gerandoFatura = undefined;
+        this.cdr.detectChanges();
+        this.alert.error(`Erro ao gerar a fatura de ${tipo === 'COMPRA' ? 'compra' : 'venda'} de ${pessoa.nome}.`);
+      }
+    });
+  }
+
+  gerarLiberacao(tipo: 'COMPRA' | 'VENDA', pessoa: CompradorResumo | VendedorResumo): void {
+    this.gerandoLiberacao = `${tipo}-${pessoa.id}`;
+    const geracao = tipo === 'COMPRA'
+      ? this.relatorioService.gerarLiberacaoCompra(this.leilaoId, pessoa.id)
+      : this.relatorioService.gerarLiberacaoRetorno(this.leilaoId, pessoa.id);
+
+    geracao.subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+        this.gerandoLiberacao = undefined;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.gerandoLiberacao = undefined;
+        this.cdr.detectChanges();
+        this.alert.error(
+          `Erro ao gerar a liberação de ${tipo === 'COMPRA' ? 'compra' : 'retorno'} de ${pessoa.nome}.`
+        );
+      }
+    });
   }
 
   private executarEnvioGeral(apenasNaoEnviados: boolean): void {
@@ -310,7 +412,10 @@ export class LeilaoViewComponent implements OnInit, OnDestroy {
 
     const lotesVendidos = lotes.filter(l => this.loteContaComoVendido(l));
     const lotesRestantes = lotes.filter(l => !this.loteContaComoVendido(l));
-    const movimentacaoBruta = lotesVendidos.reduce((sum, l) => sum + (l.precoCompra || 0), 0);
+    const movimentacaoBruta = lotesVendidos.reduce(
+      (sum, l) => sum + ((l.precoCompra || 0) * (l.qntdAnimais || 0)),
+      0
+    );
 
     this.resumo = {
       ...this.resumo,

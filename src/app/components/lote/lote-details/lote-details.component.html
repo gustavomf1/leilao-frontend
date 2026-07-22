@@ -122,17 +122,28 @@
             Campo obrigatório
           </span>
         </div>
-
         <!-- Categoria -->
         <div class="field-wrap field-wrap--md">
           <label class="field-label">Categoria <span class="req">*</span></label>
-          <input class="field-input" formControlName="categoriaAnimal" placeholder="Ex: Bezerro, Novilha..." />
+          <div class="select-wrap" *ngIf="opcoesCategoriaAdulta.length; else categoriaAutomatica">
+            <select class="field-select" formControlName="categoriaAnimal">
+              <option *ngFor="let categoria of opcoesCategoriaAdulta" [value]="categoria">
+                {{ categoria }}
+              </option>
+            </select>
+            <svg class="select-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </div>
+          <ng-template #categoriaAutomatica>
+            <input class="field-input" formControlName="categoriaAnimal" readonly />
+          </ng-template>
           <span class="field-error"
             *ngIf="form.get('categoriaAnimal')?.invalid && form.get('categoriaAnimal')?.touched">
             Campo obrigatório
           </span>
         </div>
-
         <!-- Peso -->
         <div class="field-wrap field-wrap--sm">
           <label class="field-label">Peso <span class="field-unit">(kg)</span> <span class="req">*</span></label>
@@ -145,7 +156,29 @@
       </div>
     </div>
 
-    <!-- ══ SEÇÃO 2: Vendedor & Leilão ════════════════════════ -->
+    <!-- ══ SEÇÃO 2: Observações ══════════════════════════════ -->
+    <div class="form-section">
+      <div class="section-label">
+        <span class="section-label__icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+        </span>
+        Observações
+      </div>
+      <div class="fields-grid">
+        <div class="field-wrap field-wrap--full">
+          <textarea class="field-input field-input--textarea" formControlName="obs"
+            placeholder="Observações adicionais sobre o lote..." rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SEÇÃO 3: Vendedor & Leilão ════════════════════════ -->
     <div class="form-section">
       <div class="section-label">
         <span class="section-label__icon">
@@ -245,7 +278,7 @@
       </div>
     </div>
 
-    <!-- ══ SEÇÃO 3: Financeiro ════════════════════════════════ -->
+    <!-- ══ SEÇÃO 4: Financeiro ════════════════════════════════ -->
     <div class="form-section form-section--finance" *ngIf="exibirFinanceiro">
       <div class="section-label section-label--finance">
         <span class="section-label__icon">
@@ -316,28 +349,6 @@
           <small class="field-caption">Preenchido ao finalizar o leilão.</small>
         </div>
 
-      </div>
-    </div>
-
-    <!-- ══ SEÇÃO 4: Observações ══════════════════════════════ -->
-    <div class="form-section">
-      <div class="section-label">
-        <span class="section-label__icon">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10 9 9 9 8 9" />
-          </svg>
-        </span>
-        Observações
-      </div>
-      <div class="fields-grid">
-        <div class="field-wrap field-wrap--full">
-          <textarea class="field-input field-input--textarea" formControlName="obs"
-            placeholder="Observações adicionais sobre o lote..." rows="3"></textarea>
-        </div>
       </div>
     </div>
 
@@ -573,7 +584,8 @@
               <strong>Vendedor:</strong> {{ loteCarregado?.vendedorNome || loteCarregado?.vendedorNomeRascunho || '—' }}
             </span>
             <span class="pix-contexto__item">
-              <strong>Comprador:</strong> {{ validacaoCompradorSelecionado?.nome || loteCarregado?.compradorNome || loteCarregado?.compradorNomeRascunho || '—' }}
+              <strong>Comprador:</strong> {{ validacaoCompradorSelecionado?.nome || loteCarregado?.compradorNome ||
+              loteCarregado?.compradorNomeRascunho || '—' }}
             </span>
           </div>
 
@@ -588,12 +600,12 @@
                   Vendedor não possui PIX cadastrado
                 </div>
                 <button type="button" cDropdownItem *ngFor="let pix of pixDoVendedor"
-                        [active]="loteCarregado?.vendedorPixId === pix.pixId"
-                        (click)="selecionarPix(pix)">
+                  [active]="loteCarregado?.vendedorPixId === pix.pixId" (click)="selecionarPix(pix)">
                   {{ formatarPix(pix.tipo, pix.chave) }}
                 </button>
                 <hr cDropdownDivider *ngIf="loteCarregado?.vendedorPixId != null" />
-                <button type="button" cDropdownItem *ngIf="loteCarregado?.vendedorPixId != null" (click)="selecionarPix(null)">
+                <button type="button" cDropdownItem *ngIf="loteCarregado?.vendedorPixId != null"
+                  (click)="selecionarPix(null)">
                   Nenhum
                 </button>
               </ng-container>
@@ -782,8 +794,11 @@
   </c-modal-footer>
 </c-modal>
 
-<c-modal *ngIf="modalNovoPixVisivel" [visible]="modalNovoPixVisivel" (visibleChange)="modalNovoPixVisivel = $event" alignment="center">
-  <c-modal-header><h5 cModalTitle>Cadastrar Novo PIX</h5></c-modal-header>
+<c-modal *ngIf="modalNovoPixVisivel" [visible]="modalNovoPixVisivel" (visibleChange)="modalNovoPixVisivel = $event"
+  alignment="center">
+  <c-modal-header>
+    <h5 cModalTitle>Cadastrar Novo PIX</h5>
+  </c-modal-header>
   <c-modal-body>
     <div class="mb-3">
       <label class="form-label">Tipo</label>
@@ -801,7 +816,9 @@
     </div>
   </c-modal-body>
   <c-modal-footer>
-    <button cButton color="secondary" variant="ghost" (click)="fecharModalNovoPix()"><fa-icon [icon]="faTimes" class="me-1"></fa-icon> Cancelar</button>
-    <button cButton color="primary" [disabled]="!novoPixTipo || !novoPixChave.trim()" (click)="confirmarNovoPix()"><fa-icon [icon]="faPlus" class="me-1"></fa-icon> Salvar</button>
+    <button cButton color="secondary" variant="ghost" (click)="fecharModalNovoPix()"><fa-icon [icon]="faTimes"
+        class="me-1"></fa-icon> Cancelar</button>
+    <button cButton color="primary" [disabled]="!novoPixTipo || !novoPixChave.trim()"
+      (click)="confirmarNovoPix()"><fa-icon [icon]="faPlus" class="me-1"></fa-icon> Salvar</button>
   </c-modal-footer>
 </c-modal>

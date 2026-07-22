@@ -125,6 +125,15 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
     return !this.isManejoMode && !this.isValidacaoEscritorio && !this.isValidacaoLance;
   }
 
+  get opcoesCategoriaAdulta(): string[] {
+    const idade = Number(this.form?.get('idadeEmMeses')?.value);
+    if (idade <= 36) return [];
+
+    return this.form?.get('sexo')?.value === 'Macho'
+      ? ['Boi', 'Touro']
+      : ['Vaca', 'Vaca Parida'];
+  }
+
   get tituloPagina(): string {
     if (this.isValidacaoEscritorio) return 'Validar Lote';
     if (this.isValidacaoLance) return 'Validar Lance';
@@ -195,7 +204,9 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
       const sexo = this.form.get('sexo')?.value;
       const idade = this.form.get('idadeEmMeses')?.value;
       const categoria = this.calcularCategoria(sexo, Number(idade));
-      if (categoria) {
+      const categoriaAtual = this.form.get('categoriaAnimal')?.value;
+      const opcoesAdultas = this.opcoesCategoriaAdulta;
+      if (categoria && (!opcoesAdultas.length || !opcoesAdultas.includes(categoriaAtual))) {
         this.form.get('categoriaAnimal')?.setValue(categoria, { emitEvent: false });
       }
     };
@@ -644,7 +655,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
     if (this.entityId == null) return;
     this.loteFotoService.listar(this.entityId).subscribe({
       next: (fotos) => { this.galeriaFotos = fotos; this.cdr.markForCheck(); },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -697,6 +708,8 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
     this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
     this.cdr.markForCheck();
   }
+
+
 
   private calcularCategoria(sexo: string, idadeEmMeses: number): string {
     if (!sexo || idadeEmMeses == null) return '';

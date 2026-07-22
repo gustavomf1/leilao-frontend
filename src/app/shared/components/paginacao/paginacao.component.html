@@ -7,7 +7,7 @@
          [(ngModel)]="termoBusca"
          (ngModelChange)="onBuscaDigitada()" />
 
-  <select cFormSelect class="w-auto" [ngModel]="tamanhoPagina"
+  <select cSelect class="w-auto" [ngModel]="tamanhoPagina"
           (ngModelChange)="onTamanhoAlterado($event)">
     <option *ngFor="let t of tamanhosDisponiveis" [value]="t">{{ t }} por página</option>
   </select>
