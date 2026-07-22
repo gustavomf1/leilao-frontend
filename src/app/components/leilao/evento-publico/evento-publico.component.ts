@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faGavel, faHashtag, faPaw, faDollarSign,
-  faUser, faCheck, faLayerGroup
+  faUser, faCheck, faLayerGroup, faSearch
 } from '@fortawesome/free-solid-svg-icons';
 import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
@@ -47,6 +47,7 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   confirmacaoAberta = false;
   sucessoModalAberto = false;
   enviandoLance = false;
+  buscaCodigo = '';
 
   readonly faGavel      = faGavel;
   readonly faHashtag    = faHashtag;
@@ -55,9 +56,13 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   readonly faUser       = faUser;
   readonly faCheck      = faCheck;
   readonly faLayerGroup = faLayerGroup;
+  readonly faSearch     = faSearch;
 
   get lotesFiltrados(): Lote[] {
-    return this.lotes$.value.filter(l => l.status === 'AGUARDANDO_LANCE').sort(compararCodigoLote);
+    const lotes = this.lotes$.value.filter(l => l.status === 'AGUARDANDO_LANCE').sort(compararCodigoLote);
+    const termo = this.buscaCodigo.trim().toLowerCase();
+    if (!termo) return lotes;
+    return lotes.filter(l => (l.codigo ?? '').toLowerCase().startsWith(termo));
   }
 
   ngOnInit() {

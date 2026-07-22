@@ -18,6 +18,17 @@
     </div>
   </div>
 
+  <!-- Busca por código do lote -->
+  <div class="ep-busca">
+    <fa-icon [icon]="faSearch" class="ep-busca-icon"></fa-icon>
+    <input
+      type="text"
+      class="ep-busca-input"
+      placeholder="Buscar por código do lote (ex: 1, 1A)..."
+      [(ngModel)]="buscaCodigo"
+      autocomplete="off" />
+  </div>
+
   <!-- Alerta de erro -->
   <div *ngIf="erro" class="ep-alert ep-alert-erro">{{ erro }}</div>
   <div *ngIf="sucesso" class="ep-alert ep-alert-sucesso">{{ sucesso }}</div>
@@ -28,7 +39,7 @@
   <ng-container *ngIf="!loading">
     <!-- Sem lotes -->
     <div *ngIf="lotesFiltrados.length === 0" class="ep-vazio">
-      Nenhum lote aguardando lance no momento.
+      {{ buscaCodigo.trim() ? 'Nenhum lote encontrado com esse código.' : 'Nenhum lote aguardando lance no momento.' }}
     </div>
 
     <!-- Grid de lotes -->

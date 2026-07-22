@@ -59,3 +59,59 @@ describe('EventoPublicoComponent — galeria de fotos por lote', () => {
     expect(component.sucesso).toContain('LOTE-L-001');
   });
 });
+
+describe('EventoPublicoComponent — busca por código do lote', () => {
+  let component: EventoPublicoComponent;
+  let fixture: ComponentFixture<EventoPublicoComponent>;
+
+  const lotesMock = [
+    { id: 1, codigo: '1', status: 'AGUARDANDO_LANCE' },
+    { id: 2, codigo: '1A', status: 'AGUARDANDO_LANCE' },
+    { id: 3, codigo: '2', status: 'AGUARDANDO_LANCE' },
+    { id: 4, codigo: '10', status: 'AGUARDANDO_LANCE' },
+  ];
+
+  const mockLoteService = {
+    listarPorLeilaoPublico: vi.fn().mockReturnValue(of(lotesMock)),
+    listarFotosPublico: vi.fn().mockReturnValue(of([])),
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [EventoPublicoComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LoteService, useValue: mockLoteService },
+        { provide: LoteWebsocketService, useValue: { conectar: vi.fn(), desconectar: vi.fn(), novoLoteSubject: new Subject() } },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '1' } } } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(EventoPublicoComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('sem busca, mostra todos os lotes aguardando lance', () => {
+    expect(component.lotesFiltrados.map(l => l.codigo)).toEqual(['1', '1A', '2', '10']);
+  });
+
+  it('buscar "1" mostra os códigos que começam com 1 (1, 1A, 10), mas não o 2', () => {
+    component.buscaCodigo = '1';
+    expect(component.lotesFiltrados.map(l => l.codigo)).toEqual(['1', '1A', '10']);
+  });
+
+  it('buscar "1a" (minúsculo) mostra só o lote 1A', () => {
+    component.buscaCodigo = '1a';
+    expect(component.lotesFiltrados.map(l => l.codigo)).toEqual(['1A']);
+  });
+
+  it('busca sem resultado exibe mensagem específica, sem confundir com "nenhum lote aguardando lance"', () => {
+    component.buscaCodigo = '999';
+    fixture.detectChanges();
+    expect(component.lotesFiltrados.length).toBe(0);
+    const texto = fixture.nativeElement.querySelector('.ep-vazio')?.textContent.trim();
+    expect(texto).toContain('Nenhum lote encontrado com esse código');
+  });
+});
