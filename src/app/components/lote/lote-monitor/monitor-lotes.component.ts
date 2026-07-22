@@ -16,7 +16,7 @@ import {
   faCircle, faLayerGroup, faHashtag, faTag,
   faPaw, faDollarSign, faUser, faHorse,
   faPlus, faPencil, faArrowRight, faTrash, faCheck, faEye, faTimes, faShare, faFileInvoice,
-  faPaperPlane, faSpinner, faCheckDouble
+  faPaperPlane, faSpinner, faCheckDouble, faSearch
 } from '@fortawesome/free-solid-svg-icons';
 import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR, FaturaEnvioLog } from '../../../core/models/entities.model';
 import { LoteCodigoPipe, compararCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
@@ -54,6 +54,7 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   }
 
   filtroStatus: StatusLote | 'TODOS' | 'NAO_VENDIDO' = 'TODOS';
+  buscaCodigo = '';
   precoInput: Record<number, number | null> = {};
 
   readonly STATUS_LABELS = STATUS_LOTE_LABELS;
@@ -88,6 +89,7 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
   readonly faPaperPlane  = faPaperPlane;
   readonly faSpinner     = faSpinner;
   readonly faCheckDouble = faCheckDouble;
+  readonly faSearch      = faSearch;
 
   dropdownFaturaAberto: Record<number, boolean> = {};
 
@@ -148,9 +150,14 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
 
   get lotesFiltrados(): Lote[] {
     const lotes = this.lotesDoContexto;
-    if (this.filtroStatus === 'TODOS') return [...lotes].sort(compararCodigoLote);
-    if (this.filtroStatus === 'NAO_VENDIDO') return lotes.filter(l => l.naoVendidoNoLeilao === 'S').sort(compararCodigoLote);
-    return lotes.filter(l => l.status === this.filtroStatus).sort(compararCodigoLote);
+    let filtrados: Lote[];
+    if (this.filtroStatus === 'TODOS') filtrados = [...lotes].sort(compararCodigoLote);
+    else if (this.filtroStatus === 'NAO_VENDIDO') filtrados = lotes.filter(l => l.naoVendidoNoLeilao === 'S').sort(compararCodigoLote);
+    else filtrados = lotes.filter(l => l.status === this.filtroStatus).sort(compararCodigoLote);
+
+    const termo = this.buscaCodigo.trim().toLowerCase();
+    if (!termo) return filtrados;
+    return filtrados.filter(l => (l.codigo ?? '').toLowerCase().startsWith(termo));
   }
 
   get novoLoteParams(): Params | null {

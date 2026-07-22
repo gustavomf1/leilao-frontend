@@ -50,6 +50,17 @@
 
     <c-card-body class="p-3">
 
+      <!-- Busca por código do lote -->
+      <div class="monitor-busca">
+        <fa-icon [icon]="faSearch" class="monitor-busca-icon"></fa-icon>
+        <input
+          type="text"
+          class="monitor-busca-input"
+          placeholder="Buscar por código do lote (ex: 1, 1A)..."
+          [(ngModel)]="buscaCodigo"
+          autocomplete="off" />
+      </div>
+
       <!-- Loading State: lotes$ === null -->
       <ng-container *ngIf="(lotes$ | async) !== null; else carregando">
 
@@ -58,7 +69,9 @@
           <div class="empty-icon">
             <fa-icon [icon]="faHorse" size="3x"></fa-icon>
           </div>
-          <p class="empty-text">Nenhum lote neste status.</p>
+          <p class="empty-text">
+            {{ buscaCodigo.trim() ? 'Nenhum lote encontrado com esse código.' : 'Nenhum lote neste status.' }}
+          </p>
         </div>
 
       <!-- Grid de Lotes -->

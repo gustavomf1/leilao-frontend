@@ -100,3 +100,58 @@ describe('MonitorLotesComponent — código do lote com prefixo fixo', () => {
     expect(fixture.nativeElement.textContent).toContain('Enviar para próximo leilão — LOTE-L-005');
   });
 });
+
+describe('MonitorLotesComponent — busca por código do lote', () => {
+  let component: MonitorLotesComponent;
+  let fixture: ComponentFixture<MonitorLotesComponent>;
+
+  const lotesMock = [
+    { id: 1, codigo: '1', status: 'AGUARDANDO_LANCE' },
+    { id: 2, codigo: '1A', status: 'AGUARDANDO_LANCE' },
+    { id: 3, codigo: '2', status: 'AGUARDANDO_LANCE' },
+    { id: 4, codigo: '10', status: 'AGUARDANDO_LANCE' },
+  ] as any;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MonitorLotesComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: LoteWebsocketService, useValue: { novoLoteSubject: new Subject() } },
+        { provide: LoteService, useValue: { listar: vi.fn().mockReturnValue(of(lotesMock)) } },
+        { provide: LeilaoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+        { provide: AuthService, useValue: { isAdmin: vi.fn().mockReturnValue(true), isManejo: vi.fn().mockReturnValue(false), hasPermission: vi.fn().mockReturnValue(true) } },
+        { provide: AlertService, useValue: { error: vi.fn(), success: vi.fn(), confirm: vi.fn() } },
+        { provide: LoteFotoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(MonitorLotesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('sem busca, mostra todos os lotes do filtro de status atual', () => {
+    expect(component.lotesFiltrados.map(l => l.codigo)).toEqual(['1', '1A', '2', '10']);
+  });
+
+  it('buscar "1" mostra os códigos que começam com 1 (1, 1A, 10), mas não o 2', () => {
+    component.buscaCodigo = '1';
+    expect(component.lotesFiltrados.map(l => l.codigo)).toEqual(['1', '1A', '10']);
+  });
+
+  it('buscar "1a" (minúsculo) mostra só o lote 1A', () => {
+    component.buscaCodigo = '1a';
+    expect(component.lotesFiltrados.map(l => l.codigo)).toEqual(['1A']);
+  });
+
+  it('busca sem resultado exibe mensagem específica de busca', () => {
+    component.buscaCodigo = '999';
+    fixture.detectChanges();
+    expect(component.lotesFiltrados.length).toBe(0);
+    const texto = fixture.nativeElement.querySelector('.empty-text')?.textContent.trim();
+    expect(texto).toContain('Nenhum lote encontrado com esse código');
+  });
+});
