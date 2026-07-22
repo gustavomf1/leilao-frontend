@@ -52,7 +52,7 @@
 
           <div class="ja-form-field">
             <label cLabel for="tipoLeilao">Tipo de Leilão *</label>
-            <select cFormControl id="tipoLeilao" formControlName="tipoLeilao">
+            <select cSelect id="tipoLeilao" formControlName="tipoLeilao">
               <option value="" disabled>Selecione...</option>
               <option *ngFor="let tipo of tiposLeilao" [value]="tipo.value">{{ tipo.label }}</option>
             </select>
@@ -63,7 +63,7 @@
 
           <div class="ja-form-field">
             <label cLabel for="especieId">Espécie *</label>
-            <select cFormControl id="especieId" formControlName="especieId">
+            <select cSelect id="especieId" formControlName="especieId">
               <option [ngValue]="null" disabled>Selecione...</option>
               <option *ngFor="let especie of especies" [ngValue]="especie.id">{{ especie.nome }}</option>
             </select>
@@ -103,7 +103,7 @@
 
           <div class="ja-form-field">
             <label cLabel for="uf">UF *</label>
-            <select cFormControl id="uf" formControlName="uf">
+            <select cSelect id="uf" formControlName="uf">
               <option value="" disabled>Selecione...</option>
               <option *ngFor="let uf of ufs" [value]="uf">{{ uf }}</option>
             </select>
@@ -172,7 +172,7 @@
 
           <div class="ja-form-field">
             <label cLabel for="leiloeiroId">Leiloeiro</label>
-            <select cFormControl id="leiloeiroId" formControlName="leiloeiroId">
+            <select cSelect id="leiloeiroId" formControlName="leiloeiroId">
               <option [ngValue]="null">Selecione o leiloeiro</option>
               <option *ngFor="let leiloeiro of leiloeiros" [ngValue]="leiloeiro.id">
                 {{ leiloeiro.nome }}

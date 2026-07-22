@@ -104,7 +104,7 @@
 
           <div class="ja-form-field">
             <label cLabel for="tipoCondicao">Tipo</label>
-            <select cFormControl id="tipoCondicao" formControlName="tipoCondicao">
+            <select cSelect id="tipoCondicao" formControlName="tipoCondicao">
               <option [ngValue]="null">— Sem tipo específico —</option>
               <option *ngFor="let tipo of tiposCondicao" [value]="tipo">{{ tipo }}</option>
             </select>
@@ -112,7 +112,7 @@
 
           <div class="ja-form-field">
             <label cLabel for="aceiteIntegrado">Aceite Integrado (Comissão Venda)</label>
-            <select cFormControl id="aceiteIntegrado" formControlName="aceiteIntegrado">
+            <select cSelect id="aceiteIntegrado" formControlName="aceiteIntegrado">
               <option *ngFor="let aceite of aceitesIntegrado" [value]="aceite.value">{{ aceite.label }}</option>
             </select>
             <span class="form-hint">Como descontar a comissão de venda nas parcelas</span>

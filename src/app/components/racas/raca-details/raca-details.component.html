@@ -39,7 +39,7 @@
           </div>
           <div class="ja-form-field field-full">
             <label cLabel for="especieId">Espécie *</label>
-            <select cFormControl id="especieId" formControlName="especieId">
+            <select cSelect id="especieId" formControlName="especieId">
               <option [ngValue]="null" disabled>Selecione uma espécie</option>
               <option *ngFor="let especie of especies" [ngValue]="especie.id">{{ especie.nome }}</option>
             </select>

@@ -93,7 +93,7 @@
 
           <div class="ja-form-field">
             <label cLabel for="uf">UF *</label>
-            <select cFormControl id="uf" formControlName="uf">
+            <select cSelect id="uf" formControlName="uf">
               <option value="" disabled>Selecione...</option>
               <option *ngFor="let uf of ufs" [value]="uf">{{ uf }}</option>
             </select>

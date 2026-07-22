@@ -12,6 +12,38 @@
   transition: width var(--ja-dur-slow) var(--ja-ease-out);
 }
 
+.resumo-compacto table {
+  font-size: .825rem;
+}
+
+.resumo-compacto th {
+  color: var(--ja-fg-3);
+  font-size: .7rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.resumo-compacto td {
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.dados-leilao-table th {
+  color: var(--ja-fg-3);
+  width: 42%;
+}
+
+.dados-leilao-table th,
+.dados-leilao-table td {
+  padding: .45rem .65rem;
+}
+
+.resumo-compacto th,
+.resumo-compacto td {
+  padding: .45rem .65rem;
+}
+
 // ─── Auction facts (grid de label/valor) ───
 .auction-facts {
   display: grid;

@@ -26,7 +26,7 @@
           <c-col [md]="6">
             <div class="mb-3">
               <label cLabel for="especieId">Especie *</label>
-              <select cFormControl id="especieId" formControlName="especieId">
+              <select cSelect id="especieId" formControlName="especieId">
                 <option [ngValue]="null">Selecione a especie...</option>
                 <option *ngFor="let especie of especies" [ngValue]="especie.id">{{ especie.nome }}</option>
               </select>
