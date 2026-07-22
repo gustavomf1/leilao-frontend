@@ -13,7 +13,7 @@ import { LoteWebsocketService } from '../../../core/services/lote-websocket.serv
 import { LoteFoto } from '../../../core/services/lote-foto.service';
 import { LoteFotosGaleriaComponent } from '../../lote/lote-fotos-galeria/lote-fotos-galeria.component';
 import { Lote } from '../../../core/models/entities.model';
-import { LoteCodigoPipe, formatarCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
+import { LoteCodigoPipe, formatarCodigoLote, compararCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
 
 type LanceConfirmacao = {
   lote: Lote;
@@ -57,7 +57,7 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
   readonly faLayerGroup = faLayerGroup;
 
   get lotesFiltrados(): Lote[] {
-    return this.lotes$.value.filter(l => l.status === 'AGUARDANDO_LANCE');
+    return this.lotes$.value.filter(l => l.status === 'AGUARDANDO_LANCE').sort(compararCodigoLote);
   }
 
   ngOnInit() {
