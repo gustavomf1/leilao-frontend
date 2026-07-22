@@ -645,6 +645,11 @@
   color: var(--text-muted);
 }
 
+.pix-toggle:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
 .pix-dropdown-menu {
   min-width: 260px;
   max-height: 240px;

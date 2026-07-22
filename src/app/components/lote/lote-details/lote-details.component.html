@@ -609,6 +609,36 @@
           </c-dropdown>
         </div>
 
+        <div class="field-wrap field-wrap--full">
+          <label class="field-label">Fazenda de Compra</label>
+
+          <c-dropdown [popperOptions]="{ placement: 'bottom-start' }">
+            <button cDropdownToggle type="button" class="pix-toggle"
+              [class.pix-toggle--readonly]="!validacaoCompradorId"
+              [disabled]="!validacaoCompradorId"
+              (click)="carregarFazendasDoComprador()">
+              {{ formatarFazenda(validacaoFazendaId) }}
+            </button>
+            <div cDropdownMenu class="pix-dropdown-menu">
+              <div *ngIf="fazendasCarregando" class="pix-dropdown-empty">Carregando...</div>
+              <ng-container *ngIf="!fazendasCarregando">
+                <div *ngIf="fazendasDoComprador.length === 0" class="pix-dropdown-empty">
+                  Comprador não possui fazenda cadastrada
+                </div>
+                <button type="button" cDropdownItem *ngFor="let fazenda of fazendasDoComprador"
+                  [active]="validacaoFazendaId === fazenda.id" (click)="selecionarFazenda(fazenda)">
+                  {{ fazenda.nome }}
+                </button>
+                <hr cDropdownDivider *ngIf="validacaoFazendaId != null" />
+                <button type="button" cDropdownItem *ngIf="validacaoFazendaId != null"
+                  (click)="selecionarFazenda(null)">
+                  Nenhuma
+                </button>
+              </ng-container>
+            </div>
+          </c-dropdown>
+        </div>
+
         <div class="field-wrap field-wrap--sm">
           <label class="field-label">Comissão Venda (%)</label>
           <input class="field-input" type="number" step="0.01" min="0" placeholder="padrão do leilão"

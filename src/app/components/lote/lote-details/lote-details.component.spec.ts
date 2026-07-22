@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 import { of } from 'rxjs';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -12,6 +12,7 @@ import { RacaService } from '../../../core/services/raca.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { PixService } from '../../../core/services/pix.service';
+import { FazendaService } from '../../../core/services/fazenda.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { UploadQueueService } from '../../../core/services/upload-queue.service';
 import { LoteFotoService } from '../../../core/services/lote-foto.service';
@@ -243,5 +244,125 @@ describe('LotesDetailsComponent — autocomplete de comprador não deve esconder
 
     expect(component.compradorFiltrados.length).toBe(0);
     expect(component.mostrarDropdownComprador).toBe(false);
+  });
+});
+
+describe('LotesDetailsComponent — fazenda de compra (seleção manual)', () => {
+  let component: LotesDetailsComponent;
+  let fixture: ComponentFixture<LotesDetailsComponent>;
+
+  const compradorMock = { id: 9, nome: 'Carlos Comprador', cidade: 'Cidade', uf: 'SP', cpfCnpj: '000.000.000-00' };
+  const outroCompradorMock = { id: 10, nome: 'Outro Comprador', cidade: 'Cidade', uf: 'SP', cpfCnpj: '111.111.111-11' };
+  const fazendasMock = [
+    { id: 1, nome: 'Fazenda Boa Vista', inscricao: '', cidade: 'Cidade', uf: 'SP', cpfCnpj: '' },
+    { id: 2, nome: 'Fazenda Santa Fé', inscricao: '', cidade: 'Cidade', uf: 'SP', cpfCnpj: '' },
+  ];
+
+  const mockLoteService = { salvar: vi.fn(), atualizar: vi.fn(), buscarPorId: vi.fn().mockReturnValue(of({})), validarFinal: vi.fn().mockReturnValue(of({})) };
+  const mockAuth = { isManejo: vi.fn().mockReturnValue(false), isAdmin: vi.fn().mockReturnValue(true), hasPermission: vi.fn().mockReturnValue(true) };
+  const listVazio = { listar: vi.fn().mockReturnValue(of([])) };
+  const mockClienteService = { listar: vi.fn().mockReturnValue(of([compradorMock, outroCompradorMock])) };
+  const mockFazendaService = { listarPorTitular: vi.fn().mockReturnValue(of(fazendasMock)) };
+  const mockAlert = { error: vi.fn(), success: vi.fn(), confirm: vi.fn() };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LotesDetailsComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LoteService, useValue: mockLoteService },
+        { provide: AuthService, useValue: mockAuth },
+        { provide: EspecieService, useValue: listVazio },
+        { provide: RacaService, useValue: { listarPorEspecie: vi.fn().mockReturnValue(of([])) } },
+        { provide: LeilaoService, useValue: listVazio },
+        { provide: ClienteService, useValue: mockClienteService },
+        { provide: PixService, useValue: listVazio },
+        { provide: FazendaService, useValue: mockFazendaService },
+        { provide: AlertService, useValue: mockAlert },
+        { provide: UploadQueueService, useValue: { assignLoteId: vi.fn(), clearOrphans: vi.fn(), queue$: of([]), completed$: of() } },
+        { provide: LoteFotoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => null }, queryParamMap: { get: () => null } } } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LotesDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('carrega as fazendas do comprador ao abrir o dropdown', () => {
+    component.selecionarValidacaoComprador(compradorMock as any);
+    component.carregarFazendasDoComprador();
+
+    expect(mockFazendaService.listarPorTitular).toHaveBeenCalledWith(9);
+    expect(component.fazendasDoComprador).toEqual(fazendasMock);
+  });
+
+  it('reseta a fazenda selecionada ao trocar de comprador', () => {
+    component.selecionarValidacaoComprador(compradorMock as any);
+    component.carregarFazendasDoComprador();
+    component.selecionarFazenda(fazendasMock[0] as any);
+    expect(component.validacaoFazendaId).toBe(1);
+
+    component.selecionarValidacaoComprador(outroCompradorMock as any);
+
+    expect(component.validacaoFazendaId).toBeNull();
+    expect(component.fazendasDoComprador).toEqual([]);
+  });
+});
+
+describe('LotesDetailsComponent — fazenda de compra (hidratação e envio)', () => {
+  let component: LotesDetailsComponent;
+  let fixture: ComponentFixture<LotesDetailsComponent>;
+
+  const compradorMock = { id: 9, nome: 'Carlos Comprador', cidade: 'Cidade', uf: 'SP', cpfCnpj: '000.000.000-00' };
+
+  const mockLoteService = {
+    salvar: vi.fn(), atualizar: vi.fn(),
+    buscarPorId: vi.fn().mockReturnValue(of({ compradorId: 9, fazendaId: 2, fazendaNome: 'Fazenda Santa Fé' })),
+    validarFinal: vi.fn().mockReturnValue(of({})),
+  };
+  const mockAuth = { isManejo: vi.fn().mockReturnValue(false), isAdmin: vi.fn().mockReturnValue(true), hasPermission: vi.fn().mockReturnValue(true) };
+  const listVazio = { listar: vi.fn().mockReturnValue(of([])) };
+  const mockClienteService = { listar: vi.fn().mockReturnValue(of([compradorMock])) };
+  const mockFazendaService = { listarPorTitular: vi.fn().mockReturnValue(of([])) };
+  const mockAlert = { error: vi.fn(), success: vi.fn(), confirm: vi.fn() };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LotesDetailsComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LoteService, useValue: mockLoteService },
+        { provide: AuthService, useValue: mockAuth },
+        { provide: EspecieService, useValue: listVazio },
+        { provide: RacaService, useValue: { listarPorEspecie: vi.fn().mockReturnValue(of([])) } },
+        { provide: LeilaoService, useValue: listVazio },
+        { provide: ClienteService, useValue: mockClienteService },
+        { provide: PixService, useValue: listVazio },
+        { provide: FazendaService, useValue: mockFazendaService },
+        { provide: AlertService, useValue: mockAlert },
+        { provide: UploadQueueService, useValue: { assignLoteId: vi.fn(), clearOrphans: vi.fn(), queue$: of([]), completed$: of() } },
+        { provide: LoteFotoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: (k: string) => k === 'id' ? '1' : null }, queryParamMap: { get: () => null } } } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LotesDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('hidrata validacaoFazendaId a partir do lote carregado', () => {
+    expect(component.validacaoFazendaId).toBe(2);
+  });
+
+  it('confirmarValidacaoFinal envia fazendaId no payload', () => {
+    component.confirmarValidacaoFinal();
+    expect(mockLoteService.validarFinal).toHaveBeenCalledWith(1, expect.objectContaining({ fazendaId: 2 }));
   });
 });
