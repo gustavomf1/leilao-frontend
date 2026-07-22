@@ -99,6 +99,17 @@ describe('LotesDetailsComponent — fotos no cadastro (manejo)', () => {
     component.ngOnDestroy();
     expect(mockUploadQueue.clearOrphans).not.toHaveBeenCalled();
   });
+
+  it('resumoParaConfirmacao formata o código com o prefixo LOTE-', () => {
+    component.form.patchValue({
+      codigo: '001', qntdAnimais: 1, sexo: 'Macho', idadeEmMeses: 10,
+      peso: 200, raca: 'Nelore', especieId: 1, categoriaAnimal: 'Bezerro'
+    });
+
+    const codigoEntry = component.resumoParaConfirmacao.find(item => item.label === 'Código');
+
+    expect(codigoEntry?.valor).toBe('LOTE-001');
+  });
 });
 
 describe('LotesDetailsComponent — galeria de fotos na edição', () => {
