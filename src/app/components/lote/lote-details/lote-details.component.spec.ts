@@ -311,6 +311,19 @@ describe('LotesDetailsComponent — fazenda de compra (seleção manual)', () =>
     expect(component.validacaoFazendaId).toBeNull();
     expect(component.fazendasDoComprador).toEqual([]);
   });
+
+  it('limparValidacaoComprador reseta também o estado de fazenda', () => {
+    component.selecionarValidacaoComprador(compradorMock as any);
+    component.carregarFazendasDoComprador();
+    component.selecionarFazenda(fazendasMock[0] as any);
+    expect(component.validacaoFazendaId).toBe(1);
+
+    component.limparValidacaoComprador();
+
+    expect(component.validacaoCompradorId).toBeNull();
+    expect(component.validacaoFazendaId).toBeNull();
+    expect(component.fazendasDoComprador).toEqual([]);
+  });
 });
 
 describe('LotesDetailsComponent — fazenda de compra (hidratação e envio)', () => {

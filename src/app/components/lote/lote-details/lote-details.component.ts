@@ -433,6 +433,16 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
     setTimeout(() => { this.mostrarDropdownValidacaoComprador = false; this.cdr.markForCheck(); }, 180);
   }
 
+  limparValidacaoComprador(): void {
+    this.validacaoCompradorSelecionado = null;
+    this.validacaoCompradorBusca = '';
+    this.validacaoCompradorId = null;
+    this.fazendasDoComprador = [];
+    this.fazendasCarregado = false;
+    this.validacaoFazendaId = null;
+    this.cdr.markForCheck();
+  }
+
   confirmarValidacaoFinal() {
     if (!this.validacaoCompradorId) {
       this.alert.error('Selecione o comprador para validar o lote.');
