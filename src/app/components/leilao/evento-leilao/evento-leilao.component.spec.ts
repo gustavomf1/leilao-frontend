@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 import { of, Subject } from 'rxjs';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -55,5 +55,23 @@ describe('EventoLeilaoComponent — galeria de fotos', () => {
     component.fecharGaleria();
     expect(component.galeriaVisivel).toBe(false);
     expect(component.galeriaFotos).toEqual([]);
+  });
+
+  it('confirmarLance formata o código do lote com o prefixo LOTE- nas mensagens de alerta', () => {
+    const alertConfirm = vi.fn((_msg: string, cb: () => void) => cb());
+    (component as any).alert = { ...(component as any).alert, confirm: alertConfirm, success: vi.fn() };
+    (component as any).loteService.registrarPreco = vi.fn().mockReturnValue(of({}));
+    component.lancesValues = { 3: 150 };
+
+    component.confirmarLance({ id: 3, codigo: 'L-003' } as any);
+
+    expect(alertConfirm).toHaveBeenCalledWith('Confirmar lance de R$ 150.00 para o lote LOTE-L-003?', expect.anything(), 'Confirmar', 'success');
+  });
+
+  it('abrirGaleria guarda o código do lote sem prefixo, e o template exibe com o prefixo LOTE-', () => {
+    component.abrirGaleria({ id: 3, codigo: 'L-003' } as any);
+    fixture.detectChanges();
+    expect(component.loteGaleriaCodigo).toBe('L-003');
+    expect(fixture.nativeElement.textContent).toContain('Fotos do Lote — LOTE-L-003');
   });
 });

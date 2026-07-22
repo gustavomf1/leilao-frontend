@@ -133,7 +133,7 @@
         <tbody>
           <tr *ngFor="let lote of lotesAguardandoLance">
             <td>
-              <strong>{{ lote.codigo }}</strong>
+              <strong>{{ lote.codigo | loteCodigo }}</strong>
               <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="abrirGaleria(lote)" title="Ver fotos">
                 <fa-icon [icon]="faImages"></fa-icon>
               </button>
@@ -195,7 +195,7 @@
         <tbody>
           <tr *ngFor="let lote of lotes">
             <td>
-              <strong>{{ lote.codigo }}</strong>
+              <strong>{{ lote.codigo | loteCodigo }}</strong>
               <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="abrirGaleria(lote)" title="Ver fotos">
                 <fa-icon [icon]="faImages"></fa-icon>
               </button>
@@ -245,7 +245,7 @@
         <tbody>
           <tr *ngFor="let lote of lotesFinalizados">
             <td>
-              <strong>{{ lote.codigo }}</strong>
+              <strong>{{ lote.codigo | loteCodigo }}</strong>
               <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="abrirGaleria(lote)" title="Ver fotos">
                 <fa-icon [icon]="faImages"></fa-icon>
               </button>
@@ -268,7 +268,7 @@
 <!-- Modal de fotos do lote -->
 <c-modal *ngIf="galeriaVisivel" [visible]="galeriaVisivel" (visibleChange)="galeriaVisivel = $event" alignment="center" size="lg">
   <c-modal-header>
-    <h5 cModalTitle>Fotos do Lote — {{ loteGaleriaCodigo }}</h5>
+    <h5 cModalTitle>Fotos do Lote — {{ loteGaleriaCodigo | loteCodigo }}</h5>
   </c-modal-header>
   <c-modal-body>
     <app-lote-fotos-galeria [fotos]="galeriaFotos"></app-lote-fotos-galeria>
