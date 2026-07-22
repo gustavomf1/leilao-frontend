@@ -19,11 +19,12 @@ import {
   faPaperPlane, faSpinner, faCheckDouble
 } from '@fortawesome/free-solid-svg-icons';
 import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR, FaturaEnvioLog } from '../../../core/models/entities.model';
+import { LoteCodigoPipe } from '../../../shared/pipes/lote-codigo.pipe';
 
 @Component({
   selector: 'app-monitor-lotes',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, FontAwesomeModule, LoteFotosGaleriaComponent],
+  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, FontAwesomeModule, LoteFotosGaleriaComponent, LoteCodigoPipe],
   templateUrl: './monitor-lotes.component.html',
   styleUrl: './monitor-lotes.component.css'
 })

@@ -54,3 +54,49 @@ describe('MonitorLotesComponent — galeria de fotos no modal de detalhes', () =
     expect(component.galeriaFotos).toEqual([]);
   });
 });
+
+describe('MonitorLotesComponent — código do lote com prefixo fixo', () => {
+  let component: MonitorLotesComponent;
+  let fixture: ComponentFixture<MonitorLotesComponent>;
+
+  const loteMock = { id: 5, codigo: 'L-005', raca: 'Nelore', status: 'AGUARDANDO_LANCE' } as any;
+  const mockLoteService = { listar: vi.fn().mockReturnValue(of([loteMock])) };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MonitorLotesComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: LoteWebsocketService, useValue: { novoLoteSubject: new Subject() } },
+        { provide: LoteService, useValue: mockLoteService },
+        { provide: LeilaoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+        { provide: AuthService, useValue: { isAdmin: vi.fn().mockReturnValue(true), isManejo: vi.fn().mockReturnValue(false), hasPermission: vi.fn().mockReturnValue(true) } },
+        { provide: AlertService, useValue: { error: vi.fn(), success: vi.fn(), confirm: vi.fn() } },
+        { provide: LoteFotoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(MonitorLotesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('exibe o código do lote com o prefixo fixo LOTE- no grid', () => {
+    const texto = fixture.nativeElement.querySelector('.lote-id')?.textContent.trim();
+    expect(texto).toBe('LOTE-L-005');
+  });
+
+  it('exibe o código com prefixo no modal de detalhes', () => {
+    component.abrirDetalhes(loteMock);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Detalhes do Lote — LOTE-L-005');
+  });
+
+  it('exibe o código com prefixo no modal de transferência', () => {
+    component.abrirModalTransferir(loteMock);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Enviar para próximo leilão — LOTE-L-005');
+  });
+});
