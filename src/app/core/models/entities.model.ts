@@ -198,6 +198,8 @@ export interface Lote {
   vendedorPixId?: number;
   vendedorPixTipo?: 'CPF_CNPJ' | 'TELEFONE' | 'EMAIL' | 'CHAVE_ALEATORIA';
   vendedorPixChave?: string;
+  fazendaId?: number | null;
+  fazendaNome?: string | null;
   status?: StatusLote;
   naoVendidoNoLeilao?: string;
 }

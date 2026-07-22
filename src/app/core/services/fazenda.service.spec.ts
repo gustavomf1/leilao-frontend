@@ -21,4 +21,11 @@ describe('FazendaService', () => {
     expect(req.request.method).toBe('GET');
     req.flush([]);
   });
+
+  it('listarPorTitular() faz GET em /api/fazenda com o titularId', () => {
+    service.listarPorTitular(9).subscribe();
+    const req = http.expectOne('http://localhost:8080/api/fazenda?titularId=9');
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
+  });
 });

@@ -59,6 +59,13 @@ describe('LoteService', () => {
     req.flush({});
   });
 
+  it('validarFinal inclui fazendaId no payload quando informado', () => {
+    service.validarFinal(1, { compradorId: 9, fazendaId: 5 }).subscribe();
+    const req = http.expectOne(r => r.url.includes('/api/lote/1/validar-final'));
+    expect(req.request.body).toEqual({ compradorId: 9, fazendaId: 5 });
+    req.flush({});
+  });
+
   it('gerarNotaLeilao faz GET com responseType blob', () => {
     service.gerarNotaLeilao(1).subscribe();
     const req = http.expectOne(r => r.url.includes('/api/relatorios/nota-leilao/1'));
