@@ -177,10 +177,10 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
 
     this.form = this.fb.group({
       codigo: ['', Validators.required],
-      qntdAnimais: [1, [Validators.required, Validators.min(1)]],
+      qntdAnimais: [null, [Validators.required, Validators.min(1)]],
       sexo: ['', Validators.required],
-      idadeEmMeses: [0, [Validators.required, Validators.min(0)]],
-      peso: [0, [Validators.required, Validators.min(0)]],
+      idadeEmMeses: [null, [Validators.required, Validators.min(0)]],
+      peso: [null, [Validators.required, Validators.min(0)]],
       raca: ['', Validators.required],
       especieId: [null, Validators.required],
       categoriaAnimal: ['', Validators.required],

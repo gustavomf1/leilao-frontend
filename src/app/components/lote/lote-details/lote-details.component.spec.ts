@@ -122,6 +122,12 @@ describe('LotesDetailsComponent — fotos no cadastro (manejo)', () => {
 
     expect(component.form.get('codigo')?.value).toBe('001');
   });
+
+  it('form nasce com qntdAnimais, idadeEmMeses e peso vazios, sem valor default', () => {
+    expect(component.form.get('qntdAnimais')?.value).toBeNull();
+    expect(component.form.get('idadeEmMeses')?.value).toBeNull();
+    expect(component.form.get('peso')?.value).toBeNull();
+  });
 });
 
 describe('LotesDetailsComponent — galeria de fotos na edição', () => {
