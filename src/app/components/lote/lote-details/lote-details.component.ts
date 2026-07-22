@@ -16,9 +16,10 @@ import { RacaService } from '../../../core/services/raca.service';
 import { LeilaoService } from '../../../core/services/leilao.service';
 import { ClienteService } from '../../../core/services/cliente.service';
 import { PixService } from '../../../core/services/pix.service';
+import { FazendaService } from '../../../core/services/fazenda.service';
 import { UploadQueueService } from '../../../core/services/upload-queue.service';
 import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.service';
-import { Especie, Raca, LeilaoDetalhes, Cliente, Pix } from '../../../core/models/entities.model';
+import { Especie, Raca, LeilaoDetalhes, Cliente, Pix, Fazenda } from '../../../core/models/entities.model';
 import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
 import { LoteFotosGaleriaComponent } from '../lote-fotos-galeria/lote-fotos-galeria.component';
 import { LoteCodigoPipe, formatarCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
@@ -48,6 +49,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   private leilaoService = inject(LeilaoService);
   private clienteService = inject(ClienteService);
   private pixService = inject(PixService);
+  private fazendaService = inject(FazendaService);
 
   faSave = faSave;
   faArrowLeft = faArrowLeft;
@@ -100,6 +102,11 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   modalNovoPixVisivel = false;
   novoPixTipo: '' | Pix['tipo'] = '';
   novoPixChave = '';
+
+  fazendasDoComprador: Fazenda[] = [];
+  fazendasCarregando = false;
+  fazendasCarregado = false;
+  validacaoFazendaId: number | null = null;
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -416,11 +423,24 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
     this.validacaoCompradorBusca = cliente.nome;
     this.validacaoCompradorId = cliente.id!;
     this.mostrarDropdownValidacaoComprador = false;
+    this.fazendasDoComprador = [];
+    this.fazendasCarregado = false;
+    this.validacaoFazendaId = null;
     this.cdr.markForCheck();
   }
 
   fecharDropdownValidacaoComprador() {
     setTimeout(() => { this.mostrarDropdownValidacaoComprador = false; this.cdr.markForCheck(); }, 180);
+  }
+
+  limparValidacaoComprador(): void {
+    this.validacaoCompradorSelecionado = null;
+    this.validacaoCompradorBusca = '';
+    this.validacaoCompradorId = null;
+    this.fazendasDoComprador = [];
+    this.fazendasCarregado = false;
+    this.validacaoFazendaId = null;
+    this.cdr.markForCheck();
   }
 
   confirmarValidacaoFinal() {
@@ -432,6 +452,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
       compradorId: this.validacaoCompradorId,
       comissaoVenda: this.validacaoComissaoVendedor,
       comissaoCompra: this.validacaoComissaoComprador,
+      fazendaId: this.validacaoFazendaId,
     }).subscribe({
       next: () => {
         this.alert.success('Lote finalizado com sucesso!');
@@ -456,6 +477,34 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
         this.alert.error('Erro ao carregar PIX do vendedor');
       }
     });
+  }
+
+  carregarFazendasDoComprador(): void {
+    if (this.fazendasCarregado || this.validacaoCompradorId == null) return;
+    this.fazendasCarregando = true;
+    this.fazendaService.listarPorTitular(this.validacaoCompradorId).subscribe({
+      next: (lista) => {
+        this.fazendasDoComprador = lista;
+        this.fazendasCarregado = true;
+        this.fazendasCarregando = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.fazendasCarregando = false;
+        this.alert.error('Erro ao carregar fazendas do comprador');
+      }
+    });
+  }
+
+  selecionarFazenda(fazenda: Fazenda | null): void {
+    this.validacaoFazendaId = fazenda?.id ?? null;
+    this.cdr.markForCheck();
+  }
+
+  formatarFazenda(fazendaId: number | null): string {
+    if (fazendaId == null) return 'Nenhuma selecionada';
+    const f = this.fazendasDoComprador.find(fz => fz.id === fazendaId);
+    return f ? f.nome : (this.loteCarregado?.fazendaNome || 'Nenhuma selecionada');
   }
 
   selecionarPix(pix: Pix | null): void {
@@ -616,6 +665,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
         this.validacaoCompradorSelecionado = c;
         this.validacaoCompradorBusca = c.nome;
         this.validacaoCompradorId = c.id!;
+        this.validacaoFazendaId = this.loteCarregado.fazendaId ?? null;
       }
     }
 

@@ -94,6 +94,20 @@ describe('MonitorLotesComponent — código do lote com prefixo fixo', () => {
     expect(fixture.nativeElement.textContent).toContain('Detalhes do Lote — LOTE-L-005');
   });
 
+  it('exibe a fazenda no modal de detalhes quando o lote tiver uma vinculada', () => {
+    component.abrirDetalhes({ ...loteMock, fazendaNome: 'Fazenda Boa Vista' });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Fazenda Boa Vista');
+  });
+
+  it('não exibe o campo fazenda no modal quando o lote não tiver uma vinculada', () => {
+    component.abrirDetalhes(loteMock);
+    fixture.detectChanges();
+    const labels = Array.from(fixture.nativeElement.querySelectorAll('.text-secondary'))
+      .map((el: any) => el.textContent.trim());
+    expect(labels).not.toContain('Fazenda');
+  });
+
   it('exibe o código com prefixo no modal de transferência', () => {
     component.abrirModalTransferir(loteMock);
     fixture.detectChanges();

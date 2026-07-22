@@ -10,4 +10,8 @@ export class FazendaService extends ApiService<Fazenda> {
     buscarPorNome(nome: string): Observable<Fazenda[]> {
         return this.http.get<Fazenda[]>(`${this.baseUrl}/api/fazenda/buscar?nome=${nome}`);
     }
+
+    listarPorTitular(titularId: number): Observable<Fazenda[]> {
+        return this.http.get<Fazenda[]>(`${this.baseUrl}/api/fazenda?titularId=${titularId}`);
+    }
 }

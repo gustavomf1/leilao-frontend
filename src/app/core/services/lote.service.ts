@@ -28,7 +28,7 @@ export class LoteService extends ApiService<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/preco`, { precoCompra, ...dadosExtras });
   }
 
-  validarFinal(id: number, dados: { compradorId: number; comissaoVenda?: number | null; comissaoCompra?: number | null }): Observable<Lote> {
+  validarFinal(id: number, dados: { compradorId: number; comissaoVenda?: number | null; comissaoCompra?: number | null; fazendaId?: number | null }): Observable<Lote> {
     return this.http.patch<Lote>(`${this.baseUrl}/api/${this.endpoint}/${id}/validar-final`, dados);
   }
 

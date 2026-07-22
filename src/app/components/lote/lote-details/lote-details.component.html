@@ -416,7 +416,7 @@
                 [placeholder]="validacaoCompradorSelecionado ? validacaoCompradorSelecionado.nome : 'Pesquisar comprador por nome...'"
                 autocomplete="off" />
               <button type="button" class="autocomplete-clear" *ngIf="validacaoCompradorSelecionado"
-                (click)="validacaoCompradorSelecionado=null; validacaoCompradorBusca=''; validacaoCompradorId=null">
+                (click)="limparValidacaoComprador()">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
@@ -545,7 +545,7 @@
                 [placeholder]="validacaoCompradorSelecionado ? validacaoCompradorSelecionado.nome : 'Pesquisar comprador por nome...'"
                 autocomplete="off" />
               <button type="button" class="autocomplete-clear" *ngIf="validacaoCompradorSelecionado"
-                (click)="validacaoCompradorSelecionado=null; validacaoCompradorBusca=''; validacaoCompradorId=null">
+                (click)="limparValidacaoComprador()">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
@@ -605,6 +605,36 @@
                 <fa-icon [icon]="faPlus" class="me-1"></fa-icon>
                 Cadastrar novo PIX
               </button>
+            </div>
+          </c-dropdown>
+        </div>
+
+        <div class="field-wrap field-wrap--full">
+          <label class="field-label">Fazenda de Compra</label>
+
+          <c-dropdown [popperOptions]="{ placement: 'bottom-start' }">
+            <button cDropdownToggle type="button" class="pix-toggle"
+              [class.pix-toggle--readonly]="!validacaoCompradorId"
+              [disabled]="!validacaoCompradorId"
+              (click)="carregarFazendasDoComprador()">
+              {{ formatarFazenda(validacaoFazendaId) }}
+            </button>
+            <div cDropdownMenu class="pix-dropdown-menu">
+              <div *ngIf="fazendasCarregando" class="pix-dropdown-empty">Carregando...</div>
+              <ng-container *ngIf="!fazendasCarregando">
+                <div *ngIf="fazendasDoComprador.length === 0" class="pix-dropdown-empty">
+                  Comprador não possui fazenda cadastrada
+                </div>
+                <button type="button" cDropdownItem *ngFor="let fazenda of fazendasDoComprador"
+                  [active]="validacaoFazendaId === fazenda.id" (click)="selecionarFazenda(fazenda)">
+                  {{ fazenda.nome }}
+                </button>
+                <hr cDropdownDivider *ngIf="validacaoFazendaId != null" />
+                <button type="button" cDropdownItem *ngIf="validacaoFazendaId != null"
+                  (click)="selecionarFazenda(null)">
+                  Nenhuma
+                </button>
+              </ng-container>
             </div>
           </c-dropdown>
         </div>
@@ -704,7 +734,7 @@
                 [placeholder]="validacaoCompradorSelecionado ? validacaoCompradorSelecionado.nome : 'Pesquisar comprador por nome...'"
                 autocomplete="off" />
               <button type="button" class="autocomplete-clear" *ngIf="validacaoCompradorSelecionado"
-                (click)="validacaoCompradorSelecionado=null; validacaoCompradorBusca=''; validacaoCompradorId=null">
+                (click)="limparValidacaoComprador()">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
