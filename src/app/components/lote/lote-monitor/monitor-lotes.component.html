@@ -75,7 +75,7 @@
               <!-- Linha 1: código truncado -->
               <div class="lote-id">
                 <fa-icon [icon]="faHashtag" class="me-1 opacity-75"></fa-icon>
-                {{ lote.codigo }}
+                {{ lote.codigo | loteCodigo }}
               </div>
               <!-- Linha 2: raça + badge de status -->
               <div class="lote-card-meta">
@@ -287,14 +287,14 @@
 <!-- Modal de detalhes do lote -->
 <c-modal *ngIf="modalDetalhesVisivel" [visible]="modalDetalhesVisivel" (visibleChange)="modalDetalhesVisivel = $event" alignment="center" size="lg">
   <c-modal-header>
-    <h5 cModalTitle>Detalhes do Lote — {{ loteDetalhes?.codigo }}</h5>
+    <h5 cModalTitle>Detalhes do Lote — {{ loteDetalhes?.codigo | loteCodigo }}</h5>
   </c-modal-header>
 
   <c-modal-body *ngIf="loteDetalhes">
     <c-row [gutter]="3">
       <c-col [md]="4">
         <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Código</div>
-        <div class="fw-bold">{{ loteDetalhes.codigo }}</div>
+        <div class="fw-bold">{{ loteDetalhes.codigo | loteCodigo }}</div>
       </c-col>
       <c-col [md]="4">
         <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Qtd. Animais</div>
@@ -372,7 +372,7 @@
 <!-- Modal: Enviar para próximo leilão -->
 <c-modal *ngIf="modalTransferirVisivel" [visible]="modalTransferirVisivel" (visibleChange)="modalTransferirVisivel = $event" alignment="center">
   <c-modal-header>
-    <h5 cModalTitle>Enviar para próximo leilão — {{ loteParaTransferir?.codigo }}</h5>
+    <h5 cModalTitle>Enviar para próximo leilão — {{ loteParaTransferir?.codigo | loteCodigo }}</h5>
   </c-modal-header>
 
   <c-modal-body>

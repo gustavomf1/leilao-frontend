@@ -43,4 +43,19 @@ describe('EventoPublicoComponent — galeria de fotos por lote', () => {
     expect(mockLoteService.listarFotosPublico).toHaveBeenCalledWith(1);
     expect(component.fotosPorLote[1]).toEqual(fotosMock);
   });
+
+  it('exibe o código do lote com o prefixo fixo LOTE- no grid', () => {
+    fixture.detectChanges();
+    const texto = fixture.nativeElement.querySelector('.ep-cod')?.textContent.trim();
+    expect(texto).toContain('LOTE-L-001');
+  });
+
+  it('confirmarEnvioLance formata o código do lote com prefixo LOTE- na mensagem de sucesso', () => {
+    (component as any).loteService.registrarPrecoPublico = vi.fn().mockReturnValue(of({ id: 1, codigo: 'L-001', status: 'FINALIZADO' }));
+    component.lancePendente = { lote: lotesMock[0], preco: 100, compradorNome: 'Zezin' } as any;
+
+    component.confirmarEnvioLance();
+
+    expect(component.sucesso).toContain('LOTE-L-001');
+  });
 });

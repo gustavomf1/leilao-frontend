@@ -19,11 +19,12 @@ import {
   faPaperPlane, faSpinner, faCheckDouble
 } from '@fortawesome/free-solid-svg-icons';
 import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR, FaturaEnvioLog } from '../../../core/models/entities.model';
+import { LoteCodigoPipe, compararCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
 
 @Component({
   selector: 'app-monitor-lotes',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, FontAwesomeModule, LoteFotosGaleriaComponent],
+  imports: [CommonModule, CurrencyPipe, RouterModule, FormsModule, CardModule, BadgeModule, SpinnerModule, GridModule, ButtonDirective, FormModule, ModalModule, FontAwesomeModule, LoteFotosGaleriaComponent, LoteCodigoPipe],
   templateUrl: './monitor-lotes.component.html',
   styleUrl: './monitor-lotes.component.css'
 })
@@ -147,9 +148,9 @@ export class MonitorLotesComponent implements OnInit, OnDestroy {
 
   get lotesFiltrados(): Lote[] {
     const lotes = this.lotesDoContexto;
-    if (this.filtroStatus === 'TODOS') return lotes;
-    if (this.filtroStatus === 'NAO_VENDIDO') return lotes.filter(l => l.naoVendidoNoLeilao === 'S');
-    return lotes.filter(l => l.status === this.filtroStatus);
+    if (this.filtroStatus === 'TODOS') return [...lotes].sort(compararCodigoLote);
+    if (this.filtroStatus === 'NAO_VENDIDO') return lotes.filter(l => l.naoVendidoNoLeilao === 'S').sort(compararCodigoLote);
+    return lotes.filter(l => l.status === this.filtroStatus).sort(compararCodigoLote);
   }
 
   get novoLoteParams(): Params | null {

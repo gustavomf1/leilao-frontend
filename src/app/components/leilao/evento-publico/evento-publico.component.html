@@ -39,7 +39,7 @@
         <!-- Topo do card -->
         <div class="ep-card-header">
           <span class="ep-cod">
-            <fa-icon [icon]="faHashtag"></fa-icon> {{ lote.codigo }}
+            <fa-icon [icon]="faHashtag"></fa-icon> {{ lote.codigo | loteCodigo }}
           </span>
           <span class="ep-status"
                 [class.status-aguardando]="lote.status === 'AGUARDANDO_LANCE'">
@@ -132,7 +132,7 @@
       <div class="ep-modal-resumo">
         <div>
           <span>Lote</span>
-          <strong>{{ lancePendente.lote.codigo }}</strong>
+          <strong>{{ lancePendente.lote.codigo | loteCodigo }}</strong>
         </div>
         <div>
           <span>Comprador</span>
@@ -166,7 +166,7 @@
       </div>
       <h2 class="ep-modal-title">Lance enviado</h2>
       <p class="ep-modal-text">
-        {{ formatarMoeda(lancePendente.preco) }} registrado para o lote {{ lancePendente.lote.codigo }}.
+        {{ formatarMoeda(lancePendente.preco) }} registrado para o lote {{ lancePendente.lote.codigo | loteCodigo }}.
       </p>
     </section>
   </div>

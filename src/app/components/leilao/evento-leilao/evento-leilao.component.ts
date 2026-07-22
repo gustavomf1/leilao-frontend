@@ -21,6 +21,7 @@ import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.service';
 import { LoteFotosGaleriaComponent } from '../../lote/lote-fotos-galeria/lote-fotos-galeria.component';
+import { LoteCodigoPipe, formatarCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
 import { LeilaoDetalhes, Lote, STATUS_LEILAO_LABELS, STATUS_LEILAO_COLOR, TIPO_LEILAO_LABELS } from '../../../core/models/entities.model';
 
 @Component({
@@ -31,7 +32,7 @@ import { LeilaoDetalhes, Lote, STATUS_LEILAO_LABELS, STATUS_LEILAO_COLOR, TIPO_L
     CardModule, BadgeComponent, ButtonDirective,
     GridModule, TableModule, TableDirective,
     ModalModule, FormModule,
-    FontAwesomeModule, LoteFotosGaleriaComponent
+    FontAwesomeModule, LoteFotosGaleriaComponent, LoteCodigoPipe
   ],
   templateUrl: './evento-leilao.component.html',
   styleUrl: './evento-leilao.component.scss'
@@ -224,10 +225,10 @@ export class EventoLeilaoComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.alert.confirm(`Confirmar lance de R$ ${valor.toFixed(2)} para o lote ${lote.codigo}?`, () => {
+    this.alert.confirm(`Confirmar lance de R$ ${valor.toFixed(2)} para o lote ${formatarCodigoLote(lote.codigo)}?`, () => {
       this.loteService.registrarPreco(lote.id!, valor).subscribe({
         next: () => {
-          this.alert.success(`Lance registrado para o lote ${lote.codigo}!`);
+          this.alert.success(`Lance registrado para o lote ${formatarCodigoLote(lote.codigo)}!`);
           this.carregarLotes();
         },
         error: (err: any) => {

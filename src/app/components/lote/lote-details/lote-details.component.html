@@ -37,7 +37,10 @@
         <!-- Código -->
         <div class="field-wrap field-wrap--md">
           <label class="field-label">Código <span class="req">*</span></label>
-          <input class="field-input" formControlName="codigo" placeholder="Ex: L-001" />
+          <div class="codigo-input-group">
+            <span class="codigo-input-group__prefix">LOTE-</span>
+            <input class="codigo-input-group__input" formControlName="codigo" placeholder="001" />
+          </div>
           <span class="field-error" *ngIf="form.get('codigo')?.invalid && form.get('codigo')?.touched">
             Campo obrigatório
           </span>
@@ -255,16 +258,13 @@
               <div class="autocomplete-empty" *ngIf="clientesFiltrados.length === 0">
                 Nenhum cliente encontrado
               </div>
-              <div class="autocomplete-item" *ngFor="let c of clientesFiltrados | slice:0:8"
+              <div class="autocomplete-item" *ngFor="let c of clientesFiltrados"
                 (mousedown)="selecionarVendedor(c)">
                 <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
                 <span class="autocomplete-item__info">
                   <strong>{{ c.nome }}</strong>
                   <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
                 </span>
-              </div>
-              <div class="autocomplete-count" *ngIf="clientesFiltrados.length > 8">
-                +{{ clientesFiltrados.length - 8 }} resultados — refine a busca
               </div>
             </div>
           </div>
@@ -333,16 +333,13 @@
               <div class="autocomplete-empty" *ngIf="compradorFiltrados.length === 0">
                 Nenhum cliente encontrado
               </div>
-              <div class="autocomplete-item" *ngFor="let c of compradorFiltrados | slice:0:8"
+              <div class="autocomplete-item" *ngFor="let c of compradorFiltrados"
                 (mousedown)="selecionarComprador(c)">
                 <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
                 <span class="autocomplete-item__info">
                   <strong>{{ c.nome }}</strong>
                   <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
                 </span>
-              </div>
-              <div class="autocomplete-count" *ngIf="compradorFiltrados.length > 8">
-                +{{ compradorFiltrados.length - 8 }} resultados — refine a busca
               </div>
             </div>
           </div>
@@ -429,16 +426,13 @@
               <div class="autocomplete-empty" *ngIf="validacaoCompradorFiltrados.length === 0">
                 Nenhum cliente encontrado
               </div>
-              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados | slice:0:8"
+              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados"
                 (mousedown)="selecionarValidacaoComprador(c)">
                 <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
                 <span class="autocomplete-item__info">
                   <strong>{{ c.nome }}</strong>
                   <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
                 </span>
-              </div>
-              <div class="autocomplete-count" *ngIf="validacaoCompradorFiltrados.length > 8">
-                +{{ validacaoCompradorFiltrados.length - 8 }} resultados — refine a busca
               </div>
             </div>
           </div>
@@ -482,7 +476,7 @@
       <div class="lote-info-strip">
         <div class="info-chip">
           <span class="info-chip__label">Código</span>
-          <span class="info-chip__value">{{ loteCarregado?.codigo ?? '—' }}</span>
+          <span class="info-chip__value">{{ loteCarregado?.codigo | loteCodigo }}</span>
         </div>
         <div class="info-chip">
           <span class="info-chip__label">Qtd. Animais</span>
@@ -561,16 +555,13 @@
               <div class="autocomplete-empty" *ngIf="validacaoCompradorFiltrados.length === 0">
                 Nenhum cliente encontrado
               </div>
-              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados | slice:0:8"
+              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados"
                 (mousedown)="selecionarValidacaoComprador(c)">
                 <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
                 <span class="autocomplete-item__info">
                   <strong>{{ c.nome }}</strong>
                   <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
                 </span>
-              </div>
-              <div class="autocomplete-count" *ngIf="validacaoCompradorFiltrados.length > 8">
-                +{{ validacaoCompradorFiltrados.length - 8 }} resultados — refine a busca
               </div>
             </div>
           </div>
@@ -650,7 +641,7 @@
       <div class="lote-info-strip">
         <div class="info-chip">
           <span class="info-chip__label">Código</span>
-          <span class="info-chip__value">{{ loteCarregado?.codigo ?? '—' }}</span>
+          <span class="info-chip__value">{{ loteCarregado?.codigo | loteCodigo }}</span>
         </div>
         <div class="info-chip">
           <span class="info-chip__label">Qtd. Animais</span>
@@ -723,16 +714,13 @@
               <div class="autocomplete-empty" *ngIf="validacaoCompradorFiltrados.length === 0">
                 Nenhum cliente encontrado
               </div>
-              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados | slice:0:8"
+              <div class="autocomplete-item" *ngFor="let c of validacaoCompradorFiltrados"
                 (mousedown)="selecionarValidacaoComprador(c)">
                 <span class="autocomplete-item__avatar">{{ c.nome.charAt(0) }}</span>
                 <span class="autocomplete-item__info">
                   <strong>{{ c.nome }}</strong>
                   <small>{{ c.cidade }}/{{ c.uf }} · {{ c.cpfCnpj }}</small>
                 </span>
-              </div>
-              <div class="autocomplete-count" *ngIf="validacaoCompradorFiltrados.length > 8">
-                +{{ validacaoCompradorFiltrados.length - 8 }} resultados — refine a busca
               </div>
             </div>
           </div>

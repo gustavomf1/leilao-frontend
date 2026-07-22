@@ -21,6 +21,7 @@ import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.serv
 import { Especie, Raca, LeilaoDetalhes, Cliente, Pix } from '../../../core/models/entities.model';
 import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
 import { LoteFotosGaleriaComponent } from '../lote-fotos-galeria/lote-fotos-galeria.component';
+import { LoteCodigoPipe, formatarCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
 
 @Component({
   selector: 'app-lotes-details',
@@ -29,7 +30,7 @@ import { LoteFotosGaleriaComponent } from '../lote-fotos-galeria/lote-fotos-gale
     CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
     ModalModule, DropdownModule, FontAwesomeModule, LoteFotosComponent,
-    LoteFotosGaleriaComponent
+    LoteFotosGaleriaComponent, LoteCodigoPipe
   ],
   templateUrl: './lote-details.component.html',
   styleUrl: './lote-details.component.css'
@@ -154,7 +155,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   get resumoParaConfirmacao(): { label: string; valor: any }[] {
     const f = this.form.getRawValue();
     return [
-      { label: 'Código', valor: f.codigo },
+      { label: 'Código', valor: formatarCodigoLote(f.codigo) },
       { label: 'Qtd. Animais', valor: f.qntdAnimais },
       { label: 'Sexo', valor: f.sexo },
       { label: 'Espécie', valor: this.especies.find(e => e.id === f.especieId)?.nome ?? f.especieId },
@@ -185,10 +186,10 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
 
     this.form = this.fb.group({
       codigo: ['', Validators.required],
-      qntdAnimais: [1, [Validators.required, Validators.min(1)]],
+      qntdAnimais: [null, [Validators.required, Validators.min(1)]],
       sexo: ['', Validators.required],
-      idadeEmMeses: [0, [Validators.required, Validators.min(0)]],
-      peso: [0, [Validators.required, Validators.min(0)]],
+      idadeEmMeses: [null, [Validators.required, Validators.min(0)]],
+      peso: [null, [Validators.required, Validators.min(0)]],
       raca: ['', Validators.required],
       especieId: [null, Validators.required],
       categoriaAnimal: ['', Validators.required],
@@ -275,10 +276,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   filtrarVendedor() {
-    const termo = this.vendedorBusca.toLowerCase().trim();
-    this.clientesFiltrados = termo
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(termo))
-      : this.clientes;
+    this.clientesFiltrados = this.buscarClientesPorNome(this.vendedorBusca);
     this.mostrarDropdownVendedor = this.clientesFiltrados.length > 0;
     this.vendedorSelecionado = null;
     this.form.get('vendedorId')?.setValue(null);
@@ -298,18 +296,13 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   abrirDropdownVendedor() {
-    this.clientesFiltrados = this.vendedorBusca.trim()
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.vendedorBusca.toLowerCase()))
-      : this.clientes;
+    this.clientesFiltrados = this.buscarClientesPorNome(this.vendedorBusca);
     this.mostrarDropdownVendedor = this.clientesFiltrados.length > 0;
     this.cdr.markForCheck();
   }
 
   filtrarComprador() {
-    const termo = this.compradorBusca.toLowerCase().trim();
-    this.compradorFiltrados = termo
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(termo))
-      : this.clientes;
+    this.compradorFiltrados = this.buscarClientesPorNome(this.compradorBusca);
     this.mostrarDropdownComprador = this.compradorFiltrados.length > 0;
     this.compradorSelecionado = null;
     this.form.get('compradorId')?.setValue(null);
@@ -329,9 +322,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   abrirDropdownComprador() {
-    this.compradorFiltrados = this.compradorBusca.trim()
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.compradorBusca.toLowerCase()))
-      : this.clientes;
+    this.compradorFiltrados = this.buscarClientesPorNome(this.compradorBusca);
     this.mostrarDropdownComprador = this.compradorFiltrados.length > 0;
     this.cdr.markForCheck();
   }
@@ -413,10 +404,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   filtrarValidacaoComprador() {
-    const termo = this.validacaoCompradorBusca.toLowerCase().trim();
-    this.validacaoCompradorFiltrados = termo
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(termo))
-      : this.clientes;
+    this.validacaoCompradorFiltrados = this.buscarClientesPorNome(this.validacaoCompradorBusca);
     this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
     this.validacaoCompradorSelecionado = null;
     this.validacaoCompradorId = null;
@@ -702,14 +690,18 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   abrirDropdownValidacaoComprador() {
-    this.validacaoCompradorFiltrados = this.validacaoCompradorBusca.trim()
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.validacaoCompradorBusca.toLowerCase()))
-      : this.clientes;
+    this.validacaoCompradorFiltrados = this.buscarClientesPorNome(this.validacaoCompradorBusca);
     this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
     this.cdr.markForCheck();
   }
 
-
+  /** Exige ao menos 2 caracteres para evitar filtrar/renderizar a base inteira de clientes (12k+ registros). */
+  private buscarClientesPorNome(busca: string): Cliente[] {
+    const termo = busca.toLowerCase().trim();
+    if (termo.length < 2) return [];
+    const encontrados = this.clientes.filter(c => c.nome.toLowerCase().includes(termo));
+    return [...encontrados].sort((a, b) => a.nome.localeCompare(b.nome));
+  }
 
   private calcularCategoria(sexo: string, idadeEmMeses: number): string {
     if (!sexo || idadeEmMeses == null) return '';

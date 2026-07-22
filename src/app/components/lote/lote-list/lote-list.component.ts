@@ -13,12 +13,13 @@ import { LoteService } from '../../../core/services/lote.service';
 import { LoteWebsocketService } from '../../../core/services/lote-websocket.service';
 import { AlertService } from '../../../shared/services/alert.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
+import { Lote, StatusLote, STATUS_LOTE_LABELS, STATUS_LOTE_COLOR } from '../../../core/models/entities.model';
+import { LoteCodigoPipe } from '../../../shared/pipes/lote-codigo.pipe';
 
 @Component({
   selector: 'app-lotes-list',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterModule, CardModule, BadgeModule, GridModule, ButtonDirective, FontAwesomeModule],
+  imports: [CommonModule, CurrencyPipe, RouterModule, CardModule, BadgeModule, GridModule, ButtonDirective, FontAwesomeModule, LoteCodigoPipe],
   templateUrl: './lote-list.component.html',
   styleUrl: './lote-list.component.css'
 })
@@ -53,6 +54,14 @@ export class LotesListComponent implements OnInit {
     'TODOS', 'AGUARDANDO_ESCRITORIO', 'AGUARDANDO_LANCE',
     'AGUARDANDO_ULTIMA_VALIDACAO', 'FINALIZADO', 'NAO_VENDIDO'
   ];
+
+  statusLabel(status: string): string {
+    return this.STATUS_LABELS[status as StatusLote] || status;
+  }
+
+  statusColor(status: string): string {
+    return this.STATUS_COLOR[status as StatusLote] || 'secondary';
+  }
 
   get lotesFiltrados(): any[] {
     if (this.filtroStatus === 'TODOS') return this.lotes;
@@ -100,7 +109,7 @@ export class LotesListComponent implements OnInit {
           const idx = this.lotes.findIndex(l => l.id === id);
           if (idx >= 0) this.lotes[idx] = loteAtualizado;
           this.lotes$.next([...this.lotes]);
-          this.alert.success(`Status avançado para: ${this.STATUS_LABELS[loteAtualizado.status]}`);
+          this.alert.success(`Status avançado para: ${this.statusLabel(loteAtualizado.status as string)}`);
         });
       },
       error: (err) => this.alert.error(err.error?.mensagem || 'Erro ao avançar status')

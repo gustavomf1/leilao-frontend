@@ -53,7 +53,7 @@
             <c-card-header class="lote-card-header">
               <div class="lote-id">
                 <fa-icon [icon]="faHashtag" class="me-1 opacity-75"></fa-icon>
-                {{ lote.codigo }}
+                {{ lote.codigo | loteCodigo }}
               </div>
               <div class="d-flex align-items-center gap-2">
                 <span class="lote-raca">
@@ -61,8 +61,8 @@
                   {{ lote.raca }}
                 </span>
                 <!-- Badge de status -->
-                <c-badge [color]="STATUS_COLOR[lote.status] || 'secondary'" shape="rounded-pill">
-                  {{ STATUS_LABELS[lote.status] || lote.status }}
+                <c-badge [color]="statusColor(lote.status)" shape="rounded-pill">
+                  {{ statusLabel(lote.status) }}
                 </c-badge>
               </div>
             </c-card-header>

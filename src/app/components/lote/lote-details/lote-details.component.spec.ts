@@ -99,6 +99,35 @@ describe('LotesDetailsComponent — fotos no cadastro (manejo)', () => {
     component.ngOnDestroy();
     expect(mockUploadQueue.clearOrphans).not.toHaveBeenCalled();
   });
+
+  it('resumoParaConfirmacao formata o código com o prefixo LOTE-', () => {
+    component.form.patchValue({
+      codigo: '001', qntdAnimais: 1, sexo: 'Macho', idadeEmMeses: 10,
+      peso: 200, raca: 'Nelore', especieId: 1, categoriaAnimal: 'Bezerro'
+    });
+
+    const codigoEntry = component.resumoParaConfirmacao.find(item => item.label === 'Código');
+
+    expect(codigoEntry?.valor).toBe('LOTE-001');
+  });
+
+  it('exibe o prefixo fixo LOTE- colado no campo Código, sem afetar o valor do form', () => {
+    const prefixo = fixture.nativeElement.querySelector('.codigo-input-group__prefix');
+    expect(prefixo?.textContent?.trim()).toBe('LOTE-');
+
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('.codigo-input-group__input');
+    input.value = '001';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.form.get('codigo')?.value).toBe('001');
+  });
+
+  it('form nasce com qntdAnimais, idadeEmMeses e peso vazios, sem valor default', () => {
+    expect(component.form.get('qntdAnimais')?.value).toBeNull();
+    expect(component.form.get('idadeEmMeses')?.value).toBeNull();
+    expect(component.form.get('peso')?.value).toBeNull();
+  });
 });
 
 describe('LotesDetailsComponent — galeria de fotos na edição', () => {
@@ -149,5 +178,70 @@ describe('LotesDetailsComponent — galeria de fotos na edição', () => {
   it('carrega as fotos do lote ao editar', () => {
     expect(mockLoteFotoService.listar).toHaveBeenCalledWith(7);
     expect(component.galeriaFotos).toEqual(fotosMock);
+  });
+
+  it('exibe o código do lote com o prefixo fixo LOTE- no info-chip de resumo', () => {
+    expect(fixture.nativeElement.textContent).toContain('LOTE-L-007');
+  });
+});
+
+describe('LotesDetailsComponent — autocomplete de comprador não deve esconder matches além do 8º', () => {
+  let component: LotesDetailsComponent;
+  let fixture: ComponentFixture<LotesDetailsComponent>;
+
+  const clientesGustavo = Array.from({ length: 47 }, (_, i) => ({
+    id: i + 1, nome: `Gustavo Cliente ${i}`, cidade: 'Cidade', uf: 'SP', cpfCnpj: '000.000.000-00'
+  }));
+
+  const mockLoteService = { salvar: vi.fn(), atualizar: vi.fn(), buscarPorId: vi.fn().mockReturnValue(of({})) };
+  const mockAuth = { isManejo: vi.fn().mockReturnValue(false), isAdmin: vi.fn().mockReturnValue(true), hasPermission: vi.fn().mockReturnValue(true) };
+  const listVazio = { listar: vi.fn().mockReturnValue(of([])) };
+  const mockClienteService = { listar: vi.fn().mockReturnValue(of(clientesGustavo)) };
+  const mockAlert = { error: vi.fn(), success: vi.fn(), confirm: vi.fn() };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LotesDetailsComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LoteService, useValue: mockLoteService },
+        { provide: AuthService, useValue: mockAuth },
+        { provide: EspecieService, useValue: listVazio },
+        { provide: RacaService, useValue: { listarPorEspecie: vi.fn().mockReturnValue(of([])) } },
+        { provide: LeilaoService, useValue: listVazio },
+        { provide: ClienteService, useValue: mockClienteService },
+        { provide: PixService, useValue: listVazio },
+        { provide: AlertService, useValue: mockAlert },
+        { provide: UploadQueueService, useValue: { assignLoteId: vi.fn(), clearOrphans: vi.fn(), queue$: of([]), completed$: of() } },
+        { provide: LoteFotoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => null }, queryParamMap: { get: () => null } } } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LotesDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('mantém os 47 matches em compradorFiltrados e renderiza todos no dropdown, sem cortar em 8', () => {
+    component.compradorBusca = 'gustavo';
+    component.filtrarComprador();
+    fixture.detectChanges();
+
+    expect(component.compradorFiltrados.length).toBe(47);
+
+    const itens = fixture.nativeElement.querySelectorAll('.autocomplete-item');
+    expect(itens.length).toBe(47);
+  });
+
+  it('não popula nem renderiza o dropdown com menos de 2 caracteres (evita filtrar a base inteira)', () => {
+    component.compradorBusca = 'g';
+    component.filtrarComprador();
+    fixture.detectChanges();
+
+    expect(component.compradorFiltrados.length).toBe(0);
+    expect(component.mostrarDropdownComprador).toBe(false);
   });
 });
