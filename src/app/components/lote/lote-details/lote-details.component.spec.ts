@@ -184,3 +184,64 @@ describe('LotesDetailsComponent — galeria de fotos na edição', () => {
     expect(fixture.nativeElement.textContent).toContain('LOTE-L-007');
   });
 });
+
+describe('LotesDetailsComponent — autocomplete de comprador não deve esconder matches além do 8º', () => {
+  let component: LotesDetailsComponent;
+  let fixture: ComponentFixture<LotesDetailsComponent>;
+
+  const clientesGustavo = Array.from({ length: 47 }, (_, i) => ({
+    id: i + 1, nome: `Gustavo Cliente ${i}`, cidade: 'Cidade', uf: 'SP', cpfCnpj: '000.000.000-00'
+  }));
+
+  const mockLoteService = { salvar: vi.fn(), atualizar: vi.fn(), buscarPorId: vi.fn().mockReturnValue(of({})) };
+  const mockAuth = { isManejo: vi.fn().mockReturnValue(false), isAdmin: vi.fn().mockReturnValue(true), hasPermission: vi.fn().mockReturnValue(true) };
+  const listVazio = { listar: vi.fn().mockReturnValue(of([])) };
+  const mockClienteService = { listar: vi.fn().mockReturnValue(of(clientesGustavo)) };
+  const mockAlert = { error: vi.fn(), success: vi.fn(), confirm: vi.fn() };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LotesDetailsComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: LoteService, useValue: mockLoteService },
+        { provide: AuthService, useValue: mockAuth },
+        { provide: EspecieService, useValue: listVazio },
+        { provide: RacaService, useValue: { listarPorEspecie: vi.fn().mockReturnValue(of([])) } },
+        { provide: LeilaoService, useValue: listVazio },
+        { provide: ClienteService, useValue: mockClienteService },
+        { provide: PixService, useValue: listVazio },
+        { provide: AlertService, useValue: mockAlert },
+        { provide: UploadQueueService, useValue: { assignLoteId: vi.fn(), clearOrphans: vi.fn(), queue$: of([]), completed$: of() } },
+        { provide: LoteFotoService, useValue: { listar: vi.fn().mockReturnValue(of([])) } },
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => null }, queryParamMap: { get: () => null } } } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LotesDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('mantém os 47 matches em compradorFiltrados e renderiza todos no dropdown, sem cortar em 8', () => {
+    component.compradorBusca = 'gustavo';
+    component.filtrarComprador();
+    fixture.detectChanges();
+
+    expect(component.compradorFiltrados.length).toBe(47);
+
+    const itens = fixture.nativeElement.querySelectorAll('.autocomplete-item');
+    expect(itens.length).toBe(47);
+  });
+
+  it('não popula nem renderiza o dropdown com menos de 2 caracteres (evita filtrar a base inteira)', () => {
+    component.compradorBusca = 'g';
+    component.filtrarComprador();
+    fixture.detectChanges();
+
+    expect(component.compradorFiltrados.length).toBe(0);
+    expect(component.mostrarDropdownComprador).toBe(false);
+  });
+});

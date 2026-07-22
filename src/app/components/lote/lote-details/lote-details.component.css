@@ -385,7 +385,8 @@
   border: 1px solid var(--border-2);
   border-radius: 10px;
   box-shadow: 0 16px 48px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.08);
-  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
   animation: dropIn .15s ease both;
 }
 @keyframes dropIn {

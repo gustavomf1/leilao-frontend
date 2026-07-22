@@ -265,10 +265,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   filtrarVendedor() {
-    const termo = this.vendedorBusca.toLowerCase().trim();
-    this.clientesFiltrados = termo
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(termo))
-      : this.clientes;
+    this.clientesFiltrados = this.buscarClientesPorNome(this.vendedorBusca);
     this.mostrarDropdownVendedor = this.clientesFiltrados.length > 0;
     this.vendedorSelecionado = null;
     this.form.get('vendedorId')?.setValue(null);
@@ -288,18 +285,13 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   abrirDropdownVendedor() {
-    this.clientesFiltrados = this.vendedorBusca.trim()
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.vendedorBusca.toLowerCase()))
-      : this.clientes;
+    this.clientesFiltrados = this.buscarClientesPorNome(this.vendedorBusca);
     this.mostrarDropdownVendedor = this.clientesFiltrados.length > 0;
     this.cdr.markForCheck();
   }
 
   filtrarComprador() {
-    const termo = this.compradorBusca.toLowerCase().trim();
-    this.compradorFiltrados = termo
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(termo))
-      : this.clientes;
+    this.compradorFiltrados = this.buscarClientesPorNome(this.compradorBusca);
     this.mostrarDropdownComprador = this.compradorFiltrados.length > 0;
     this.compradorSelecionado = null;
     this.form.get('compradorId')?.setValue(null);
@@ -319,9 +311,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   abrirDropdownComprador() {
-    this.compradorFiltrados = this.compradorBusca.trim()
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.compradorBusca.toLowerCase()))
-      : this.clientes;
+    this.compradorFiltrados = this.buscarClientesPorNome(this.compradorBusca);
     this.mostrarDropdownComprador = this.compradorFiltrados.length > 0;
     this.cdr.markForCheck();
   }
@@ -403,10 +393,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   filtrarValidacaoComprador() {
-    const termo = this.validacaoCompradorBusca.toLowerCase().trim();
-    this.validacaoCompradorFiltrados = termo
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(termo))
-      : this.clientes;
+    this.validacaoCompradorFiltrados = this.buscarClientesPorNome(this.validacaoCompradorBusca);
     this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
     this.validacaoCompradorSelecionado = null;
     this.validacaoCompradorId = null;
@@ -692,11 +679,17 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   }
 
   abrirDropdownValidacaoComprador() {
-    this.validacaoCompradorFiltrados = this.validacaoCompradorBusca.trim()
-      ? this.clientes.filter(c => c.nome.toLowerCase().includes(this.validacaoCompradorBusca.toLowerCase()))
-      : this.clientes;
+    this.validacaoCompradorFiltrados = this.buscarClientesPorNome(this.validacaoCompradorBusca);
     this.mostrarDropdownValidacaoComprador = this.validacaoCompradorFiltrados.length > 0;
     this.cdr.markForCheck();
+  }
+
+  /** Exige ao menos 2 caracteres para evitar filtrar/renderizar a base inteira de clientes (12k+ registros). */
+  private buscarClientesPorNome(busca: string): Cliente[] {
+    const termo = busca.toLowerCase().trim();
+    if (termo.length < 2) return [];
+    const encontrados = this.clientes.filter(c => c.nome.toLowerCase().includes(termo));
+    return [...encontrados].sort((a, b) => a.nome.localeCompare(b.nome));
   }
 
   private calcularCategoria(sexo: string, idadeEmMeses: number): string {
