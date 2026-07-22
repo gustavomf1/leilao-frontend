@@ -356,6 +356,10 @@
         <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Vendedor (confirmado)</div>
         <div class="fw-bold">{{ loteDetalhes.vendedorNome }}</div>
       </c-col>
+      <c-col [md]="6" *ngIf="loteDetalhes.fazendaNome">
+        <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Fazenda</div>
+        <div class="fw-bold">{{ loteDetalhes.fazendaNome }}</div>
+      </c-col>
       <c-col [md]="12" *ngIf="loteDetalhes.obs">
         <div class="text-secondary" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800">Observações</div>
         <div>{{ loteDetalhes.obs }}</div>
