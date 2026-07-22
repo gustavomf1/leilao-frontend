@@ -110,6 +110,18 @@ describe('LotesDetailsComponent — fotos no cadastro (manejo)', () => {
 
     expect(codigoEntry?.valor).toBe('LOTE-001');
   });
+
+  it('exibe o prefixo fixo LOTE- colado no campo Código, sem afetar o valor do form', () => {
+    const prefixo = fixture.nativeElement.querySelector('.codigo-input-group__prefix');
+    expect(prefixo?.textContent?.trim()).toBe('LOTE-');
+
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('.codigo-input-group__input');
+    input.value = '001';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(component.form.get('codigo')?.value).toBe('001');
+  });
 });
 
 describe('LotesDetailsComponent — galeria de fotos na edição', () => {

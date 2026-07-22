@@ -37,7 +37,10 @@
         <!-- Código -->
         <div class="field-wrap field-wrap--md">
           <label class="field-label">Código <span class="req">*</span></label>
-          <input class="field-input" formControlName="codigo" placeholder="Ex: L-001" />
+          <div class="codigo-input-group">
+            <span class="codigo-input-group__prefix">LOTE-</span>
+            <input class="codigo-input-group__input" formControlName="codigo" placeholder="001" />
+          </div>
           <span class="field-error" *ngIf="form.get('codigo')?.invalid && form.get('codigo')?.touched">
             Campo obrigatório
           </span>
