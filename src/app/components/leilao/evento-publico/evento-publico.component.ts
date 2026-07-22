@@ -13,6 +13,7 @@ import { LoteWebsocketService } from '../../../core/services/lote-websocket.serv
 import { LoteFoto } from '../../../core/services/lote-foto.service';
 import { LoteFotosGaleriaComponent } from '../../lote/lote-fotos-galeria/lote-fotos-galeria.component';
 import { Lote } from '../../../core/models/entities.model';
+import { LoteCodigoPipe, formatarCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
 
 type LanceConfirmacao = {
   lote: Lote;
@@ -23,7 +24,7 @@ type LanceConfirmacao = {
 @Component({
   selector: 'app-evento-publico',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, FormsModule, FontAwesomeModule, LoteFotosGaleriaComponent],
+  imports: [CommonModule, CurrencyPipe, FormsModule, FontAwesomeModule, LoteFotosGaleriaComponent, LoteCodigoPipe],
   templateUrl: './evento-publico.component.html',
   styleUrl: './evento-publico.component.css'
 })
@@ -136,7 +137,7 @@ export class EventoPublicoComponent implements OnInit, OnDestroy {
           this.enviandoLance = false;
           this.confirmacaoAberta = false;
           this.sucessoModalAberto = true;
-          this.mostrarSucesso(`Lance de ${this.formatarMoeda(preco)} registrado para o lote ${lote.codigo}!`);
+          this.mostrarSucesso(`Lance de ${this.formatarMoeda(preco)} registrado para o lote ${formatarCodigoLote(lote.codigo)}!`);
           this.cdr.detectChanges();
           setTimeout(() => {
             this.sucessoModalAberto = false;
