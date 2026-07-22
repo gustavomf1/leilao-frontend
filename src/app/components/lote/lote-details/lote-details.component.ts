@@ -21,6 +21,7 @@ import { LoteFotoService, LoteFoto } from '../../../core/services/lote-foto.serv
 import { Especie, Raca, LeilaoDetalhes, Cliente, Pix } from '../../../core/models/entities.model';
 import { LoteFotosComponent } from '../lote-fotos/lote-fotos.component';
 import { LoteFotosGaleriaComponent } from '../lote-fotos-galeria/lote-fotos-galeria.component';
+import { LoteCodigoPipe, formatarCodigoLote } from '../../../shared/pipes/lote-codigo.pipe';
 
 @Component({
   selector: 'app-lotes-details',
@@ -29,7 +30,7 @@ import { LoteFotosGaleriaComponent } from '../lote-fotos-galeria/lote-fotos-gale
     CommonModule, RouterModule, ReactiveFormsModule, FormsModule,
     CardModule, ButtonDirective, FormModule, GridModule,
     ModalModule, DropdownModule, FontAwesomeModule, LoteFotosComponent,
-    LoteFotosGaleriaComponent
+    LoteFotosGaleriaComponent, LoteCodigoPipe
   ],
   templateUrl: './lote-details.component.html',
   styleUrl: './lote-details.component.css'
@@ -145,7 +146,7 @@ export class LotesDetailsComponent implements OnInit, OnDestroy {
   get resumoParaConfirmacao(): { label: string; valor: any }[] {
     const f = this.form.getRawValue();
     return [
-      { label: 'Código', valor: f.codigo },
+      { label: 'Código', valor: formatarCodigoLote(f.codigo) },
       { label: 'Qtd. Animais', valor: f.qntdAnimais },
       { label: 'Sexo', valor: f.sexo },
       { label: 'Espécie', valor: this.especies.find(e => e.id === f.especieId)?.nome ?? f.especieId },

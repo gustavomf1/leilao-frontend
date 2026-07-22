@@ -150,4 +150,8 @@ describe('LotesDetailsComponent — galeria de fotos na edição', () => {
     expect(mockLoteFotoService.listar).toHaveBeenCalledWith(7);
     expect(component.galeriaFotos).toEqual(fotosMock);
   });
+
+  it('exibe o código do lote com o prefixo fixo LOTE- no info-chip de resumo', () => {
+    expect(fixture.nativeElement.textContent).toContain('LOTE-L-007');
+  });
 });
