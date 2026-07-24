@@ -93,7 +93,7 @@ export class LeiloesDetailsComponent implements OnInit {
       descricao:   ['', Validators.required],
       data:        ['', Validators.required],
       condicoesId: [null, Validators.required],
-      taxaPadraoId: [null],
+      taxaPadraoId: [null, Validators.required],
       especieId:         [null, Validators.required],
       leiloeiroId:       [null],
       tipoLeilao:        ['', Validators.required],
@@ -172,21 +172,46 @@ export class LeiloesDetailsComponent implements OnInit {
   // ── Salvar Leilão ─────────────────────────────────────────────
 
   salvar() {
-    if (this.form.valid) {
-      const dados = {
-        ...this.form.getRawValue(),
-        uf: String(this.form.get('uf')?.value || '').toUpperCase(),
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      const labels: Record<string, string> = {
+        local: 'Local / Recinto',
+        uf: 'UF',
+        cidade: 'Cidade',
+        descricao: 'Descrição',
+        data: 'Data do evento',
+        condicoesId: 'Condição de pagamento',
+        taxaPadraoId: 'Taxa padrão vigente',
+        especieId: 'Espécie',
+        tipoLeilao: 'Tipo de leilão',
+        taxaPor: 'Cobrança da taxa',
       };
-      const op = this.isEdicao
-        ? this.service.atualizar(this.entityId!, dados)
-        : this.service.salvar(dados);
-      op.subscribe({
-        next: () => {
-          this.alert.success(this.isEdicao ? 'Leilão atualizado!' : 'Leilão cadastrado!');
-          this.router.navigate(['/leiloes/lista']);
-        },
-        error: (err) => this.alert.error(err.error?.mensagem ),
-      });
+      const pendentes = Object.keys(this.form.controls)
+        .filter(campo => this.form.get(campo)?.invalid)
+        .map(campo => labels[campo] ?? campo);
+      this.alert.warning(`Preencha os campos obrigatórios: ${pendentes.join(', ')}.`);
+      return;
     }
+
+    const dados = {
+      ...this.form.getRawValue(),
+      uf: String(this.form.get('uf')?.value || '').toUpperCase(),
+    };
+    const op = this.isEdicao
+      ? this.service.atualizar(this.entityId!, dados)
+      : this.service.salvar(dados);
+    op.subscribe({
+      next: () => {
+        this.alert.success(this.isEdicao ? 'Leilão atualizado!' : 'Leilão cadastrado!');
+        this.router.navigate(['/leiloes/lista']);
+      },
+      error: (err) => {
+        const mensagem = err.error?.mensagem
+          ?? err.error?.message
+          ?? (typeof err.error === 'string' ? err.error : null)
+          ?? 'Não foi possível salvar o leilão.';
+        this.alert.error(mensagem);
+      },
+    });
   }
 }

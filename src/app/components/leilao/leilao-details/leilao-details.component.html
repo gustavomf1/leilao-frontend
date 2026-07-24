@@ -14,7 +14,7 @@
       <a routerLink="/leiloes/lista" cButton color="secondary" variant="ghost">
         <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
       </a>
-      <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+      <button type="button" cButton color="primary" (click)="salvar()">
         <fa-icon [icon]="faSave" class="me-1"></fa-icon>
         {{ isEdicao ? 'Salvar Alterações' : 'Salvar Leilão' }}
       </button>
@@ -241,7 +241,7 @@
     <a routerLink="/leiloes/lista" cButton color="secondary" variant="ghost">
       <fa-icon [icon]="faArrowLeft" class="me-1"></fa-icon> Cancelar
     </a>
-    <button type="button" cButton color="primary" [disabled]="form.invalid" (click)="salvar()">
+    <button type="button" cButton color="primary" (click)="salvar()">
       <fa-icon [icon]="faSave" class="me-1"></fa-icon>
       {{ isEdicao ? 'Salvar Alterações' : 'Salvar Leilão' }}
     </button>
